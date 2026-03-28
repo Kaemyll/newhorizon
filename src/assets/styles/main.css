@@ -1,0 +1,909 @@
+/* =========================================================
+   1. VARIABLES GLOBALES ET BASE
+   ========================================================= */
+
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #e8edf2;
+  background: #0b1118;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  height: 100%;
+  background: #0b1118;
+  color: #e8edf2;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+button,
+select {
+  font: inherit;
+}
+
+/* =========================================================
+   2. ÉLÉMENTS INTERACTIFS
+   ========================================================= */
+
+button {
+  cursor: pointer;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #7697ba;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #284059 0%, #1d3042 100%);
+  color: #f3f8fc;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.05s ease,
+    box-shadow 0.15s ease;
+}
+
+button:hover {
+  background: linear-gradient(180deg, #314d69 0%, #23384c 100%);
+  border-color: #9ab8d7;
+  box-shadow: 0 0 0 1px rgba(154, 184, 215, 0.1);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+button.is-active {
+  border-color: #b7d4f2;
+  box-shadow: 0 0 0 1px rgba(183, 212, 242, 0.2);
+  background: linear-gradient(180deg, #35506e 0%, #274057 100%);
+}
+
+select {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #3c536b;
+  border-radius: 6px;
+  background: #0f1822;
+  color: #eef5fb;
+}
+
+/* =========================================================
+   3. STRUCTURE GLOBALE APP
+   ========================================================= */
+
+.app-shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100vh;
+  width: min(98vw, 1800px);
+  margin: 0 auto;
+  padding: 12px 14px 12px;
+  gap: 10px;
+}
+
+.app-header {
+  min-height: 0;
+}
+
+.app-main {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr) 330px;
+  gap: 12px;
+  min-height: 0;
+}
+
+/* =========================================================
+   4. HEADER
+   ========================================================= */
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.header-brand {
+  min-width: 300px;
+}
+
+.title-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 4px 0;
+  font-size: 2.5rem;
+  line-height: 1.02;
+}
+
+.title-icon {
+  color: #7db8ff;
+  font-size: 1.55rem;
+  opacity: 0.95;
+}
+
+.subtitle {
+  margin: 0 0 4px 0;
+  font-size: 0.98rem;
+  opacity: 0.95;
+}
+
+.meta-line {
+  margin: 0;
+  font-size: 0.87rem;
+  opacity: 0.75;
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: flex-start;
+  max-width: 860px;
+  gap: 6px;
+  padding-top: 4px;
+}
+
+.header-actions button {
+  padding: 0.52rem 0.78rem;
+  font-size: 0.92rem;
+}
+
+/* =========================================================
+   5. COLONNES PRINCIPALES
+   ========================================================= */
+
+.main-column,
+.right-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  padding-right: 2px;
+}
+
+.main-column-left,
+.right-aside {
+  overflow-y: auto;
+}
+
+.right-aside {
+  border-left: 1px solid rgba(125, 184, 255, 0.08);
+  padding-left: 10px;
+}
+
+.main-column > .panel,
+.right-aside > .panel {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.main-column-center {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 220px;
+  gap: 10px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.center-top {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.journal-panel {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Sécurité anti-débordement */
+.right-aside .panel p,
+.right-aside .panel li,
+.right-aside .panel span,
+.main-column .panel p,
+.main-column .panel li,
+.main-column .panel span {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* =========================================================
+   6. PANNEAUX GÉNÉRAUX
+   ========================================================= */
+
+.panel {
+  min-height: 152px;
+  padding: 11px 11px 10px;
+  border: 1px solid #243241;
+  border-radius: 12px;
+  background: #101923;
+  box-shadow: inset 0 0 0 1px rgba(125, 184, 255, 0.03);
+  overflow: hidden;
+}
+
+.panel h2 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 0.98rem;
+}
+
+.panel h3 {
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-size: 0.88rem;
+  opacity: 0.92;
+}
+
+.panel p {
+  margin: 0 0 6px 0;
+  line-height: 1.18;
+  font-size: 0.9rem;
+}
+
+/* =========================================================
+   7. GROUPES D’ACTIONS ET NOTES
+   ========================================================= */
+
+.action-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.action-group button {
+  padding: 0.48rem 0.72rem;
+  font-size: 0.86rem;
+}
+
+.panel-note {
+  margin-top: 10px;
+  font-style: italic;
+  font-size: 0.84rem;
+  opacity: 0.84;
+}
+
+/* =========================================================
+   8. LISTES GÉNÉRIQUES
+   ========================================================= */
+
+.resource-list {
+  margin: 0;
+  padding-left: 16px;
+}
+
+.resource-list li {
+  margin-bottom: 5px;
+  line-height: 1.18;
+  font-size: 0.89rem;
+}
+
+/* =========================================================
+   9. LISTE COMPACTE DES MINERAIS EN SOUTE
+   ========================================================= */
+
+.resource-list-compact {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  list-style: none;
+  gap: 3px 10px;
+  margin-top: 2px;
+  padding-left: 0;
+}
+
+.resource-list-compact li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 0;
+  padding-bottom: 1px;
+  border-bottom: 1px dotted rgba(125, 184, 255, 0.08);
+}
+
+.resource-list-mineraux {
+  font-size: 0.82rem;
+}
+
+.resource-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.resource-icon {
+  display: inline-block;
+  width: 13px;
+  text-align: center;
+  opacity: 0.9;
+  font-size: 0.84rem;
+}
+
+.resource-name {
+  min-width: 0;
+}
+
+.resource-list-mineraux .resource-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resource-value {
+  font-weight: 600;
+  opacity: 0.92;
+  font-size: 0.82rem;
+}
+
+/* =========================================================
+   10. RESSOURCES LOCALES DU SECTEUR
+   ========================================================= */
+
+.resource-list-sector {
+  font-size: 0.86rem;
+}
+
+.resource-list-sector li {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.resource-list-sector .resource-name {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: initial;
+  line-height: 1.14;
+}
+
+.resource-weight {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  opacity: 0.72;
+}
+
+/* =========================================================
+   11. DESCRIPTION DU SECTEUR / STATION
+   ========================================================= */
+
+.sector-description {
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px solid rgba(125, 184, 255, 0.12);
+  font-style: italic;
+  line-height: 1.22;
+  font-size: 0.86rem;
+  opacity: 0.88;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* =========================================================
+   12. NAVIGATION
+   ========================================================= */
+
+.navigation-label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.88rem;
+  opacity: 0.9;
+}
+
+.navigation-select {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #3c536b;
+  border-radius: 6px;
+  background: #0f1822;
+  color: #eef5fb;
+}
+
+.navigation-status {
+  margin-top: 8px;
+  font-style: italic;
+  font-size: 0.88rem;
+  opacity: 0.9;
+}
+
+/* =========================================================
+   13. SERVICES DE STATION
+   ========================================================= */
+
+.station-services-panel {
+  min-height: 0;
+}
+
+.station-services-header {
+  margin-bottom: 8px;
+}
+
+.station-services-subtitle {
+  margin: 2px 0 0 0;
+  font-size: 0.82rem;
+  opacity: 0.72;
+}
+
+.station-mode-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.station-mode-tabs button {
+  padding: 0.46rem 0.7rem;
+  font-size: 0.84rem;
+}
+
+.station-service-card {
+  padding: 10px;
+  border: 1px solid rgba(125, 184, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(125, 184, 255, 0.03);
+}
+
+.station-service-card + .station-service-card {
+  margin-top: 8px;
+}
+
+.station-service-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.station-service-card-header h3 {
+  margin: 0;
+}
+
+.market-rate-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.market-rate-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18px auto auto;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 7px;
+  border: 1px solid rgba(125, 184, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.market-rate-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  font-size: 0.8rem;
+}
+
+.market-rate-variation {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.market-rate-variation-up {
+  opacity: 0.95;
+}
+
+.market-rate-variation-down {
+  opacity: 0.95;
+}
+
+.market-rate-variation-stable {
+  opacity: 0.7;
+}
+
+.market-rate-values {
+  flex-shrink: 0;
+  font-size: 0.76rem;
+  opacity: 0.84;
+}
+
+.market-rate-average {
+  flex-shrink: 0;
+  font-size: 0.74rem;
+  opacity: 0.68;
+}
+
+.market-rate-legend {
+  margin-bottom: 8px;
+  font-size: 0.76rem;
+  font-style: italic;
+  opacity: 0.72;
+}
+
+.station-service-badge {
+  display: inline-block;
+  padding: 0.2rem 0.45rem;
+  border: 1px solid rgba(125, 184, 255, 0.18);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  opacity: 0.84;
+  background: rgba(125, 184, 255, 0.05);
+}
+
+.station-service-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.station-service-metric {
+  padding: 8px 9px;
+  border: 1px solid rgba(125, 184, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.station-service-label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 0.75rem;
+  opacity: 0.72;
+}
+
+.station-service-description {
+  margin-bottom: 8px;
+  font-size: 0.84rem;
+  font-style: italic;
+  line-height: 1.16;
+  opacity: 0.88;
+}
+
+.station-service-card-commerce {
+  border-color: rgba(206, 180, 97, 0.14);
+}
+
+.station-service-card-fuel {
+  border-color: rgba(114, 167, 214, 0.14);
+}
+
+.station-service-card-workshop {
+  border-color: rgba(140, 145, 220, 0.14);
+}
+
+.station-mode-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.station-mode-tabs button {
+  padding: 0.46rem 0.7rem;
+  font-size: 0.84rem;
+}
+
+.station-upgrade-shell {
+  min-height: 0;
+  max-height: 320px;
+  margin-top: 10px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.station-upgrade-shell .panel {
+  min-height: unset;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.station-upgrade-shell .upgrade-item {
+  min-width: 0;
+}
+
+.station-service-list {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+.station-service-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 5px;
+  line-height: 1.16;
+  font-size: 0.88rem;
+}
+
+.station-service-icon {
+  display: inline-block;
+  width: 14px;
+  text-align: center;
+  opacity: 0.92;
+  font-size: 0.86rem;
+}
+
+.station-service-state {
+  margin-left: auto;
+  font-size: 0.82rem;
+  opacity: 0.78;
+}
+
+.station-summary-panel strong {
+  font-size: 0.96rem;
+}
+
+.station-summary-block {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(125, 184, 255, 0.08);
+}
+
+.station-summary-list {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+.station-summary-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 5px;
+  font-size: 0.86rem;
+  line-height: 1.16;
+}
+
+/* =========================================================
+   14. ATELIER / AMÉLIORATIONS
+   ========================================================= */
+
+.upgrade-item {
+  padding: 8px 0;
+  border-top: 1px solid rgba(125, 184, 255, 0.08);
+}
+
+.upgrade-item:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.upgrade-header {
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+.upgrade-description {
+  margin-bottom: 6px;
+  font-style: italic;
+  font-size: 0.84rem;
+  line-height: 1.18;
+  opacity: 0.86;
+}
+
+.upgrade-item p {
+  font-size: 0.86rem;
+  margin-bottom: 5px;
+}
+
+.upgrade-item button {
+  padding: 0.45rem 0.7rem;
+  font-size: 0.86rem;
+}
+
+/* =========================================================
+   15. JOURNAL DE BORD TOUJOURS VISIBLE
+   ========================================================= */
+
+.journal-footer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid #243241;
+  border-radius: 14px;
+  background: #0f1822;
+  box-shadow: inset 0 0 0 1px rgba(125, 184, 255, 0.04);
+}
+
+.journal-footer-header {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(125, 184, 255, 0.12);
+  background: rgba(125, 184, 255, 0.03);
+}
+
+.journal-footer-header h2 {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.journal-shell {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.journal-column {
+  min-height: 0;
+  padding: 10px 11px;
+  overflow-y: auto;
+}
+
+.journal-column + .journal-column {
+  border-left: 1px solid rgba(125, 184, 255, 0.1);
+}
+
+.journal-title {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.log-list {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 0.78rem;
+  line-height: 1.12;
+}
+
+.log-list li {
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.log-timestamp {
+  margin-right: 5px;
+  font-size: 0.74rem;
+  font-style: normal;
+  color: #c7a84a;
+}
+
+.log-message {
+  font-style: italic;
+  opacity: 0.96;
+}
+
+.log-placeholder {
+  list-style: none;
+  margin-left: -16px;
+  opacity: 0.7;
+}
+
+/* =========================================================
+   16. RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1450px) {
+  .app-shell {
+    width: min(99vw, 1800px);
+    padding-inline: 10px;
+  }
+
+  .app-main {
+    grid-template-columns: 260px minmax(0, 1fr) 310px;
+  }
+}
+
+@media (max-width: 1200px) {
+  body {
+    overflow: auto;
+  }
+
+  .app-shell {
+    grid-template-rows: auto auto;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .app-main {
+    grid-template-columns: 1fr;
+  }
+
+  .main-column,
+  .right-aside,
+  .center-top {
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  .main-column-center {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: visible;
+  }
+
+  .right-aside {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  .journal-panel {
+    min-height: unset;
+    overflow: visible;
+  }
+
+  .journal-footer {
+    min-height: unset;
+    height: auto;
+  }
+
+  .journal-shell {
+    grid-template-columns: 1fr;
+    flex: initial;
+    height: auto;
+  }
+
+  .journal-column {
+    max-height: 160px;
+  }
+
+  .journal-column + .journal-column {
+    border-top: 1px solid rgba(125, 184, 255, 0.1);
+    border-left: none;
+  }
+
+  .resource-list-compact {
+    grid-template-columns: 1fr;
+  }
+
+  .market-rate-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+@media (max-width: 800px) {
+  .app-shell {
+    padding: 10px;
+  }
+
+  .title-line {
+    gap: 8px;
+    font-size: 2rem;
+  }
+
+  .title-icon {
+    font-size: 1.35rem;
+  }
+
+  .panel {
+    min-height: unset;
+  }
+
+  .resource-list-compact {
+    grid-template-columns: 1fr;
+  }
+}
