@@ -16,6 +16,11 @@ export function ravitaillerCarburant() {
     return
   }
 
+  if (etat.positionLocale !== 'station') {
+    ajouterAuJournal('Le ravitaillement n’est possible qu’à la station.', 'commerce')
+    return
+  }
+
   const secteurCourant = recupererSecteurCourant()
   const station = secteurCourant?.stationPrincipale
 

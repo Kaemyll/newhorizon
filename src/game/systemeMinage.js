@@ -73,15 +73,16 @@ export function minerMineraiManuellement() {
     return
   }
 
+  if (etat.positionLocale !== 'operations') {
+    ajouterAuJournal('Le minage manuel n’est possible qu’en zone d’opérations.', 'evenements')
+    return
+  }
+
   if (etat.vaisseau.soute >= etat.vaisseau.souteMax) {
     ajouterAuJournal('Soute pleine. Impossible de miner.', 'evenements')
     return
   }
 
-  /**
-   * Règle v0.3.6 :
-   * le minage manuel consomme 1 tick = 1 heure.
-   */
   avancerTemps(1)
 
   const mineraiTire = tirerMineraiAleatoire()
@@ -102,6 +103,11 @@ export function vendreTousLesMinerais() {
 
   if (etat.navigation?.enVoyage) {
     ajouterAuJournal('Impossible de vendre la cargaison pendant un trajet.', 'commerce')
+    return
+  }
+
+  if (etat.positionLocale !== 'station') {
+    ajouterAuJournal('La vente n’est possible qu’à la station.', 'commerce')
     return
   }
 
@@ -151,6 +157,16 @@ export function acheterDroneMinier() {
   const etat = recupererEtatJeu()
   const cout = etat.economie.coutDroneMinier
 
+  if (etat.navigation?.enVoyage) {
+    ajouterAuJournal('Impossible d’acheter un drone pendant un trajet.', 'commerce')
+    return
+  }
+
+  if (etat.positionLocale !== 'station') {
+    ajouterAuJournal('L’achat d’un drone n’est possible qu’à la station.', 'commerce')
+    return
+  }
+
   if (etat.industrie.drones.length >= etat.vaisseau.dronesMiniersMax) {
     ajouterAuJournal('Capacité maximale de drones atteinte.', 'commerce')
     return
@@ -180,6 +196,10 @@ export function faireTournerDrones() {
   const etat = recupererEtatJeu()
 
   if (etat.navigation?.enVoyage) {
+    return
+  }
+
+  if (etat.positionLocale !== 'operations') {
     return
   }
 

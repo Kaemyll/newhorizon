@@ -5,7 +5,7 @@ export function creerEtatInitialJeu() {
 
   return {
     meta: {
-      version: '0.3.6',
+      version: '0.3.7',
       auteur: 'Kaemyll',
       annee: 2026,
     },
@@ -46,11 +46,10 @@ export function creerEtatInitialJeu() {
     },
 
     /**
-     * Préparation de la future distinction locale :
+     * v0.3.7
+     * Position locale dans le secteur courant :
      * - station
      * - operations
-     *
-     * Pour l'instant, le jeu démarre à la station.
      */
     positionLocale: 'station',
 
@@ -73,7 +72,7 @@ export function creerEtatInitialJeu() {
       },
       {
         horodatage: '[T0000]',
-        message: 'Vaisseau prêt au départ.',
+        message: 'Vaisseau prêt au départ, amarré à la station locale.',
         categorie: 'evenements',
       },
     ],

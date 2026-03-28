@@ -33,6 +33,14 @@ export function lancerVoyageVersDestinationSelectionnee() {
     return
   }
 
+  if (etat.positionLocale !== 'station') {
+    ajouterAuJournal(
+      'Le voyage inter-sectoriel ne peut être lancé que depuis la station.',
+      'evenements',
+    )
+    return
+  }
+
   const idOrigine = etat.secteurCourant.id
   const idDestination = etat.navigation.destinationSelectionneeId
 
@@ -90,8 +98,17 @@ export function faireAvancerVoyage() {
   etat.navigation.secteurDestinationId = null
   etat.navigation.ticksRestants = 0
 
+  /**
+   * À l’arrivée d’un trajet inter-sectoriel, on considère que le joueur
+   * arrive au voisinage immédiat de la station principale du secteur.
+   */
+  etat.positionLocale = 'station'
+
   if (secteurDestination) {
-    ajouterAuJournal(`Arrivée dans le secteur ${secteurDestination.nom}.`, 'evenements')
+    ajouterAuJournal(
+      `Arrivée dans le secteur ${secteurDestination.nom}. Amarrage local disponible.`,
+      'evenements',
+    )
   } else {
     ajouterAuJournal('Arrivée dans le secteur de destination.', 'evenements')
   }

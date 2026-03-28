@@ -36,6 +36,11 @@ export function ameliorerVaisseau(idAmelioration) {
     return
   }
 
+  if (etat.positionLocale !== 'station') {
+    ajouterAuJournal('Les améliorations ne sont disponibles qu’à la station.', 'commerce')
+    return
+  }
+
   if (!station?.services?.atelier) {
     ajouterAuJournal('Aucun atelier disponible dans cette station.', 'commerce')
     return

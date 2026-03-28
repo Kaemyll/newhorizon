@@ -24,6 +24,7 @@ import {
   selectionnerDestination,
   lancerVoyageVersDestinationSelectionnee,
 } from './game/systemeNavigation'
+import { allerEnZoneOperations, retourALaStation } from './game/systemeLocalisation'
 import { donneesSecteurs } from './game/donneesSecteurs'
 import { demarrerBoucleJeu, arreterBoucleJeu } from './game/systemeTick'
 
@@ -128,6 +129,18 @@ function gererAmelioration(idAmelioration) {
   synchroniserEtat()
 }
 
+function gererAllerOperations() {
+  allerEnZoneOperations()
+  sauvegarderJeu()
+  synchroniserEtat()
+}
+
+function gererRetourStation() {
+  retourALaStation()
+  sauvegarderJeu()
+  synchroniserEtat()
+}
+
 function gererReinitialisation() {
   reinitialiserEtatJeu()
   Object.assign(ui, creerEtatUIInitial())
@@ -207,6 +220,7 @@ onUnmounted(() => {
         <NavigationPanel
           :secteur-courant-id="etat.secteurCourant.id"
           :navigation="etat.navigation"
+          :position-locale="etat.positionLocale"
           @selectionner-destination="gererSelectionDestination"
           @voyager="gererVoyage"
         />
@@ -220,7 +234,10 @@ onUnmounted(() => {
             :vaisseau="etat.vaisseau"
             :industrie="etat.industrie"
             :navigation="etat.navigation"
+            :position-locale="etat.positionLocale"
             @miner="gererMinageManuel"
+            @aller-operations="gererAllerOperations"
+            @retour-station="gererRetourStation"
           />
 
           <StationServicesPanel
@@ -229,10 +246,12 @@ onUnmounted(() => {
             :vaisseau="etat.vaisseau"
             :ressources="etat.ressources"
             :sous-mode-station="ui.sousModeStation"
+            :position-locale="etat.positionLocale"
             @changer-sous-mode-station="changerSousModeStation"
             @vendre="gererVenteMinerai"
             @ravitailler="gererRavitaillement"
             @acheter-drone="gererAchatDrone"
+            @retour-station="gererRetourStation"
           >
             <template #atelier>
               <UpgradePanel
@@ -247,6 +266,7 @@ onUnmounted(() => {
             v-else-if="ui.modeActif === 'navigation'"
             :secteur-courant-id="etat.secteurCourant.id"
             :navigation="etat.navigation"
+            :position-locale="etat.positionLocale"
             @selectionner-destination="gererSelectionDestination"
             @voyager="gererVoyage"
           />
