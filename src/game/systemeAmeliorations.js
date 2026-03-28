@@ -1,6 +1,6 @@
 import { recupererEtatJeu } from './etatJeu'
-import { donneesSecteurs } from './donneesSecteurs'
-import { donneesVaisseaux } from './donneesVaisseaux'
+import { donneesSecteurs } from './dataSecteurs'
+import { donneesVaisseaux } from './dataVaisseaux'
 import { ajouterAuJournal } from './systemeMinage'
 
 function recupererSecteurCourant() {
@@ -22,7 +22,7 @@ export function recupererListeAmeliorationsDisponibles() {
     return []
   }
 
-  return Object.values(modele.ameliorations)
+  return modele.ameliorations
 }
 
 export function ameliorerVaisseau(idAmelioration) {
@@ -46,7 +46,7 @@ export function ameliorerVaisseau(idAmelioration) {
     return
   }
 
-  const amelioration = modele?.ameliorations?.[idAmelioration]
+  const amelioration = modele?.ameliorations?.find((entree) => entree.id === idAmelioration)
 
   if (!amelioration) {
     ajouterAuJournal('Amélioration inconnue.', 'commerce')

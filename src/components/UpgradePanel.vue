@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { donneesVaisseaux } from '../game/donneesVaisseaux'
+import { donneesVaisseaux } from '../game/dataVaisseaux'
 
 const props = defineProps({
   vaisseau: {

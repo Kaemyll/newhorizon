@@ -1,0 +1,206 @@
+[
+  {
+    "id": "ceinture_khepri",
+    "nom": "Ceinture de Khepri",
+    "securite": 1.0,
+    "type": "ceinture_miniere",
+    "description": "Ceinture minière sûre et banale, adaptée aux petits indépendants.",
+    "stationPrincipale": {
+      "id": "hawking_exchange",
+      "nom": "Hawking Exchange",
+      "type": "station_commerciale_orbitale",
+      "description": "Plateforme commerciale majeure du secteur, connue pour ses services fiables et ses taxes élevées.",
+      "services": {
+        "ravitaillement": true,
+        "commerce": true,
+        "atelier": true
+      },
+      "economie": {
+        "coutCarburantParUnite": 1,
+        "modificateursMinerais": [
+          { "idMinerai": "roche_carbonee", "modificateur": 0.75 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.82 },
+          { "idMinerai": "olivine", "modificateur": 0.9 },
+          { "idMinerai": "pyroxene", "modificateur": 1.08 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.2 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.35 }
+        ]
+      }
+    },
+    "repartitionMinerais": [
+      { "idMinerai": "roche_carbonee", "poids": 50 },
+      { "idMinerai": "poussiere_silicatee", "poids": 35 },
+      { "idMinerai": "olivine", "poids": 15 }
+    ]
+  },
+  {
+    "id": "anneau_demeter",
+    "nom": "Anneau de Déméter",
+    "securite": 0.6,
+    "type": "anneau_minier",
+    "description": "Zone plus riche et plus rude, encore relativement fréquentée.",
+    "stationPrincipale": {
+      "id": "demeter_prospect",
+      "nom": "Demeter Prospect",
+      "type": "station_industrielle_orbitale",
+      "description": "Installation minière dense, spécialisée dans le transit de cargaisons et le ravitaillement.",
+      "services": {
+        "ravitaillement": true,
+        "commerce": true,
+        "atelier": false
+      },
+      "economie": {
+        "coutCarburantParUnite": 1,
+        "modificateursMinerais": [
+          { "idMinerai": "roche_carbonee", "modificateur": 0.7 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.92 },
+          { "idMinerai": "olivine", "modificateur": 1.05 },
+          { "idMinerai": "pyroxene", "modificateur": 1.18 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.08 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.15 }
+        ]
+      }
+    },
+    "repartitionMinerais": [
+      { "idMinerai": "poussiere_silicatee", "poids": 30 },
+      { "idMinerai": "olivine", "poids": 45 },
+      { "idMinerai": "pyroxene", "poids": 25 }
+    ]
+  },
+  {
+    "id": "banc_persephone",
+    "nom": "Banc de Perséphone",
+    "securite": 0.3,
+    "type": "banc_asteroides",
+    "description": "Champ fragmenté, plus isolé, offrant des extraits plus intéressants.",
+    "stationPrincipale": {
+      "id": "persephone_anchorage",
+      "nom": "Persephone Anchorage",
+      "type": "mouillage_orbital",
+      "description": "Mouillage excentré et rugueux, fréquenté par des opérateurs indépendants plus audacieux.",
+      "services": {
+        "ravitaillement": true,
+        "commerce": true,
+        "atelier": false
+      },
+      "economie": {
+        "coutCarburantParUnite": 1,
+        "modificateursMinerais": [
+          { "idMinerai": "roche_carbonee", "modificateur": 0.68 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.8 },
+          { "idMinerai": "olivine", "modificateur": 0.95 },
+          { "idMinerai": "pyroxene", "modificateur": 1.12 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.22 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.18 }
+        ]
+      }
+    },
+    "repartitionMinerais": [
+      { "idMinerai": "olivine", "poids": 20 },
+      { "idMinerai": "pyroxene", "poids": 45 },
+      { "idMinerai": "fer_nickel_brut", "poids": 35 }
+    ]
+  },
+  {
+    "id": "nuee_hecate",
+    "nom": "Nuée d’Hécate",
+    "securite": 0.1,
+    "type": "nuee_asteroides",
+    "description": "Zone lointaine et peu sûre, réputée pour ses gisements rares.",
+    "stationPrincipale": {
+      "id": "blackwake_terminal",
+      "nom": "Blackwake Terminal",
+      "type": "terminal_orbital_avance",
+      "description": "Terminal lointain au trafic plus âpre, où l’on échange des cargaisons rares sous forte spéculation.",
+      "services": {
+        "ravitaillement": true,
+        "commerce": true,
+        "atelier": false
+      },
+      "economie": {
+        "coutCarburantParUnite": 1,
+        "modificateursMinerais": [
+          { "idMinerai": "roche_carbonee", "modificateur": 0.6 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.72 },
+          { "idMinerai": "olivine", "modificateur": 0.84 },
+          { "idMinerai": "pyroxene", "modificateur": 1.0 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.15 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.32 }
+        ]
+      }
+    },
+    "repartitionMinerais": [
+      { "idMinerai": "pyroxene", "poids": 25 },
+      { "idMinerai": "fer_nickel_brut", "poids": 50 },
+      { "idMinerai": "cobalt_natif", "poids": 25 }
+    ]
+  },
+  {
+    "id": "forge_tantalus",
+    "nom": "Forge de Tantale",
+    "securite": 0.5,
+    "type": "systeme_industriel",
+    "description": "Système industriel dense, alimenté par un trafic marchand soutenu et une activité métallurgique constante.",
+    "stationPrincipale": {
+      "id": "tantalus_yards",
+      "nom": "Tantalus Yards",
+      "type": "chantier_orbital",
+      "description": "Chantier et hub logistique tourné vers la métallurgie, le transport et l’équipement industriel.",
+      "services": {
+        "ravitaillement": true,
+        "commerce": true,
+        "atelier": true
+      },
+      "economie": {
+        "coutCarburantParUnite": 1,
+        "modificateursMinerais": [
+          { "idMinerai": "roche_carbonee", "modificateur": 0.65 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.78 },
+          { "idMinerai": "olivine", "modificateur": 0.94 },
+          { "idMinerai": "pyroxene", "modificateur": 1.08 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.28 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.22 }
+        ]
+      }
+    },
+    "repartitionMinerais": [
+      { "idMinerai": "olivine", "poids": 18 },
+      { "idMinerai": "pyroxene", "poids": 37 },
+      { "idMinerai": "fer_nickel_brut", "poids": 45 }
+    ]
+  },
+  {
+    "id": "drift_nyx",
+    "nom": "Dérive de Nyx",
+    "securite": 0.2,
+    "type": "zone_peripherique",
+    "description": "Région sombre et lointaine, peu surveillée, où circulent des cargaisons discrètes et des prospecteurs téméraires.",
+    "stationPrincipale": {
+      "id": "nyx_freeport",
+      "nom": "Nyx Freeport",
+      "type": "port_franc_orbital",
+      "description": "Port franc périphérique, rude et spéculatif, où certaines cargaisons rares trouvent preneur à bon prix.",
+      "services": {
+        "ravitaillement": true,
+        "commerce": true,
+        "atelier": false
+      },
+      "economie": {
+        "coutCarburantParUnite": 1,
+        "modificateursMinerais": [
+          { "idMinerai": "roche_carbonee", "modificateur": 0.58 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.7 },
+          { "idMinerai": "olivine", "modificateur": 0.82 },
+          { "idMinerai": "pyroxene", "modificateur": 1.02 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.18 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.4 }
+        ]
+      }
+    },
+    "repartitionMinerais": [
+      { "idMinerai": "pyroxene", "poids": 22 },
+      { "idMinerai": "fer_nickel_brut", "poids": 43 },
+      { "idMinerai": "cobalt_natif", "poids": 35 }
+    ]
+  }
+]

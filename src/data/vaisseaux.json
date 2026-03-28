@@ -1,0 +1,202 @@
+[
+  {
+    "id": "hw_mule",
+    "nom": "Mule",
+    "constructeur": "Hardspan Works",
+    "role": "mineur_leger",
+    "description": "Petit vaisseau minier utilitaire d’entrée de gamme, robuste et simple d’entretien.",
+    "coqueMax": 100,
+    "souteMax": 20,
+    "puissanceMiniere": 1,
+    "dronesMiniersMax": 2,
+    "carburantMax": 10,
+    "scanner": {
+      "type": "base",
+      "ameliorable": false
+    },
+    "ameliorations": [
+      {
+        "id": "soute",
+        "nom": "Extension de soute",
+        "description": "Augmente la capacité de stockage.",
+        "cout": 25,
+        "increment": 5,
+        "valeurMax": 25
+      },
+      {
+        "id": "drones",
+        "nom": "Baie à drones renforcée",
+        "description": "Augmente le nombre maximal de drones embarqués.",
+        "cout": 35,
+        "increment": 1,
+        "valeurMax": 4
+      },
+      {
+        "id": "carburant",
+        "nom": "Réservoir auxiliaire",
+        "description": "Augmente la capacité maximale de carburant.",
+        "cout": 30,
+        "increment": 5,
+        "valeurMax": 20
+      },
+      {
+        "id": "extraction",
+        "nom": "Tête d’extraction améliorée",
+        "description": "Renforce légèrement le rendement minier du vaisseau.",
+        "cout": 40,
+        "increment": 1,
+        "valeurMax": 3
+      }
+    ]
+  },
+  {
+    "id": "hw_mastiff",
+    "nom": "Mastiff",
+    "constructeur": "Hardspan Works",
+    "role": "mineur_lourd",
+    "description": "Mineur plus massif, avec une meilleure tenue et des capacités défensives limitées.",
+    "coqueMax": 140,
+    "souteMax": 32,
+    "puissanceMiniere": 2,
+    "dronesMiniersMax": 3,
+    "carburantMax": 14,
+    "scanner": {
+      "type": "standard",
+      "ameliorable": false
+    },
+    "ameliorations": [
+      {
+        "id": "soute",
+        "nom": "Extension de soute",
+        "description": "Augmente la capacité de stockage.",
+        "cout": 45,
+        "increment": 6,
+        "valeurMax": 44
+      },
+      {
+        "id": "drones",
+        "nom": "Baie à drones renforcée",
+        "description": "Augmente le nombre maximal de drones embarqués.",
+        "cout": 55,
+        "increment": 1,
+        "valeurMax": 5
+      },
+      {
+        "id": "carburant",
+        "nom": "Réservoir auxiliaire",
+        "description": "Augmente la capacité maximale de carburant.",
+        "cout": 50,
+        "increment": 4,
+        "valeurMax": 22
+      },
+      {
+        "id": "extraction",
+        "nom": "Tête d’extraction améliorée",
+        "description": "Renforce légèrement le rendement minier du vaisseau.",
+        "cout": 65,
+        "increment": 1,
+        "valeurMax": 4
+      }
+    ]
+  },
+  {
+    "id": "hw_caravel",
+    "nom": "Caravel",
+    "constructeur": "Hardspan Works",
+    "role": "transporteur_marchand",
+    "description": "Transporteur civil à grande soute, conçu pour le fret plus que pour l’extraction.",
+    "coqueMax": 110,
+    "souteMax": 48,
+    "puissanceMiniere": 1,
+    "dronesMiniersMax": 1,
+    "carburantMax": 16,
+    "scanner": {
+      "type": "base",
+      "ameliorable": false
+    },
+    "ameliorations": [
+      {
+        "id": "soute",
+        "nom": "Extension de soute",
+        "description": "Augmente la capacité de stockage.",
+        "cout": 40,
+        "increment": 8,
+        "valeurMax": 64
+      },
+      {
+        "id": "drones",
+        "nom": "Baie à drones renforcée",
+        "description": "Augmente le nombre maximal de drones embarqués.",
+        "cout": 60,
+        "increment": 1,
+        "valeurMax": 2
+      },
+      {
+        "id": "carburant",
+        "nom": "Réservoir auxiliaire",
+        "description": "Augmente la capacité maximale de carburant.",
+        "cout": 45,
+        "increment": 4,
+        "valeurMax": 24
+      },
+      {
+        "id": "extraction",
+        "nom": "Tête d’extraction améliorée",
+        "description": "Renforce légèrement le rendement minier du vaisseau.",
+        "cout": 70,
+        "increment": 1,
+        "valeurMax": 2
+      }
+    ]
+  },
+  {
+    "id": "hw_bulwark",
+    "nom": "Bulwark",
+    "constructeur": "Hardspan Works",
+    "role": "mineur_renforce",
+    "description": "Mineur plus robuste et mieux protégé, pensé pour les zones moins sûres.",
+    "coqueMax": 170,
+    "souteMax": 26,
+    "puissanceMiniere": 2,
+    "dronesMiniersMax": 2,
+    "carburantMax": 12,
+    "scanner": {
+      "type": "standard",
+      "ameliorable": false
+    },
+    "ameliorations": [
+      {
+        "id": "soute",
+        "nom": "Extension de soute",
+        "description": "Augmente la capacité de stockage.",
+        "cout": 40,
+        "increment": 5,
+        "valeurMax": 36
+      },
+      {
+        "id": "drones",
+        "nom": "Baie à drones renforcée",
+        "description": "Augmente le nombre maximal de drones embarqués.",
+        "cout": 55,
+        "increment": 1,
+        "valeurMax": 4
+      },
+      {
+        "id": "carburant",
+        "nom": "Réservoir auxiliaire",
+        "description": "Augmente la capacité maximale de carburant.",
+        "cout": 45,
+        "increment": 4,
+        "valeurMax": 20
+      },
+      {
+        "id": "extraction",
+        "nom": "Tête d’extraction améliorée",
+        "description": "Renforce légèrement le rendement minier du vaisseau.",
+        "cout": 60,
+        "increment": 1,
+        "valeurMax": 3
+      }
+    ]
+  }
+]

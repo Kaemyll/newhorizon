@@ -1,0 +1,86 @@
+[
+  {
+    "id": "ceinture_khepri__anneau_demeter",
+    "origine": "ceinture_khepri",
+    "destination": "anneau_demeter",
+    "coutCarburant": 2,
+    "tempsTrajet": 3
+  },
+  {
+    "id": "ceinture_khepri__banc_persephone",
+    "origine": "ceinture_khepri",
+    "destination": "banc_persephone",
+    "coutCarburant": 3,
+    "tempsTrajet": 4
+  },
+  {
+    "id": "ceinture_khepri__nuee_hecate",
+    "origine": "ceinture_khepri",
+    "destination": "nuee_hecate",
+    "coutCarburant": 4,
+    "tempsTrajet": 5
+  },
+  {
+    "id": "anneau_demeter__ceinture_khepri",
+    "origine": "anneau_demeter",
+    "destination": "ceinture_khepri",
+    "coutCarburant": 2,
+    "tempsTrajet": 3
+  },
+  {
+    "id": "anneau_demeter__banc_persephone",
+    "origine": "anneau_demeter",
+    "destination": "banc_persephone",
+    "coutCarburant": 2,
+    "tempsTrajet": 3
+  },
+  {
+    "id": "anneau_demeter__nuee_hecate",
+    "origine": "anneau_demeter",
+    "destination": "nuee_hecate",
+    "coutCarburant": 3,
+    "tempsTrajet": 4
+  },
+  {
+    "id": "banc_persephone__ceinture_khepri",
+    "origine": "banc_persephone",
+    "destination": "ceinture_khepri",
+    "coutCarburant": 3,
+    "tempsTrajet": 4
+  },
+  {
+    "id": "banc_persephone__anneau_demeter",
+    "origine": "banc_persephone",
+    "destination": "anneau_demeter",
+    "coutCarburant": 2,
+    "tempsTrajet": 3
+  },
+  {
+    "id": "banc_persephone__nuee_hecate",
+    "origine": "banc_persephone",
+    "destination": "nuee_hecate",
+    "coutCarburant": 2,
+    "tempsTrajet": 3
+  },
+  {
+    "id": "nuee_hecate__ceinture_khepri",
+    "origine": "nuee_hecate",
+    "destination": "ceinture_khepri",
+    "coutCarburant": 4,
+    "tempsTrajet": 5
+  },
+  {
+    "id": "nuee_hecate__anneau_demeter",
+    "origine": "nuee_hecate",
+    "destination": "anneau_demeter",
+    "coutCarburant": 3,
+    "tempsTrajet": 4
+  },
+  {
+    "id": "nuee_hecate__banc_persephone",
+    "origine": "nuee_hecate",
+    "destination": "banc_persephone",
+    "coutCarburant": 2,
+    "tempsTrajet": 3
+  }
+]

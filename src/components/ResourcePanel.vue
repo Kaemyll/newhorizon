@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
-import { donneesMinerais } from '../game/donneesMinerais'
-import { donneesSecteurs } from '../game/donneesSecteurs'
+import { donneesMinerais } from '../game/dataMinerais'
+import { donneesSecteurs } from '../game/dataSecteurs'
 import { calculerValeurCargaisonPourStation } from '../game/systemeCommerce'
 
 const props = defineProps({

@@ -1,6 +1,6 @@
 import { recupererEtatJeu } from './etatJeu'
-import { donneesMinerais } from './donneesMinerais'
-import { donneesSecteurs } from './donneesSecteurs'
+import { donneesMinerais } from './dataMinerais'
+import { donneesSecteurs } from './dataSecteurs'
 import { calculerPrixLigneBrut, calculerTauxTaxePourSecurite } from './systemeCommerce'
 import { avancerTemps, recupererTickCourant } from './systemeTemps'
 import { verifierPanneSecheEtDeclencher } from './systemeAssistance'

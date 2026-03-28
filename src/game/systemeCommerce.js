@@ -1,5 +1,5 @@
-import { donneesMinerais } from './donneesMinerais'
-import { donneesSecteurs } from './donneesSecteurs'
+import { donneesMinerais } from './dataMinerais'
+import { donneesSecteurs } from './dataSecteurs'
 
 export function calculerTauxTaxePourSecurite(securite) {
   const taxe = 0.18 + securite * 0.22
@@ -20,7 +20,11 @@ export function recupererStationParSecteurId(idSecteur) {
 }
 
 export function recupererModificateurMinerai(station, idMinerai) {
-  return station?.economie?.modificateursMinerais?.[idMinerai] ?? 1
+  const entree = station?.economie?.modificateursMinerais?.find(
+    (ligne) => ligne.idMinerai === idMinerai,
+  )
+
+  return entree?.modificateur ?? 1
 }
 
 export function calculerPrixUnitaireLocalBrut(station, minerai) {

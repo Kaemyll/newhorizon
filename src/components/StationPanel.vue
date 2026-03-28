@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { donneesSecteurs } from '../game/donneesSecteurs'
+import { donneesSecteurs } from '../game/dataSecteurs'
 import { calculerTauxTaxePourSecurite, formaterPourcentageTaxe } from '../game/systemeCommerce'
 
 const props = defineProps({

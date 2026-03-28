@@ -1,6 +1,6 @@
 import { recupererEtatJeu } from './etatJeu'
-import { donneesSecteurs } from './donneesSecteurs'
-import { donneesTrajets } from './donneesTrajets'
+import { donneesSecteurs } from './dataSecteurs'
+import { donneesTrajets } from './dataTrajets'
 import { ajouterAuJournal, rappelerDrones } from './systemeMinage'
 
 export function recupererSecteurParId(idSecteur) {

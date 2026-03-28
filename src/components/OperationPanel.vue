@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { donneesMinerais } from '../game/donneesMinerais'
+import { donneesMinerais } from '../game/dataMinerais'
 
 const props = defineProps({
   ressources: {

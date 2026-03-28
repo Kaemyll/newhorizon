@@ -1,5 +1,5 @@
 import { recupererEtatJeu } from './etatJeu'
-import { donneesSecteurs } from './donneesSecteurs'
+import { donneesSecteurs } from './dataSecteurs'
 import { ajouterAuJournal } from './systemeMinage'
 
 function recupererSecteurCourant() {

@@ -1,6 +1,6 @@
 import { recupererEtatJeu } from './etatJeu'
-import { donneesSecteurs } from './donneesSecteurs'
-import { donneesMinerais } from './donneesMinerais'
+import { donneesSecteurs } from './dataSecteurs'
+import { donneesMinerais } from './dataMinerais'
 import { ajouterAuJournal, faireTournerDrones } from './systemeMinage'
 import { avancerTemps } from './systemeTemps'
 import { verifierPanneSecheEtDeclencher } from './systemeAssistance'

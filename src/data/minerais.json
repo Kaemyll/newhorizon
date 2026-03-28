@@ -1,0 +1,62 @@
+[
+  {
+    "id": "roche_carbonee",
+    "nom": "Roche carbonée",
+    "abreviation": "roc.carb.",
+    "icone": "◆",
+    "prixUnitaire": 1,
+    "frequence": "ultra_commune",
+    "niveauSecteurMinimal": 1.0,
+    "description": "Roche pauvre et abondante, très peu valorisée."
+  },
+  {
+    "id": "poussiere_silicatee",
+    "nom": "Poussière silicatée",
+    "abreviation": "pou.sili.",
+    "icone": "◇",
+    "prixUnitaire": 2,
+    "frequence": "ultra_commune",
+    "niveauSecteurMinimal": 1.0,
+    "description": "Résidu minéral très commun, peu coûteux mais facile à extraire."
+  },
+  {
+    "id": "olivine",
+    "nom": "Olivine",
+    "abreviation": "oliv.",
+    "icone": "⬡",
+    "prixUnitaire": 2,
+    "frequence": "commune",
+    "niveauSecteurMinimal": 1.0,
+    "description": "Silicate courant, utilisé dans plusieurs chaînes industrielles simples."
+  },
+  {
+    "id": "pyroxene",
+    "nom": "Pyroxène",
+    "abreviation": "pyro.",
+    "icone": "⬢",
+    "prixUnitaire": 3,
+    "frequence": "commune",
+    "niveauSecteurMinimal": 0.6,
+    "description": "Minerai plus intéressant, apprécié pour certaines applications industrielles."
+  },
+  {
+    "id": "fer_nickel_brut",
+    "nom": "Fer-nickel brut",
+    "abreviation": "fer.nic.",
+    "icone": "■",
+    "prixUnitaire": 4,
+    "frequence": "peu_commune",
+    "niveauSecteurMinimal": 0.3,
+    "description": "Métal brut plus rentable, recherché pour les usages industriels lourds."
+  },
+  {
+    "id": "cobalt_natif",
+    "nom": "Cobalt natif",
+    "abreviation": "cob.nat.",
+    "icone": "✦",
+    "prixUnitaire": 6,
+    "frequence": "rare",
+    "niveauSecteurMinimal": 0.1,
+    "description": "Minerai précieux, peu fréquent, au fort potentiel commercial."
+  }
+]

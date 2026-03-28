@@ -28,7 +28,7 @@ import {
 } from './game/systemeNavigation'
 import { allerEnZoneOperations, retourALaStation } from './game/systemeLocalisation'
 import { scannerAmasMinier } from './game/systemeExploration'
-import { donneesSecteurs } from './game/donneesSecteurs'
+import { donneesSecteurs } from './game/dataSecteurs'
 import { demarrerBoucleJeu, arreterBoucleJeu } from './game/systemeTick'
 
 const etat = reactive({})

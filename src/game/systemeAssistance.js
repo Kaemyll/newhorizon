@@ -1,5 +1,5 @@
 import { recupererEtatJeu } from './etatJeu'
-import { donneesSecteurs } from './donneesSecteurs'
+import { donneesSecteurs } from './dataSecteurs'
 import { calculerTauxTaxePourSecurite } from './systemeCommerce'
 import { ajouterAuJournal, rappelerDrones } from './systemeMinage'
 

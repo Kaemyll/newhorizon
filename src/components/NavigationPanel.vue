@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
-import { donneesSecteurs } from '../game/donneesSecteurs'
-import { donneesTrajets } from '../game/donneesTrajets'
+import { donneesSecteurs } from '../game/dataSecteurs'
+import { donneesTrajets } from '../game/dataTrajets'
 
 const props = defineProps({
   secteurCourantId: {

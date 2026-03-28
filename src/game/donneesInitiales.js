@@ -1,4 +1,4 @@
-import { donneesVaisseaux } from './donneesVaisseaux'
+import { donneesVaisseaux } from './dataVaisseaux'
 
 export function creerEtatInitialJeu() {
   const vaisseauDepart = donneesVaisseaux.find((vaisseau) => vaisseau.id === 'hw_mule')
