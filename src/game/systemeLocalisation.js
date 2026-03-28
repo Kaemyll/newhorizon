@@ -54,9 +54,27 @@ export function retourALaStation() {
     return
   }
 
+  let nombreRappeles = 0
+
+  for (const drone of etat.industrie?.drones || []) {
+    if (drone.etat === 'deploie') {
+      drone.etat = 'embarque'
+      nombreRappeles += 1
+      ajouterAuJournal(
+        `Drone #${drone.id} rappelé automatiquement avant retour station.`,
+        'evenements',
+      )
+    }
+  }
+
   etat.ressources.carburant -= COUT_CARBURANT_LOCAL
   avancerTemps(COUT_TICKS_LOCAL)
   etat.positionLocale = 'station'
+
+  if (nombreRappeles > 0) {
+    ajouterAuJournal('Retour à la station locale et procédure d’amarrage terminée.', 'evenements')
+    return
+  }
 
   ajouterAuJournal('Retour à la station locale et procédure d’amarrage terminée.', 'evenements')
 }

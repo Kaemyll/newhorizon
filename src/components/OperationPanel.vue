@@ -1,5 +1,7 @@
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   ressources: {
     type: Object,
     required: true,
@@ -22,7 +24,33 @@ defineProps({
   },
 })
 
-const emit = defineEmits(['miner', 'aller-operations', 'retour-station'])
+const emit = defineEmits([
+  'miner',
+  'aller-operations',
+  'retour-station',
+  'deployer-drones',
+  'rappeler-drones',
+])
+
+const nbDeployes = computed(
+  () => props.industrie.drones.filter((drone) => drone.etat === 'deploie').length,
+)
+
+const nbEmbarques = computed(
+  () => props.industrie.drones.filter((drone) => drone.etat === 'embarque').length,
+)
+
+function decrireDrone(drone) {
+  if (drone.etat === 'deploie') {
+    return `Déployé — autonomie ${drone.autonomieRestante}/8`
+  }
+
+  if (drone.ticksRechargeRestants > 0) {
+    return `Embarqué — recharge ${drone.ticksRechargeRestants} tick(s)`
+  }
+
+  return `Embarqué — prêt`
+}
 </script>
 
 <template>
@@ -35,7 +63,8 @@ const emit = defineEmits(['miner', 'aller-operations', 'retour-station'])
       Canon de minage :
       {{ positionLocale === 'operations' && !navigation.enVoyage ? 'Prêt' : 'Hors service local' }}
     </p>
-    <p>Drones embarqués : {{ industrie.drones.length }} / {{ vaisseau.dronesMiniersMax }}</p>
+    <p>Drones embarqués : {{ nbEmbarques }} / {{ industrie.drones.length }}</p>
+    <p>Drones déployés : {{ nbDeployes }}</p>
     <p>Soute : {{ vaisseau.soute }} / {{ vaisseau.souteMax }}</p>
     <p>Carburant : {{ ressources.carburant }} / {{ vaisseau.carburantMax }}</p>
 
@@ -58,15 +87,37 @@ const emit = defineEmits(['miner', 'aller-operations', 'retour-station'])
 
       <button
         :disabled="navigation.enVoyage || positionLocale !== 'operations'"
+        @click="emit('deployer-drones')"
+      >
+        Déployer les drones
+      </button>
+
+      <button :disabled="navigation.enVoyage" @click="emit('rappeler-drones')">
+        Rappeler les drones
+      </button>
+
+      <button
+        :disabled="navigation.enVoyage || positionLocale !== 'operations'"
         @click="emit('miner')"
       >
         Miner manuellement
       </button>
     </div>
 
+    <h3>État des drones</h3>
+
+    <ul v-if="industrie.drones.length > 0" class="drone-status-list">
+      <li v-for="drone in industrie.drones" :key="drone.id">
+        <span class="drone-status-name">Drone #{{ drone.id }}</span>
+        <span class="drone-status-meta">{{ decrireDrone(drone) }}</span>
+      </li>
+    </ul>
+
+    <p v-else class="panel-note">Aucun drone embarqué pour le moment.</p>
+
     <p class="panel-note">
-      En v0.3.7, le minage n’est possible qu’en zone d’opérations. Les services de station ne sont
-      disponibles qu’une fois amarré.
+      En v0.3.8, un drone déployé extrait une fois par tick, dispose de 8 ticks d’autonomie, puis
+      revient automatiquement pour 2 ticks de recharge.
     </p>
   </section>
 </template>

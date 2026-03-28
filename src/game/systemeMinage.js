@@ -181,15 +181,71 @@ export function acheterDroneMinier() {
 
   const nouveauDrone = {
     id: etat.industrie.prochainDroneId,
-    cyclesActifs: 0,
-    cyclesMaintenanceRestants: 0,
-    ticksDepuisExtraction: 0,
+    etat: 'embarque',
+    autonomieRestante: 8,
+    ticksRechargeRestants: 0,
   }
 
   etat.industrie.drones.push(nouveauDrone)
   etat.industrie.prochainDroneId += 1
 
   ajouterAuJournal(`Drone minier #${nouveauDrone.id} acheté et embarqué.`, 'commerce')
+}
+
+export function deployerDrones() {
+  const etat = recupererEtatJeu()
+
+  if (etat.navigation?.enVoyage) {
+    ajouterAuJournal('Impossible de déployer les drones pendant un trajet.', 'evenements')
+    return
+  }
+
+  if (etat.positionLocale !== 'operations') {
+    ajouterAuJournal('Les drones ne peuvent être déployés qu’en zone d’opérations.', 'evenements')
+    return
+  }
+
+  if (!etat.industrie?.drones?.length) {
+    ajouterAuJournal('Aucun drone embarqué à déployer.', 'evenements')
+    return
+  }
+
+  let nombreDeployes = 0
+
+  for (const drone of etat.industrie.drones) {
+    if (drone.etat === 'embarque' && drone.ticksRechargeRestants === 0) {
+      drone.etat = 'deploie'
+      nombreDeployes += 1
+      ajouterAuJournal(`Drone #${drone.id} déployé en zone d’opérations.`, 'evenements')
+    }
+  }
+
+  if (nombreDeployes === 0) {
+    ajouterAuJournal('Aucun drone prêt à être déployé.', 'evenements')
+  }
+}
+
+export function rappelerDrones() {
+  const etat = recupererEtatJeu()
+
+  if (!etat.industrie?.drones?.length) {
+    ajouterAuJournal('Aucun drone à rappeler.', 'evenements')
+    return
+  }
+
+  let nombreRappeles = 0
+
+  for (const drone of etat.industrie.drones) {
+    if (drone.etat === 'deploie') {
+      drone.etat = 'embarque'
+      nombreRappeles += 1
+      ajouterAuJournal(`Drone #${drone.id} rappelé au vaisseau.`, 'evenements')
+    }
+  }
+
+  if (nombreRappeles === 0) {
+    ajouterAuJournal('Aucun drone déployé à rappeler.', 'evenements')
+  }
 }
 
 export function faireTournerDrones() {
@@ -199,56 +255,61 @@ export function faireTournerDrones() {
     return
   }
 
-  if (etat.positionLocale !== 'operations') {
-    return
-  }
-
   if (!etat.industrie || !etat.industrie.drones) {
     return
   }
 
   for (const drone of etat.industrie.drones) {
-    if (etat.vaisseau.soute >= etat.vaisseau.souteMax) {
-      return
-    }
+    if (drone.etat === 'embarque' && drone.ticksRechargeRestants > 0) {
+      drone.ticksRechargeRestants -= 1
 
-    if (drone.cyclesMaintenanceRestants > 0) {
-      drone.cyclesMaintenanceRestants -= 1
-
-      if (drone.cyclesMaintenanceRestants === 0) {
-        ajouterAuJournal(
-          `Drone #${drone.id} maintenance terminée. Reprise des opérations.`,
-          'evenements',
-        )
+      if (drone.ticksRechargeRestants === 0) {
+        drone.autonomieRestante = 8
+        ajouterAuJournal(`Drone #${drone.id} recharge terminée. Drone prêt.`, 'evenements')
       }
 
       continue
     }
 
-    drone.ticksDepuisExtraction += 1
-
-    if (drone.ticksDepuisExtraction < 4) {
+    if (etat.positionLocale !== 'operations') {
       continue
     }
 
-    drone.ticksDepuisExtraction = 0
+    if (drone.etat !== 'deploie') {
+      continue
+    }
+
+    if (etat.vaisseau.soute >= etat.vaisseau.souteMax) {
+      continue
+    }
+
+    if (drone.autonomieRestante <= 0) {
+      drone.etat = 'embarque'
+      drone.ticksRechargeRestants = 2
+
+      ajouterAuJournal(
+        `Drone #${drone.id} autonomie épuisée. Retour automatique au vaisseau pour recharge.`,
+        'evenements',
+      )
+
+      continue
+    }
 
     const mineraiTire = tirerMineraiAleatoire()
 
-    if (!mineraiTire) {
-      continue
+    drone.autonomieRestante -= 1
+
+    if (mineraiTire) {
+      ajouterMineraiDansSoute(mineraiTire.id, 1)
+      ajouterAuJournal(`Drone #${drone.id} : +1 ${mineraiTire.nom}.`, 'evenements')
     }
 
-    ajouterMineraiDansSoute(mineraiTire.id, 1)
-    drone.cyclesActifs += 1
+    if (drone.autonomieRestante <= 0) {
+      drone.etat = 'embarque'
+      drone.ticksRechargeRestants = 2
 
-    ajouterAuJournal(`Drone #${drone.id} : +1 ${mineraiTire.nom}.`, 'evenements')
-
-    if (drone.cyclesActifs >= 20) {
-      drone.cyclesActifs = 0
-      drone.cyclesMaintenanceRestants = 5
       ajouterAuJournal(
-        `Drone #${drone.id} retour au vaisseau pour recharge des batteries (5 cycles).`,
+        `Drone #${drone.id} autonomie épuisée. Retour automatique au vaisseau pour recharge.`,
         'evenements',
       )
     }

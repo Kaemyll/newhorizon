@@ -17,6 +17,8 @@ import {
   minerMineraiManuellement,
   vendreTousLesMinerais,
   acheterDroneMinier,
+  deployerDrones,
+  rappelerDrones,
 } from './game/systemeMinage'
 import { ravitaillerCarburant } from './game/systemeRavitaillement'
 import { ameliorerVaisseau } from './game/systemeAmeliorations'
@@ -101,6 +103,18 @@ function gererVenteMinerai() {
 
 function gererAchatDrone() {
   acheterDroneMinier()
+  sauvegarderJeu()
+  synchroniserEtat()
+}
+
+function gererDeploiementDrones() {
+  deployerDrones()
+  sauvegarderJeu()
+  synchroniserEtat()
+}
+
+function gererRappelDrones() {
+  rappelerDrones()
   sauvegarderJeu()
   synchroniserEtat()
 }
@@ -238,6 +252,8 @@ onUnmounted(() => {
             @miner="gererMinageManuel"
             @aller-operations="gererAllerOperations"
             @retour-station="gererRetourStation"
+            @deployer-drones="gererDeploiementDrones"
+            @rappeler-drones="gererRappelDrones"
           />
 
           <StationServicesPanel
