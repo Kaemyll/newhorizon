@@ -805,9 +805,146 @@ select {
 }
 
 /* =========================================================
-   16. DRONES
+   16. CONSOLE OPÉRATIONS
    ========================================================= */
 
+.ops-panel {
+  min-height: 0;
+}
+
+.ops-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.ops-subtitle {
+  margin: 2px 0 0 0;
+  font-size: 0.8rem;
+  opacity: 0.72;
+}
+
+.ops-local-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 185px;
+  padding: 8px 10px;
+  border: 1px solid rgba(125, 184, 255, 0.12);
+  border-radius: 10px;
+  background: rgba(125, 184, 255, 0.04);
+}
+
+.ops-local-badge-station {
+  border-color: rgba(125, 184, 255, 0.16);
+  background: rgba(125, 184, 255, 0.05);
+}
+
+.ops-local-badge-operations {
+  border-color: rgba(186, 163, 96, 0.16);
+  background: rgba(186, 163, 96, 0.07);
+}
+
+.ops-local-badge-icon {
+  font-size: 1rem;
+  opacity: 0.95;
+}
+
+.ops-local-badge-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ops-local-badge-text strong {
+  font-size: 0.84rem;
+  line-height: 1.08;
+}
+
+.ops-local-badge-text span {
+  font-size: 0.74rem;
+  opacity: 0.72;
+  line-height: 1.08;
+}
+
+.ops-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.ops-block {
+  padding-top: 8px;
+  border-top: 1px solid rgba(125, 184, 255, 0.08);
+}
+
+.ops-block:first-of-type {
+  padding-top: 0;
+  border-top: none;
+}
+
+.ops-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ops-metric-card {
+  padding: 8px 9px;
+  border: 1px solid rgba(125, 184, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.ops-metric-label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 0.75rem;
+  opacity: 0.72;
+}
+
+.ops-system-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ops-system-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid rgba(125, 184, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.ops-system-name {
+  font-size: 0.84rem;
+}
+
+.ops-system-value {
+  font-size: 0.78rem;
+  opacity: 0.8;
+  text-align: right;
+}
+
+.ops-drone-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.ops-drone-summary {
+  font-size: 0.76rem;
+  opacity: 0.72;
+}
 .drone-status-list {
   list-style: none;
   margin: 8px 0 0 0;
