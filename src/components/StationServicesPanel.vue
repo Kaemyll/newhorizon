@@ -113,7 +113,7 @@ const coursLocaux = computed(() => calculerCoursLocauxPourStation(station.value)
         une seule fois, sur le montant brut total de la transaction.
       </p>
 
-      <div class="market-rate-grid">
+      <div class="market-rate-grid market-rate-grid-three-cols">
         <div v-for="minerai in coursLocaux" :key="minerai.id" class="market-rate-item">
           <span class="market-rate-name">
             <span class="resource-icon">{{ minerai.icone }}</span>

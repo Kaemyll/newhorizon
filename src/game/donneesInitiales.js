@@ -5,10 +5,11 @@ export function creerEtatInitialJeu() {
 
   return {
     meta: {
-      version: '0.3.5b',
+      version: '0.3.6',
       auteur: 'Kaemyll',
       annee: 2026,
     },
+
     ressources: {
       credits: 0,
       carburant: vaisseauDepart.carburantMax,
@@ -21,6 +22,7 @@ export function creerEtatInitialJeu() {
         cobalt_natif: 0,
       },
     },
+
     vaisseau: {
       id: vaisseauDepart.id,
       nom: vaisseauDepart.nom,
@@ -33,22 +35,36 @@ export function creerEtatInitialJeu() {
       dronesMiniersMax: vaisseauDepart.dronesMiniersMax,
       carburantMax: vaisseauDepart.carburantMax,
     },
+
     industrie: {
       drones: [],
       prochainDroneId: 1,
     },
+
     secteurCourant: {
       id: 'ceinture_khepri',
     },
+
+    /**
+     * Préparation de la future distinction locale :
+     * - station
+     * - operations
+     *
+     * Pour l'instant, le jeu démarre à la station.
+     */
+    positionLocale: 'station',
+
     navigation: {
       enVoyage: false,
       destinationSelectionneeId: 'anneau_demeter',
       secteurDestinationId: null,
       ticksRestants: 0,
     },
+
     economie: {
       coutDroneMinier: 20,
     },
+
     journal: [
       {
         horodatage: '[T0000]',
@@ -61,10 +77,12 @@ export function creerEtatInitialJeu() {
         categorie: 'evenements',
       },
     ],
+
     statistiques: {
       totalMineraiExtrait: 0,
       totalCreditsGagnes: 0,
     },
+
     technique: {
       compteurTicks: 0,
     },

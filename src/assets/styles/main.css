@@ -488,11 +488,16 @@ select {
   margin-bottom: 8px;
 }
 
+.market-rate-grid-three-cols {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px 8px;
+}
+
 .market-rate-item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 18px auto auto;
+  grid-template-columns: minmax(0, 1fr) 16px auto;
   align-items: baseline;
-  gap: 8px;
+  gap: 6px;
   padding: 6px 7px;
   border: 1px solid rgba(125, 184, 255, 0.08);
   border-radius: 8px;
@@ -504,7 +509,17 @@ select {
   align-items: center;
   gap: 5px;
   min-width: 0;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
+}
+
+.market-rate-values {
+  flex-shrink: 0;
+  font-size: 0.74rem;
+  opacity: 0.9;
+}
+
+.market-rate-average {
+  display: none;
 }
 
 .market-rate-variation {
@@ -523,18 +538,6 @@ select {
 
 .market-rate-variation-stable {
   opacity: 0.7;
-}
-
-.market-rate-values {
-  flex-shrink: 0;
-  font-size: 0.76rem;
-  opacity: 0.84;
-}
-
-.market-rate-average {
-  flex-shrink: 0;
-  font-size: 0.74rem;
-  opacity: 0.68;
 }
 
 .market-rate-legend {
@@ -876,10 +879,18 @@ select {
   }
 
   .resource-list-compact {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .resource-list-mineraux-three-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .market-rate-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .market-rate-grid-three-cols {
     grid-template-columns: 1fr;
   }
 
@@ -903,7 +914,8 @@ select {
     min-height: unset;
   }
 
-  .resource-list-compact {
+  .resource-list-compact,
+  .resource-list-mineraux-three-cols {
     grid-template-columns: 1fr;
   }
 }

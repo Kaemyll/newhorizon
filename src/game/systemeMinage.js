@@ -2,11 +2,10 @@ import { recupererEtatJeu } from './etatJeu'
 import { donneesMinerais } from './donneesMinerais'
 import { donneesSecteurs } from './donneesSecteurs'
 import { calculerPrixLigneBrut, calculerTauxTaxePourSecurite } from './systemeCommerce'
+import { avancerTemps, recupererTickCourant } from './systemeTemps'
 
 function obtenirHorodatageTick() {
-  const etat = recupererEtatJeu()
-  const tick = etat.technique?.compteurTicks ?? 0
-
+  const tick = recupererTickCourant()
   return `[T${String(tick).padStart(4, '0')}]`
 }
 
@@ -78,6 +77,12 @@ export function minerMineraiManuellement() {
     ajouterAuJournal('Soute pleine. Impossible de miner.', 'evenements')
     return
   }
+
+  /**
+   * Règle v0.3.6 :
+   * le minage manuel consomme 1 tick = 1 heure.
+   */
+  avancerTemps(1)
 
   const mineraiTire = tirerMineraiAleatoire()
 
@@ -156,6 +161,8 @@ export function acheterDroneMinier() {
     return
   }
 
+  etat.ressources.credits -= cout
+
   const nouveauDrone = {
     id: etat.industrie.prochainDroneId,
     cyclesActifs: 0,
@@ -163,7 +170,6 @@ export function acheterDroneMinier() {
     ticksDepuisExtraction: 0,
   }
 
-  etat.ressources.credits -= cout
   etat.industrie.drones.push(nouveauDrone)
   etat.industrie.prochainDroneId += 1
 

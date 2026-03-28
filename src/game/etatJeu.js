@@ -1,15 +1,21 @@
 import { creerEtatInitialJeu } from './donneesInitiales'
 
-let etat = creerEtatInitialJeu()
+let etatJeu = creerEtatInitialJeu()
 
 export function recupererEtatJeu() {
-  return etat
+  return etatJeu
 }
 
 export function remplacerEtatJeu(nouvelEtat) {
-  etat = nouvelEtat
+  etatJeu = nouvelEtat
 }
 
 export function reinitialiserEtatJeu() {
-  etat = creerEtatInitialJeu()
+  /**
+   * Réinitialisation complète :
+   * on recrée un état neuf depuis la source initiale,
+   * y compris améliorations, drones, cargo, carburant,
+   * statistiques, journal et ticks.
+   */
+  etatJeu = creerEtatInitialJeu()
 }
