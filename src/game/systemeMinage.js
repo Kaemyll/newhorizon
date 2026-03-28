@@ -3,6 +3,7 @@ import { donneesMinerais } from './donneesMinerais'
 import { donneesSecteurs } from './donneesSecteurs'
 import { calculerPrixLigneBrut, calculerTauxTaxePourSecurite } from './systemeCommerce'
 import { avancerTemps, recupererTickCourant } from './systemeTemps'
+import { verifierPanneSecheEtDeclencher } from './systemeAssistance'
 
 function obtenirHorodatageTick() {
   const tick = recupererTickCourant()
@@ -29,18 +30,15 @@ function recupererSecteurCourantDepuisEtat() {
   return donneesSecteurs.find((secteur) => secteur.id === etat.secteurCourant.id) || null
 }
 
-function tirerMineraiAleatoire() {
-  const secteur = recupererSecteurCourantDepuisEtat()
-
-  if (!secteur || !secteur.repartitionMinerais || secteur.repartitionMinerais.length === 0) {
+function tirerMineraiDepuisComposition(composition) {
+  if (!composition || composition.length === 0) {
     return null
   }
 
-  const totalPoids = secteur.repartitionMinerais.reduce((total, entree) => total + entree.poids, 0)
-
+  const totalPoids = composition.reduce((total, entree) => total + entree.poids, 0)
   let tirage = Math.random() * totalPoids
 
-  for (const entree of secteur.repartitionMinerais) {
+  for (const entree of composition) {
     tirage -= entree.poids
 
     if (tirage <= 0) {
@@ -48,8 +46,7 @@ function tirerMineraiAleatoire() {
     }
   }
 
-  const derniereEntree = secteur.repartitionMinerais[secteur.repartitionMinerais.length - 1]
-
+  const derniereEntree = composition[composition.length - 1]
   return donneesMinerais.find((minerai) => minerai.id === derniereEntree.idMinerai) || null
 }
 
@@ -65,6 +62,40 @@ function ajouterMineraiDansSoute(mineraiId, quantite) {
   etat.statistiques.totalMineraiExtrait += quantite
 }
 
+function verifierSiteActifExploitable() {
+  const etat = recupererEtatJeu()
+  const site = etat.exploration?.siteActif
+
+  if (!site) {
+    ajouterAuJournal('Aucun amas minier actif. Un scan est requis.', 'evenements')
+    return false
+  }
+
+  if (site.reserveRestante <= 0) {
+    ajouterAuJournal('L’amas minier actif est épuisé. Un nouveau scan est requis.', 'evenements')
+    etat.exploration.siteActif = null
+    return false
+  }
+
+  return true
+}
+
+function consommerReserveSite(quantite = 1) {
+  const etat = recupererEtatJeu()
+  const site = etat.exploration?.siteActif
+
+  if (!site) {
+    return
+  }
+
+  site.reserveRestante = Math.max(0, site.reserveRestante - quantite)
+
+  if (site.reserveRestante === 0) {
+    ajouterAuJournal(`L’amas minier actif ${site.nom} est désormais épuisé.`, 'evenements')
+    etat.exploration.siteActif = null
+  }
+}
+
 export function minerMineraiManuellement() {
   const etat = recupererEtatJeu()
 
@@ -73,8 +104,17 @@ export function minerMineraiManuellement() {
     return
   }
 
+  if (etat.assistance?.remorquageEnCours) {
+    ajouterAuJournal('Impossible de miner pendant un remorquage.', 'evenements')
+    return
+  }
+
   if (etat.positionLocale !== 'operations') {
     ajouterAuJournal('Le minage manuel n’est possible qu’en zone d’opérations.', 'evenements')
+    return
+  }
+
+  if (!verifierSiteActifExploitable()) {
     return
   }
 
@@ -85,14 +125,18 @@ export function minerMineraiManuellement() {
 
   avancerTemps(1)
 
-  const mineraiTire = tirerMineraiAleatoire()
+  const mineraiTire = tirerMineraiDepuisComposition(etat.exploration.siteActif.composition)
 
   if (!mineraiTire) {
-    ajouterAuJournal('Aucune ressource exploitable dans ce secteur.', 'evenements')
+    ajouterAuJournal('Aucune ressource exploitable détectée dans cet amas.', 'evenements')
     return
   }
 
   ajouterMineraiDansSoute(mineraiTire.id, 1)
+  consommerReserveSite(1)
+  faireTournerDrones()
+  verifierPanneSecheEtDeclencher()
+
   ajouterAuJournal(`Extraction manuelle : +1 ${mineraiTire.nom}.`, 'evenements')
 }
 
@@ -200,8 +244,17 @@ export function deployerDrones() {
     return
   }
 
+  if (etat.assistance?.remorquageEnCours) {
+    ajouterAuJournal('Impossible de déployer les drones pendant un remorquage.', 'evenements')
+    return
+  }
+
   if (etat.positionLocale !== 'operations') {
     ajouterAuJournal('Les drones ne peuvent être déployés qu’en zone d’opérations.', 'evenements')
+    return
+  }
+
+  if (!verifierSiteActifExploitable()) {
     return
   }
 
@@ -225,11 +278,13 @@ export function deployerDrones() {
   }
 }
 
-export function rappelerDrones() {
+export function rappelerDrones(estAutomatique = false) {
   const etat = recupererEtatJeu()
 
   if (!etat.industrie?.drones?.length) {
-    ajouterAuJournal('Aucun drone à rappeler.', 'evenements')
+    if (!estAutomatique) {
+      ajouterAuJournal('Aucun drone à rappeler.', 'evenements')
+    }
     return
   }
 
@@ -239,11 +294,16 @@ export function rappelerDrones() {
     if (drone.etat === 'deploie') {
       drone.etat = 'embarque'
       nombreRappeles += 1
-      ajouterAuJournal(`Drone #${drone.id} rappelé au vaisseau.`, 'evenements')
+      ajouterAuJournal(
+        estAutomatique
+          ? `Drone #${drone.id} rappelé automatiquement.`
+          : `Drone #${drone.id} rappelé au vaisseau.`,
+        'evenements',
+      )
     }
   }
 
-  if (nombreRappeles === 0) {
+  if (nombreRappeles === 0 && !estAutomatique) {
     ajouterAuJournal('Aucun drone déployé à rappeler.', 'evenements')
   }
 }
@@ -275,6 +335,10 @@ export function faireTournerDrones() {
       continue
     }
 
+    if (!etat.exploration?.siteActif) {
+      continue
+    }
+
     if (drone.etat !== 'deploie') {
       continue
     }
@@ -295,12 +359,22 @@ export function faireTournerDrones() {
       continue
     }
 
-    const mineraiTire = tirerMineraiAleatoire()
+    if (etat.exploration.siteActif.reserveRestante <= 0) {
+      etat.exploration.siteActif = null
+      ajouterAuJournal(
+        'L’amas minier actif est épuisé. Les drones cessent leur extraction.',
+        'evenements',
+      )
+      return
+    }
+
+    const mineraiTire = tirerMineraiDepuisComposition(etat.exploration.siteActif.composition)
 
     drone.autonomieRestante -= 1
 
     if (mineraiTire) {
       ajouterMineraiDansSoute(mineraiTire.id, 1)
+      consommerReserveSite(1)
       ajouterAuJournal(`Drone #${drone.id} : +1 ${mineraiTire.nom}.`, 'evenements')
     }
 

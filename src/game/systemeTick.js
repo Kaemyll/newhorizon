@@ -1,39 +1,63 @@
 import { recupererEtatJeu } from './etatJeu'
-import { faireTournerDrones } from './systemeMinage'
+import { avancerTemps } from './systemeTemps'
 import { faireAvancerVoyage } from './systemeNavigation'
-import { sauvegarderJeu } from './systemeSauvegarde'
+import { faireTournerDrones } from './systemeMinage'
+import { faireAvancerRemorquage, verifierPanneSecheEtDeclencher } from './systemeAssistance'
 
-let intervalleTick = null
+let intervalleJeu = null
 
-export function demarrerBoucleJeu(apresTick) {
-  if (intervalleTick) return
+function mondeDoitAvancer() {
+  const etat = recupererEtatJeu()
 
-  intervalleTick = setInterval(() => {
-    const etat = recupererEtatJeu()
+  const dronesDeployes =
+    etat.positionLocale === 'operations' &&
+    (etat.industrie?.drones || []).some((drone) => drone.etat === 'deploie')
 
-    if (!etat.technique) {
-      etat.technique = { compteurTicks: 0 }
-    }
+  return etat.navigation?.enVoyage || etat.assistance?.remorquageEnCours || dronesDeployes
+}
 
-    etat.technique.compteurTicks += 1
+function progresserMonde() {
+  const etat = recupererEtatJeu()
 
+  if (etat.navigation?.enVoyage || etat.assistance?.remorquageEnCours) {
+    avancerTemps(1)
+  }
+
+  if (etat.navigation?.enVoyage) {
     faireAvancerVoyage()
+  }
 
-    if (!etat.navigation?.enVoyage) {
-      faireTournerDrones()
+  if (etat.assistance?.remorquageEnCours) {
+    faireAvancerRemorquage()
+  }
+
+  if (etat.positionLocale === 'operations') {
+    faireTournerDrones()
+    verifierPanneSecheEtDeclencher()
+  }
+}
+
+export function demarrerBoucleJeu(callbackMiseAJour) {
+  if (intervalleJeu) {
+    clearInterval(intervalleJeu)
+  }
+
+  intervalleJeu = setInterval(() => {
+    if (!mondeDoitAvancer()) {
+      return
     }
 
-    sauvegarderJeu()
+    progresserMonde()
 
-    if (apresTick) {
-      apresTick()
+    if (typeof callbackMiseAJour === 'function') {
+      callbackMiseAJour()
     }
   }, 1000)
 }
 
 export function arreterBoucleJeu() {
-  if (!intervalleTick) return
-
-  clearInterval(intervalleTick)
-  intervalleTick = null
+  if (intervalleJeu) {
+    clearInterval(intervalleJeu)
+    intervalleJeu = null
+  }
 }

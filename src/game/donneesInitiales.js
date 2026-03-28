@@ -5,7 +5,7 @@ export function creerEtatInitialJeu() {
 
   return {
     meta: {
-      version: '0.3.8',
+      version: '0.3.9',
       auteur: 'Kaemyll',
       annee: 2026,
     },
@@ -45,12 +45,6 @@ export function creerEtatInitialJeu() {
       id: 'ceinture_khepri',
     },
 
-    /**
-     * v0.3.7
-     * Position locale dans le secteur courant :
-     * - station
-     * - operations
-     */
     positionLocale: 'station',
 
     navigation: {
@@ -62,6 +56,18 @@ export function creerEtatInitialJeu() {
 
     economie: {
       coutDroneMinier: 20,
+    },
+
+    exploration: {
+      siteActif: null,
+      prochainSiteId: 1,
+    },
+
+    assistance: {
+      remorquageEnCours: false,
+      ticksRestants: 0,
+      coutBase: 5,
+      stationCibleNom: null,
     },
 
     journal: [

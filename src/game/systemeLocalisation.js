@@ -1,6 +1,7 @@
 import { recupererEtatJeu } from './etatJeu'
-import { ajouterAuJournal } from './systemeMinage'
+import { ajouterAuJournal, rappelerDrones } from './systemeMinage'
 import { avancerTemps } from './systemeTemps'
+import { verifierPanneSecheEtDeclencher } from './systemeAssistance'
 
 const COUT_CARBURANT_LOCAL = 1
 const COUT_TICKS_LOCAL = 1
@@ -13,6 +14,11 @@ export function allerEnZoneOperations() {
       'Impossible de quitter la station pendant un trajet inter-sectoriel.',
       'evenements',
     )
+    return
+  }
+
+  if (etat.assistance?.remorquageEnCours) {
+    ajouterAuJournal('Impossible de quitter la station pendant un remorquage.', 'evenements')
     return
   }
 
@@ -30,7 +36,11 @@ export function allerEnZoneOperations() {
   avancerTemps(COUT_TICKS_LOCAL)
   etat.positionLocale = 'operations'
 
-  ajouterAuJournal('Décollage de la station vers la zone d’opérations locale.', 'evenements')
+  verifierPanneSecheEtDeclencher()
+
+  if (!etat.assistance.remorquageEnCours) {
+    ajouterAuJournal('Décollage de la station vers la zone d’opérations locale.', 'evenements')
+  }
 }
 
 export function retourALaStation() {
@@ -44,37 +54,27 @@ export function retourALaStation() {
     return
   }
 
+  if (etat.assistance?.remorquageEnCours) {
+    ajouterAuJournal('Remorquage déjà en cours.', 'evenements')
+    return
+  }
+
   if (etat.positionLocale === 'station') {
     ajouterAuJournal('Le vaisseau est déjà amarré à la station.', 'evenements')
     return
   }
 
   if (etat.ressources.carburant < COUT_CARBURANT_LOCAL) {
-    ajouterAuJournal('Carburant insuffisant pour revenir à la station.', 'evenements')
+    etat.ressources.carburant = 0
+    verifierPanneSecheEtDeclencher()
     return
   }
 
-  let nombreRappeles = 0
-
-  for (const drone of etat.industrie?.drones || []) {
-    if (drone.etat === 'deploie') {
-      drone.etat = 'embarque'
-      nombreRappeles += 1
-      ajouterAuJournal(
-        `Drone #${drone.id} rappelé automatiquement avant retour station.`,
-        'evenements',
-      )
-    }
-  }
+  rappelerDrones(true)
 
   etat.ressources.carburant -= COUT_CARBURANT_LOCAL
   avancerTemps(COUT_TICKS_LOCAL)
   etat.positionLocale = 'station'
-
-  if (nombreRappeles > 0) {
-    ajouterAuJournal('Retour à la station locale et procédure d’amarrage terminée.', 'evenements')
-    return
-  }
 
   ajouterAuJournal('Retour à la station locale et procédure d’amarrage terminée.', 'evenements')
 }

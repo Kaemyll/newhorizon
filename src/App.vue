@@ -27,6 +27,7 @@ import {
   lancerVoyageVersDestinationSelectionnee,
 } from './game/systemeNavigation'
 import { allerEnZoneOperations, retourALaStation } from './game/systemeLocalisation'
+import { scannerAmasMinier } from './game/systemeExploration'
 import { donneesSecteurs } from './game/donneesSecteurs'
 import { demarrerBoucleJeu, arreterBoucleJeu } from './game/systemeTick'
 
@@ -91,6 +92,12 @@ function synchroniserEtat() {
 
 function gererMinageManuel() {
   minerMineraiManuellement()
+  sauvegarderJeu()
+  synchroniserEtat()
+}
+
+function gererScanner() {
+  scannerAmasMinier()
   sauvegarderJeu()
   synchroniserEtat()
 }
@@ -194,7 +201,9 @@ onUnmounted(() => {
       etat.economie &&
       etat.secteurCourant &&
       etat.navigation &&
-      etat.journal
+      etat.journal &&
+      etat.exploration &&
+      etat.assistance
     "
   >
     <header class="app-header">
@@ -249,7 +258,10 @@ onUnmounted(() => {
             :industrie="etat.industrie"
             :navigation="etat.navigation"
             :position-locale="etat.positionLocale"
+            :exploration="etat.exploration"
+            :assistance="etat.assistance"
             @miner="gererMinageManuel"
+            @scanner="gererScanner"
             @aller-operations="gererAllerOperations"
             @retour-station="gererRetourStation"
             @deployer-drones="gererDeploiementDrones"

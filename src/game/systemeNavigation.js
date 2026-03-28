@@ -1,7 +1,7 @@
 import { recupererEtatJeu } from './etatJeu'
 import { donneesSecteurs } from './donneesSecteurs'
 import { donneesTrajets } from './donneesTrajets'
-import { ajouterAuJournal } from './systemeMinage'
+import { ajouterAuJournal, rappelerDrones } from './systemeMinage'
 
 export function recupererSecteurParId(idSecteur) {
   return donneesSecteurs.find((secteur) => secteur.id === idSecteur) || null
@@ -27,6 +27,11 @@ export function selectionnerDestination(idDestination) {
 
 export function lancerVoyageVersDestinationSelectionnee() {
   const etat = recupererEtatJeu()
+
+  if (etat.assistance?.remorquageEnCours) {
+    ajouterAuJournal('Voyage impossible pendant un remorquage.', 'evenements')
+    return
+  }
 
   if (etat.navigation.enVoyage) {
     ajouterAuJournal('Navigation déjà en cours.', 'evenements')
@@ -67,10 +72,13 @@ export function lancerVoyageVersDestinationSelectionnee() {
     return
   }
 
+  rappelerDrones(true)
+
   etat.ressources.carburant -= trajet.coutCarburant
   etat.navigation.enVoyage = true
   etat.navigation.secteurDestinationId = idDestination
   etat.navigation.ticksRestants = trajet.tempsTrajet
+  etat.exploration.siteActif = null
 
   ajouterAuJournal(
     `Départ vers ${secteurDestination.nom} — coût ${trajet.coutCarburant} carburant, durée ${trajet.tempsTrajet} ticks.`,
@@ -97,12 +105,8 @@ export function faireAvancerVoyage() {
   etat.navigation.enVoyage = false
   etat.navigation.secteurDestinationId = null
   etat.navigation.ticksRestants = 0
-
-  /**
-   * À l’arrivée d’un trajet inter-sectoriel, on considère que le joueur
-   * arrive au voisinage immédiat de la station principale du secteur.
-   */
   etat.positionLocale = 'station'
+  etat.exploration.siteActif = null
 
   if (secteurDestination) {
     ajouterAuJournal(

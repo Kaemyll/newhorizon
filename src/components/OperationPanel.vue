@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import { donneesMinerais } from '../game/donneesMinerais'
 
 const props = defineProps({
   ressources: {
@@ -22,6 +23,14 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  exploration: {
+    type: Object,
+    required: true,
+  },
+  assistance: {
+    type: Object,
+    required: true,
+  },
 })
 
 const emit = defineEmits([
@@ -30,6 +39,7 @@ const emit = defineEmits([
   'retour-station',
   'deployer-drones',
   'rappeler-drones',
+  'scanner',
 ])
 
 const nbDeployes = computed(
@@ -72,6 +82,19 @@ const statutCanon = computed(() => {
   return 'Prêt'
 })
 
+const descriptionSiteActif = computed(() => {
+  const site = props.exploration?.siteActif
+  if (!site) {
+    return 'Aucun amas actif'
+  }
+
+  const compo = (site.composition || [])
+    .map((c) => donneesMinerais.find((m) => m.id === c.idMinerai)?.abreviation || c.idMinerai)
+    .join(', ')
+
+  return `${site.nom} — réserve ${site.reserveRestante}/${site.reserveTotale} — ${compo}`
+})
+
 function decrireDrone(drone) {
   if (drone.etat === 'deploie') {
     return `Déployé — autonomie ${drone.autonomieRestante}/8`
@@ -100,6 +123,20 @@ function decrireDrone(drone) {
           <span>{{ badgeLocal.sousTitre }}</span>
         </div>
       </div>
+    </div>
+
+    <div
+      v-if="assistance.remorquageEnCours"
+      class="station-service-card station-service-card-commerce"
+    >
+      <div class="station-service-card-header">
+        <h3>Assistance</h3>
+        <span class="station-service-badge">Remorquage</span>
+      </div>
+      <p class="station-service-description">
+        Remorquage en cours vers {{ assistance.stationCibleNom }}.
+      </p>
+      <p>Temps restant : {{ assistance.ticksRestants }} tick(s)</p>
     </div>
 
     <div class="ops-grid">
@@ -145,7 +182,7 @@ function decrireDrone(drone) {
 
           <div class="ops-system-item">
             <span class="ops-system-name">Scanner</span>
-            <span class="ops-system-value">Module de base / évolution future</span>
+            <span class="ops-system-value">Module de base</span>
           </div>
 
           <div class="ops-system-item">
@@ -159,12 +196,32 @@ function decrireDrone(drone) {
     </div>
 
     <section class="ops-block">
+      <h3>Scanner et site actif</h3>
+
+      <div class="ops-system-item">
+        <span class="ops-system-name">Amas actif</span>
+        <span class="ops-system-value">{{ descriptionSiteActif }}</span>
+      </div>
+
+      <div class="action-group">
+        <button
+          :disabled="
+            navigation.enVoyage || positionLocale !== 'operations' || assistance.remorquageEnCours
+          "
+          @click="emit('scanner')"
+        >
+          Scanner un amas
+        </button>
+      </div>
+    </section>
+
+    <section class="ops-block">
       <h3>Commandes</h3>
 
       <div class="action-group">
         <button
           v-if="positionLocale === 'station'"
-          :disabled="navigation.enVoyage"
+          :disabled="navigation.enVoyage || assistance.remorquageEnCours"
           @click="emit('aller-operations')"
         >
           Rejoindre la zone d’opérations
@@ -172,25 +229,32 @@ function decrireDrone(drone) {
 
         <button
           v-if="positionLocale === 'operations'"
-          :disabled="navigation.enVoyage"
+          :disabled="navigation.enVoyage || assistance.remorquageEnCours"
           @click="emit('retour-station')"
         >
           Retourner à la station
         </button>
 
         <button
-          :disabled="navigation.enVoyage || positionLocale !== 'operations'"
+          :disabled="
+            navigation.enVoyage || positionLocale !== 'operations' || assistance.remorquageEnCours
+          "
           @click="emit('deployer-drones')"
         >
           Déployer les drones
         </button>
 
-        <button :disabled="navigation.enVoyage" @click="emit('rappeler-drones')">
+        <button
+          :disabled="navigation.enVoyage || assistance.remorquageEnCours"
+          @click="emit('rappeler-drones')"
+        >
           Rappeler les drones
         </button>
 
         <button
-          :disabled="navigation.enVoyage || positionLocale !== 'operations'"
+          :disabled="
+            navigation.enVoyage || positionLocale !== 'operations' || assistance.remorquageEnCours
+          "
           @click="emit('miner')"
         >
           Miner manuellement
@@ -217,8 +281,8 @@ function decrireDrone(drone) {
     </section>
 
     <p class="panel-note">
-      En v0.3.8, un drone déployé extrait une fois par tick, dispose de 8 ticks d’autonomie, puis
-      revient automatiquement pour 2 ticks de recharge.
+      En v0.3.9, un scan détecte un amas minier actif. Le minage manuel et les drones exploitent
+      désormais sa réserve locale jusqu’à épuisement.
     </p>
   </section>
 </template>

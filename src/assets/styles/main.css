@@ -930,6 +930,7 @@ select {
 .ops-system-value {
   font-size: 0.78rem;
   opacity: 0.8;
+  max-width: 60%;
   text-align: right;
 }
 
