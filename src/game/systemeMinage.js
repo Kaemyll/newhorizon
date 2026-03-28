@@ -10,13 +10,14 @@ function obtenirHorodatageTick() {
   return `[T${String(tick).padStart(4, '0')}]`
 }
 
-export function ajouterAuJournal(message, categorie = 'evenements') {
+export function ajouterAuJournal(message, categorie = 'evenements', niveau = 'normal') {
   const etat = recupererEtatJeu()
 
   etat.journal.unshift({
     horodatage: obtenirHorodatageTick(),
     message,
     categorie,
+    niveau,
   })
 
   if (etat.journal.length > 50) {

@@ -31,11 +31,13 @@ export function verifierPanneSecheEtDeclencher() {
   etat.assistance.ticksRestants = 4
   etat.assistance.stationCibleNom = stationNom
 
+  ajouterAuJournal('ALERTE — Propulsion indisponible : carburant épuisé.', 'evenements', 'critique')
   ajouterAuJournal(
-    'Panne sèche détectée hors station. Service de remorquage local déclenché.',
+    'Assistance orbitale requise. Service de remorquage déclenché.',
     'evenements',
+    'critique',
   )
-  ajouterAuJournal(`Remorquage estimé : 4 ticks jusqu’à ${stationNom}.`, 'evenements')
+  ajouterAuJournal(`Remorquage estimé : 4 ticks jusqu’à ${stationNom}.`, 'evenements', 'critique')
 }
 
 export function faireAvancerRemorquage() {
@@ -65,9 +67,14 @@ export function faireAvancerRemorquage() {
   etat.assistance.stationCibleNom = null
   etat.exploration.siteActif = null
 
-  ajouterAuJournal(`Remorquage terminé vers ${station?.nom || 'la station locale'}.`, 'commerce')
   ajouterAuJournal(
-    `Frais de remorquage : ${coutBase} cr + ${taxe} cr de taxe = ${coutFinal} cr.`,
+    `Remorquage terminé. Vaisseau amarré à ${station?.nom || 'la station locale'}.`,
     'commerce',
+    'critique',
+  )
+  ajouterAuJournal(
+    `Frais d’assistance : ${coutBase} cr + ${taxe} cr de taxe = ${coutFinal} cr.`,
+    'commerce',
+    'critique',
   )
 }
