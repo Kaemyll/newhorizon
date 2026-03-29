@@ -5,7 +5,7 @@ export function creerEtatInitialJeu() {
 
   return {
     meta: {
-      version: '0.3.10',
+      version: '0.3.11',
       auteur: 'Kaemyll',
       annee: 2026,
     },
