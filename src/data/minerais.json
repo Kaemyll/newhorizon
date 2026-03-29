@@ -58,5 +58,25 @@
     "frequence": "rare",
     "niveauSecteurMinimal": 0.1,
     "description": "Minerai précieux, peu fréquent, au fort potentiel commercial."
+  },
+  {
+    "id": "magnetite_nickelifere",
+    "nom": "Magnétite nickélifère",
+    "abreviation": "mag.nic.",
+    "icone": "⬟",
+    "prixUnitaire": 8,
+    "frequence": "rare",
+    "niveauSecteurMinimal": 0.2,
+    "description": "Minerai métallique dense, recherché pour ses usages sidérurgiques et alliages techniques."
+  },
+  {
+    "id": "chromite",
+    "nom": "Chromite",
+    "abreviation": "chro.",
+    "icone": "✶",
+    "prixUnitaire": 10,
+    "frequence": "tres_rare",
+    "niveauSecteurMinimal": 0.1,
+    "description": "Minerai rare riche en chrome, très apprécié dans les filières industrielles avancées."
   }
 ]
