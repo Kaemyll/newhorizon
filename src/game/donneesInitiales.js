@@ -1,11 +1,16 @@
 import { donneesVaisseaux } from './dataVaisseaux'
+import { donneesMinerais } from './dataMinerais'
+
+function creerStockMineraisInitial() {
+  return Object.fromEntries(donneesMinerais.map((minerai) => [minerai.id, 0]))
+}
 
 export function creerEtatInitialJeu() {
   const vaisseauDepart = donneesVaisseaux.find((vaisseau) => vaisseau.id === 'hw_mule')
 
   return {
     meta: {
-      version: '0.3.11',
+      version: '0.3.12',
       auteur: 'Kaemyll',
       annee: 2026,
     },
@@ -13,14 +18,7 @@ export function creerEtatInitialJeu() {
     ressources: {
       credits: 0,
       carburant: vaisseauDepart.carburantMax,
-      minerais: {
-        roche_carbonee: 0,
-        poussiere_silicatee: 0,
-        olivine: 0,
-        pyroxene: 0,
-        fer_nickel_brut: 0,
-        cobalt_natif: 0,
-      },
+      minerais: creerStockMineraisInitial(),
     },
 
     vaisseau: {
