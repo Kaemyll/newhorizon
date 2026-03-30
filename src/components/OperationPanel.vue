@@ -82,6 +82,56 @@ const statutCanon = computed(() => {
   return 'Prêt'
 })
 
+const typeScannerLabel = computed(() => {
+  const type = props.vaisseau?.scanner?.type || 'base'
+
+  if (type === 'standard') {
+    return 'Module standard'
+  }
+
+  if (type === 'avance') {
+    return 'Module avancé'
+  }
+
+  return 'Module de base'
+})
+
+const qualiteScanLabel = computed(() => {
+  const qualite = props.exploration?.siteActif?.qualiteScan
+
+  if (qualite === 'bonne') {
+    return 'Bonne'
+  }
+
+  if (qualite === 'moyenne') {
+    return 'Moyenne'
+  }
+
+  if (qualite === 'faible') {
+    return 'Faible'
+  }
+
+  return '—'
+})
+
+const qualiteScanClasse = computed(() => {
+  const qualite = props.exploration?.siteActif?.qualiteScan
+
+  if (qualite === 'bonne') {
+    return 'ops-badge-scan-bonne'
+  }
+
+  if (qualite === 'moyenne') {
+    return 'ops-badge-scan-moyenne'
+  }
+
+  if (qualite === 'faible') {
+    return 'ops-badge-scan-faible'
+  }
+
+  return 'ops-badge-scan-neutre'
+})
+
 const descriptionSiteActif = computed(() => {
   const site = props.exploration?.siteActif
   if (!site) {
@@ -182,7 +232,7 @@ function decrireDrone(drone) {
 
           <div class="ops-system-item">
             <span class="ops-system-name">Scanner</span>
-            <span class="ops-system-value">Module de base</span>
+            <span class="ops-system-value">{{ typeScannerLabel }}</span>
           </div>
 
           <div class="ops-system-item">
@@ -201,6 +251,13 @@ function decrireDrone(drone) {
       <div class="ops-system-item">
         <span class="ops-system-name">Amas actif</span>
         <span class="ops-system-value">{{ descriptionSiteActif }}</span>
+      </div>
+
+      <div v-if="exploration.siteActif" class="ops-system-item">
+        <span class="ops-system-name">Qualité du relevé</span>
+        <span class="ops-badge-scan" :class="qualiteScanClasse">
+          {{ qualiteScanLabel }}
+        </span>
       </div>
 
       <div class="action-group">
@@ -281,8 +338,8 @@ function decrireDrone(drone) {
     </section>
 
     <p class="panel-note">
-      En v0.3.9, un scan détecte un amas minier actif. Le minage manuel et les drones exploitent
-      désormais sa réserve locale jusqu’à épuisement.
+      Le scanner peut détecter un amas minier exploitable… ou ne rien trouver. La qualité du relevé
+      influence la réserve estimée et la composition du site.
     </p>
   </section>
 </template>
