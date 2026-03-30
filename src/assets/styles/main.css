@@ -843,6 +843,43 @@ select {
   opacity: 0.72;
 }
 
+.ops-badge-scan {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  padding: 0.22rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+}
+
+.ops-badge-scan-faible {
+  color: #f5d7a1;
+  background: rgba(168, 104, 32, 0.18);
+  border-color: rgba(214, 146, 58, 0.35);
+}
+
+.ops-badge-scan-moyenne {
+  color: #b8d7ff;
+  background: rgba(46, 95, 160, 0.18);
+  border-color: rgba(92, 150, 220, 0.35);
+}
+
+.ops-badge-scan-bonne {
+  color: #b9f0c9;
+  background: rgba(39, 122, 73, 0.18);
+  border-color: rgba(86, 196, 124, 0.35);
+}
+
+.ops-badge-scan-neutre {
+  color: #c8d0da;
+  background: rgba(120, 132, 146, 0.14);
+  border-color: rgba(160, 172, 186, 0.22);
+}
+
 .ops-local-badge {
   display: flex;
   align-items: center;

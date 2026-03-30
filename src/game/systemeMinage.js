@@ -68,12 +68,19 @@ function verifierSiteActifExploitable() {
   const site = etat.exploration?.siteActif
 
   if (!site) {
-    ajouterAuJournal('Aucun amas minier actif. Un scan est requis.', 'evenements')
+    ajouterAuJournal(
+      '⚠ Aucun amas minier actif. Lancez un nouveau scan pour reprendre l’extraction.',
+      'evenements',
+      'alerte',
+    )
     return false
   }
 
-  if (site.reserveRestante <= 0) {
-    ajouterAuJournal('L’amas minier actif est épuisé. Un nouveau scan est requis.', 'evenements')
+  if (site.reserveRestante <= 0) {ajouterAuJournal(
+    '⚠ L’amas minier actif est épuisé. Un nouveau scan est requis.',
+    'evenements',
+    'alerte',
+  )
     etat.exploration.siteActif = null
     return false
   }
@@ -92,7 +99,11 @@ function consommerReserveSite(quantite = 1) {
   site.reserveRestante = Math.max(0, site.reserveRestante - quantite)
 
   if (site.reserveRestante === 0) {
-    ajouterAuJournal(`L’amas minier actif ${site.nom} est désormais épuisé.`, 'evenements')
+    ajouterAuJournal(
+      `⚠ ${site.nom} est épuisé. Nouveau scan requis pour détecter un autre amas.`,
+      'evenements',
+      'alerte',
+    )
     etat.exploration.siteActif = null
   }
 }
@@ -120,7 +131,11 @@ export function minerMineraiManuellement() {
   }
 
   if (etat.vaisseau.soute >= etat.vaisseau.souteMax) {
-    ajouterAuJournal('Soute pleine. Impossible de miner.', 'evenements')
+    ajouterAuJournal(
+      '⚠ Soute pleine : extraction impossible. Retour à la station ou vente requis.',
+      'evenements',
+      'alerte',
+    )
     return
   }
 
@@ -326,7 +341,11 @@ export function faireTournerDrones() {
 
       if (drone.ticksRechargeRestants === 0) {
         drone.autonomieRestante = 8
-        ajouterAuJournal(`Drone #${drone.id} recharge terminée. Drone prêt.`, 'evenements')
+        ajouterAuJournal(
+          `✓ Drone #${drone.id} rechargé et prêt à être redéployé.`,
+          'evenements',
+          'info',
+        )
       }
 
       continue
@@ -363,8 +382,9 @@ export function faireTournerDrones() {
     if (etat.exploration.siteActif.reserveRestante <= 0) {
       etat.exploration.siteActif = null
       ajouterAuJournal(
-        'L’amas minier actif est épuisé. Les drones cessent leur extraction.',
+        '⚠ L’amas minier actif est épuisé. Les drones cessent leur extraction. Nouveau scan requis.',
         'evenements',
+        'alerte',
       )
       return
     }
