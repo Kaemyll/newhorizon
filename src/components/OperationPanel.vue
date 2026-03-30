@@ -42,6 +42,10 @@ const emit = defineEmits([
   'scanner',
 ])
 
+const nbDeployes = computed(
+  () => props.industrie.drones.filter((drone) => drone.etat === 'deploie').length,
+)
+
 const nbPrets = computed(
   () =>
     props.industrie.drones.filter(
@@ -56,10 +60,6 @@ const nbEnRecharge = computed(
     ).length,
 )
 
-const nbDeployes = computed(
-  () => props.industrie.drones.filter((drone) => drone.etat === 'deploie').length,
-)
-
 const badgeLocal = computed(() =>
   props.positionLocale === 'station'
     ? {
@@ -71,7 +71,7 @@ const badgeLocal = computed(() =>
     : {
         icone: '✦',
         titre: 'Zone d’opérations',
-        sousTitre: 'Extraction et drones actifs possibles',
+        sousTitre: 'Extraction et scanner disponibles',
         classe: 'ops-local-badge-operations',
       },
 )
@@ -81,79 +81,132 @@ const statutVol = computed(() =>
 )
 
 const statutCanon = computed(() => {
-  if (props.navigation.enVoyage) {
-    return 'Indisponible'
-  }
-
-  if (props.positionLocale !== 'operations') {
-    return 'Hors zone'
-  }
-
+  if (props.navigation.enVoyage) return 'Indisponible'
+  if (props.positionLocale !== 'operations') return 'Hors zone'
   return 'Prêt'
 })
 
 const typeScannerLabel = computed(() => {
   const type = props.vaisseau?.scanner?.type || 'base'
-
-  if (type === 'standard') {
-    return 'Module standard'
-  }
-
-  if (type === 'avance') {
-    return 'Module avancé'
-  }
-
+  if (type === 'standard') return 'Module standard'
+  if (type === 'avance') return 'Module avancé'
   return 'Module de base'
 })
 
 const qualiteScanLabel = computed(() => {
   const qualite = props.exploration?.siteActif?.qualiteScan
-
-  if (qualite === 'bonne') {
-    return 'Bonne'
-  }
-
-  if (qualite === 'moyenne') {
-    return 'Moyenne'
-  }
-
-  if (qualite === 'faible') {
-    return 'Faible'
-  }
-
+  if (qualite === 'bonne') return 'Bonne'
+  if (qualite === 'moyenne') return 'Moyenne'
+  if (qualite === 'faible') return 'Faible'
   return '—'
 })
 
 const qualiteScanClasse = computed(() => {
   const qualite = props.exploration?.siteActif?.qualiteScan
-
-  if (qualite === 'bonne') {
-    return 'ops-badge-scan-bonne'
-  }
-
-  if (qualite === 'moyenne') {
-    return 'ops-badge-scan-moyenne'
-  }
-
-  if (qualite === 'faible') {
-    return 'ops-badge-scan-faible'
-  }
-
+  if (qualite === 'bonne') return 'ops-badge-scan-bonne'
+  if (qualite === 'moyenne') return 'ops-badge-scan-moyenne'
+  if (qualite === 'faible') return 'ops-badge-scan-faible'
   return 'ops-badge-scan-neutre'
 })
 
-const descriptionSiteActif = computed(() => {
+const reserveSiteLabel = computed(() => {
   const site = props.exploration?.siteActif
-  if (!site) {
-    return 'Aucun amas actif'
-  }
+  if (!site) return '—'
+  return `${site.reserveRestante} / ${site.reserveTotale}`
+})
 
-  const compo = (site.composition || [])
+const compositionSiteLabel = computed(() => {
+  const site = props.exploration?.siteActif
+  if (!site) return 'Aucun amas actif'
+
+  return (site.composition || [])
     .map((c) => donneesMinerais.find((m) => m.id === c.idMinerai)?.abreviation || c.idMinerai)
     .join(', ')
-
-  return `${site.nom} — réserve ${site.reserveRestante}/${site.reserveTotale} — ${compo}`
 })
+
+const nomSiteLabel = computed(() => props.exploration?.siteActif?.nom || 'Aucun amas actif')
+
+const statutOperationnel = computed(() => {
+  if (props.assistance.remorquageEnCours) {
+    return {
+      niveau: 'critique',
+      titre: 'Remorquage en cours',
+      texte: `Retour automatique vers ${props.assistance.stationCibleNom} dans ${props.assistance.ticksRestants} tick(s).`,
+    }
+  }
+
+  if (props.navigation.enVoyage) {
+    return {
+      niveau: 'info',
+      titre: 'Transit inter-sectoriel',
+      texte: 'Les opérations locales sont indisponibles pendant le trajet.',
+    }
+  }
+
+  if (props.positionLocale === 'station') {
+    return {
+      niveau: 'standard',
+      titre: 'À quai',
+      texte: 'Services de station disponibles. Quittez la station pour scanner et miner.',
+    }
+  }
+
+  if (props.vaisseau.soute >= props.vaisseau.souteMax) {
+    return {
+      niveau: 'alerte',
+      titre: 'Soute pleine',
+      texte: 'Extraction interrompue tant que la cargaison n’est pas déchargée.',
+    }
+  }
+
+  if (!props.exploration?.siteActif) {
+    return {
+      niveau: 'alerte',
+      titre: 'Aucun amas actif',
+      texte: 'Lancez un scan pour détecter un nouveau site exploitable.',
+    }
+  }
+
+  return {
+    niveau: 'succes',
+    titre: 'Fenêtre d’exploitation ouverte',
+    texte: 'Un amas actif est détecté. Le minage local peut reprendre.',
+  }
+})
+
+const statutOperationnelClasse = computed(() => {
+  const niveau = statutOperationnel.value.niveau
+  if (niveau === 'critique') return 'ops-status-critical'
+  if (niveau === 'alerte') return 'ops-status-warning'
+  if (niveau === 'succes') return 'ops-status-success'
+  if (niveau === 'info') return 'ops-status-info'
+  return 'ops-status-standard'
+})
+
+const scannerDisponible = computed(
+  () =>
+    !props.navigation.enVoyage &&
+    props.positionLocale === 'operations' &&
+    !props.assistance.remorquageEnCours,
+)
+
+const minageDisponible = computed(
+  () =>
+    !props.navigation.enVoyage &&
+    props.positionLocale === 'operations' &&
+    !props.assistance.remorquageEnCours,
+)
+
+const deploiementDronesDisponible = computed(
+  () =>
+    !props.navigation.enVoyage &&
+    props.positionLocale === 'operations' &&
+    !props.assistance.remorquageEnCours,
+)
+
+const rappelDronesDisponible = computed(
+  () => !props.navigation.enVoyage && !props.assistance.remorquageEnCours,
+)
 
 function decrireDrone(drone) {
   if (drone.etat === 'deploie') {
@@ -169,37 +222,51 @@ function decrireDrone(drone) {
 </script>
 
 <template>
-  <section class="panel ops-panel">
+  <section class="panel ops-panel ops-panel--enhanced">
     <div class="ops-header">
       <div>
         <h2>⌘ Opérations</h2>
         <p class="ops-subtitle">Console de bord locale du vaisseau</p>
       </div>
 
-      <div class="ops-local-badge" :class="badgeLocal.classe">
-        <span class="ops-local-badge-icon">{{ badgeLocal.icone }}</span>
-        <div class="ops-local-badge-text">
-          <strong>{{ badgeLocal.titre }}</strong>
-          <span>{{ badgeLocal.sousTitre }}</span>
+      <div class="ops-header-actions">
+        <div class="ops-local-badge" :class="badgeLocal.classe">
+          <span class="ops-local-badge-icon">{{ badgeLocal.icone }}</span>
+          <div class="ops-local-badge-text">
+            <strong>{{ badgeLocal.titre }}</strong>
+            <span>{{ badgeLocal.sousTitre }}</span>
+          </div>
         </div>
+
+        <button
+          v-if="positionLocale === 'station'"
+          class="ops-context-button"
+          :disabled="navigation.enVoyage || assistance.remorquageEnCours"
+          @click="emit('aller-operations')"
+        >
+          Rejoindre la zone d’opérations
+        </button>
+
+        <button
+          v-if="positionLocale === 'operations'"
+          class="ops-context-button"
+          :disabled="navigation.enVoyage || assistance.remorquageEnCours"
+          @click="emit('retour-station')"
+        >
+          Retourner à la station
+        </button>
       </div>
     </div>
 
-    <div
-      v-if="assistance.remorquageEnCours"
-      class="station-service-card station-service-card-commerce"
-    >
-      <div class="station-service-card-header">
-        <h3>Assistance</h3>
-        <span class="station-service-badge">Remorquage</span>
+    <section class="ops-status-banner" :class="statutOperationnelClasse">
+      <div class="ops-status-banner-head">
+        <span class="ops-status-dot"></span>
+        <strong>{{ statutOperationnel.titre }}</strong>
       </div>
-      <p class="station-service-description">
-        Remorquage en cours vers {{ assistance.stationCibleNom }}.
-      </p>
-      <p>Temps restant : {{ assistance.ticksRestants }} tick(s)</p>
-    </div>
+      <p>{{ statutOperationnel.texte }}</p>
+    </section>
 
-    <div class="ops-grid">
+    <div class="ops-grid ops-grid--top">
       <section class="ops-block">
         <h3>Situation</h3>
 
@@ -247,105 +314,90 @@ function decrireDrone(drone) {
 
           <div class="ops-system-item">
             <span class="ops-system-name">Baie à drones</span>
-            <span class="ops-system-value"
-              >{{ industrie.drones.length }} / {{ vaisseau.dronesMiniersMax }}</span
-            >
+            <span class="ops-system-value">
+              {{ industrie.drones.length }} / {{ vaisseau.dronesMiniersMax }}
+            </span>
           </div>
         </div>
       </section>
     </div>
 
-    <section class="ops-block">
-      <h3>Scanner et site actif</h3>
+    <div class="ops-grid ops-grid--main">
+      <section class="ops-block">
+        <div class="ops-block-header">
+          <h3>Exploitation</h3>
+          <span v-if="exploration.siteActif" class="ops-badge-scan" :class="qualiteScanClasse">
+            {{ qualiteScanLabel }}
+          </span>
+        </div>
 
-      <div class="ops-system-item">
-        <span class="ops-system-name">Amas actif</span>
-        <span class="ops-system-value">{{ descriptionSiteActif }}</span>
-      </div>
+        <div class="ops-system-list">
+          <div class="ops-system-item">
+            <span class="ops-system-name">Amas actif</span>
+            <span class="ops-system-value">{{ nomSiteLabel }}</span>
+          </div>
 
-      <div v-if="exploration.siteActif" class="ops-system-item">
-        <span class="ops-system-name">Qualité du relevé</span>
-        <span class="ops-badge-scan" :class="qualiteScanClasse">
-          {{ qualiteScanLabel }}
-        </span>
-      </div>
+          <div class="ops-system-item">
+            <span class="ops-system-name">Réserve</span>
+            <span class="ops-system-value">{{ reserveSiteLabel }}</span>
+          </div>
 
-      <div class="action-group">
-        <button
-          :disabled="
-            navigation.enVoyage || positionLocale !== 'operations' || assistance.remorquageEnCours
-          "
-          @click="emit('scanner')"
-        >
-          Scanner un amas
-        </button>
-      </div>
-    </section>
+          <div class="ops-system-item ops-system-item--multiline">
+            <span class="ops-system-name">Composition</span>
+            <span class="ops-system-value">{{ compositionSiteLabel }}</span>
+          </div>
+        </div>
 
-    <section class="ops-block">
-      <h3>Commandes</h3>
+        <div class="action-group action-group--inline">
+          <button :disabled="!scannerDisponible" @click="emit('scanner')">Scanner un amas</button>
 
-      <div class="action-group">
-        <button
-          v-if="positionLocale === 'station'"
-          :disabled="navigation.enVoyage || assistance.remorquageEnCours"
-          @click="emit('aller-operations')"
-        >
-          Rejoindre la zone d’opérations
-        </button>
+          <button :disabled="!minageDisponible" @click="emit('miner')">Miner manuellement</button>
+        </div>
+      </section>
 
-        <button
-          v-if="positionLocale === 'operations'"
-          :disabled="navigation.enVoyage || assistance.remorquageEnCours"
-          @click="emit('retour-station')"
-        >
-          Retourner à la station
-        </button>
+      <section class="ops-block">
+        <div class="ops-block-header">
+          <h3>Drones</h3>
+          <span class="ops-drone-summary">
+            {{ nbDeployes }} déployé(s) · {{ nbPrets }} prêt(s) · {{ nbEnRecharge }} en recharge
+          </span>
+        </div>
 
-        <button
-          :disabled="
-            navigation.enVoyage || positionLocale !== 'operations' || assistance.remorquageEnCours
-          "
-          @click="emit('deployer-drones')"
-        >
-          Déployer les drones
-        </button>
+        <div class="ops-drone-counters">
+          <div class="ops-mini-counter">
+            <span class="ops-mini-counter-label">Déployés</span>
+            <strong>{{ nbDeployes }}</strong>
+          </div>
+          <div class="ops-mini-counter">
+            <span class="ops-mini-counter-label">Prêts</span>
+            <strong>{{ nbPrets }}</strong>
+          </div>
+          <div class="ops-mini-counter">
+            <span class="ops-mini-counter-label">Recharge</span>
+            <strong>{{ nbEnRecharge }}</strong>
+          </div>
+        </div>
 
-        <button
-          :disabled="navigation.enVoyage || assistance.remorquageEnCours"
-          @click="emit('rappeler-drones')"
-        >
-          Rappeler les drones
-        </button>
+        <div class="action-group action-group--inline">
+          <button :disabled="!deploiementDronesDisponible" @click="emit('deployer-drones')">
+            Déployer les drones
+          </button>
 
-        <button
-          :disabled="
-            navigation.enVoyage || positionLocale !== 'operations' || assistance.remorquageEnCours
-          "
-          @click="emit('miner')"
-        >
-          Miner manuellement
-        </button>
-      </div>
-    </section>
+          <button :disabled="!rappelDronesDisponible" @click="emit('rappeler-drones')">
+            Rappeler les drones
+          </button>
+        </div>
 
-    <section class="ops-block">
-      <div class="ops-drone-header">
-        <h3>État des drones</h3>
-        <span class="ops-drone-summary">
-          {{ nbDeployes }} déployé(s) · {{ nbPrets }} prêt(s) · {{ nbEnRecharge }} en recharge
-        </span>
-      </div>
+        <ul v-if="industrie.drones.length > 0" class="drone-status-list">
+          <li v-for="drone in industrie.drones" :key="drone.id">
+            <span class="drone-status-name">Drone #{{ drone.id }}</span>
+            <span class="drone-status-meta">{{ decrireDrone(drone) }}</span>
+          </li>
+        </ul>
 
-      <ul v-if="industrie.drones.length > 0" class="drone-status-list">
-        <li v-for="drone in industrie.drones" :key="drone.id">
-          <span class="drone-status-name">Drone #{{ drone.id }}</span>
-          <span class="drone-status-meta">{{ decrireDrone(drone) }}</span>
-        </li>
-      </ul>
-
-      <p v-else class="panel-note">Aucun drone embarqué pour le moment.</p>
-    </section>
+        <p v-else class="panel-note">Aucun drone embarqué pour le moment.</p>
+      </section>
+    </div>
 
     <p class="panel-note">
       Le scanner peut détecter un amas minier exploitable… ou ne rien trouver. La qualité du relevé
