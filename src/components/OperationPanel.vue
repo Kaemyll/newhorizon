@@ -42,12 +42,22 @@ const emit = defineEmits([
   'scanner',
 ])
 
-const nbDeployes = computed(
-  () => props.industrie.drones.filter((drone) => drone.etat === 'deploie').length,
+const nbPrets = computed(
+  () =>
+    props.industrie.drones.filter(
+      (drone) => drone.etat === 'embarque' && drone.ticksRechargeRestants === 0,
+    ).length,
 )
 
-const nbEmbarques = computed(
-  () => props.industrie.drones.filter((drone) => drone.etat === 'embarque').length,
+const nbEnRecharge = computed(
+  () =>
+    props.industrie.drones.filter(
+      (drone) => drone.etat === 'embarque' && drone.ticksRechargeRestants > 0,
+    ).length,
+)
+
+const nbDeployes = computed(
+  () => props.industrie.drones.filter((drone) => drone.etat === 'deploie').length,
 )
 
 const badgeLocal = computed(() =>
@@ -323,7 +333,7 @@ function decrireDrone(drone) {
       <div class="ops-drone-header">
         <h3>État des drones</h3>
         <span class="ops-drone-summary">
-          {{ nbDeployes }} déployé(s) · {{ nbEmbarques }} embarqué(s)
+          {{ nbDeployes }} déployé(s) · {{ nbPrets }} prêt(s) · {{ nbEnRecharge }} en recharge
         </span>
       </div>
 

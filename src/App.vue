@@ -275,6 +275,7 @@ onUnmounted(() => {
             :ressources="etat.ressources"
             :sous-mode-station="ui.sousModeStation"
             :position-locale="etat.positionLocale"
+            :economie="etat.economie"
             @changer-sous-mode-station="changerSousModeStation"
             @vendre="gererVenteMinerai"
             @ravitailler="gererRavitaillement"
