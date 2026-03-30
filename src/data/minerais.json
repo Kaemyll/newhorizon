@@ -4,7 +4,7 @@
     "nom": "Roche carbonée",
     "abreviation": "roc.carb.",
     "icone": "◆",
-    "prixUnitaire": 1,
+    "prixUnitaire": 10,
     "frequence": "ultra_commune",
     "niveauSecteurMinimal": 1.0,
     "description": "Roche pauvre et abondante, très peu valorisée."
@@ -14,7 +14,7 @@
     "nom": "Poussière silicatée",
     "abreviation": "pou.sili.",
     "icone": "◇",
-    "prixUnitaire": 2,
+    "prixUnitaire": 16,
     "frequence": "ultra_commune",
     "niveauSecteurMinimal": 1.0,
     "description": "Résidu minéral très commun, peu coûteux mais facile à extraire."
@@ -24,7 +24,7 @@
     "nom": "Olivine",
     "abreviation": "oliv.",
     "icone": "⬡",
-    "prixUnitaire": 2,
+    "prixUnitaire": 24,
     "frequence": "commune",
     "niveauSecteurMinimal": 1.0,
     "description": "Silicate courant, utilisé dans plusieurs chaînes industrielles simples."
@@ -34,7 +34,7 @@
     "nom": "Pyroxène",
     "abreviation": "pyro.",
     "icone": "⬢",
-    "prixUnitaire": 3,
+    "prixUnitaire": 36,
     "frequence": "commune",
     "niveauSecteurMinimal": 0.6,
     "description": "Minerai plus intéressant, apprécié pour certaines applications industrielles."
@@ -44,7 +44,7 @@
     "nom": "Fer-nickel brut",
     "abreviation": "fer.nic.",
     "icone": "■",
-    "prixUnitaire": 4,
+    "prixUnitaire": 58,
     "frequence": "peu_commune",
     "niveauSecteurMinimal": 0.3,
     "description": "Métal brut plus rentable, recherché pour les usages industriels lourds."
@@ -54,7 +54,7 @@
     "nom": "Cobalt natif",
     "abreviation": "cob.nat.",
     "icone": "✦",
-    "prixUnitaire": 6,
+    "prixUnitaire": 95,
     "frequence": "rare",
     "niveauSecteurMinimal": 0.1,
     "description": "Minerai précieux, peu fréquent, au fort potentiel commercial."
@@ -64,7 +64,7 @@
     "nom": "Magnétite nickélifère",
     "abreviation": "mag.nic.",
     "icone": "⬟",
-    "prixUnitaire": 8,
+    "prixUnitaire": 150,
     "frequence": "rare",
     "niveauSecteurMinimal": 0.2,
     "description": "Minerai métallique dense, recherché pour ses usages sidérurgiques et alliages techniques."
@@ -74,7 +74,7 @@
     "nom": "Chromite",
     "abreviation": "chro.",
     "icone": "✶",
-    "prixUnitaire": 10,
+    "prixUnitaire": 240,
     "frequence": "tres_rare",
     "niveauSecteurMinimal": 0.1,
     "description": "Minerai rare riche en chrome, très apprécié dans les filières industrielles avancées."

@@ -16,16 +16,16 @@
         "atelier": true
       },
       "economie": {
-        "coutCarburantParUnite": 1,
+        "coutCarburantParUnite": 10,
         "modificateursMinerais": [
-          { "idMinerai": "roche_carbonee", "modificateur": 0.75 },
-          { "idMinerai": "poussiere_silicatee", "modificateur": 0.82 },
-          { "idMinerai": "olivine", "modificateur": 0.9 },
-          { "idMinerai": "pyroxene", "modificateur": 1.08 },
-          { "idMinerai": "fer_nickel_brut", "modificateur": 1.2 },
-          { "idMinerai": "cobalt_natif", "modificateur": 1.35 },
-          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.18 },
-          { "idMinerai": "chromite", "modificateur": 1.22 }
+          { "idMinerai": "roche_carbonee", "modificateur": 0.92 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.95 },
+          { "idMinerai": "olivine", "modificateur": 0.97 },
+          { "idMinerai": "pyroxene", "modificateur": 1.03 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.05 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.08 },
+          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.1 },
+          { "idMinerai": "chromite", "modificateur": 1.12 }
         ]
       }
     },
@@ -52,16 +52,16 @@
         "atelier": false
       },
       "economie": {
-        "coutCarburantParUnite": 1,
+        "coutCarburantParUnite": 11,
         "modificateursMinerais": [
-          { "idMinerai": "roche_carbonee", "modificateur": 0.7 },
-          { "idMinerai": "poussiere_silicatee", "modificateur": 0.92 },
-          { "idMinerai": "olivine", "modificateur": 1.05 },
-          { "idMinerai": "pyroxene", "modificateur": 1.18 },
-          { "idMinerai": "fer_nickel_brut", "modificateur": 1.08 },
-          { "idMinerai": "cobalt_natif", "modificateur": 1.15 },
-          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.12 },
-          { "idMinerai": "chromite", "modificateur": 1.1 }
+          { "idMinerai": "roche_carbonee", "modificateur": 0.9 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.98 },
+          { "idMinerai": "olivine", "modificateur": 1.04 },
+          { "idMinerai": "pyroxene", "modificateur": 1.09 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.03 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.01 },
+          { "idMinerai": "magnetite_nickelifere", "modificateur": 0.98 },
+          { "idMinerai": "chromite", "modificateur": 0.95 }
         ]
       }
     },
@@ -88,16 +88,16 @@
         "atelier": true
       },
       "economie": {
-        "coutCarburantParUnite": 1,
+        "coutCarburantParUnite": 12,
         "modificateursMinerais": [
-          { "idMinerai": "roche_carbonee", "modificateur": 0.65 },
-          { "idMinerai": "poussiere_silicatee", "modificateur": 0.78 },
-          { "idMinerai": "olivine", "modificateur": 0.94 },
-          { "idMinerai": "pyroxene", "modificateur": 1.08 },
-          { "idMinerai": "fer_nickel_brut", "modificateur": 1.28 },
-          { "idMinerai": "cobalt_natif", "modificateur": 1.22 },
-          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.34 },
-          { "idMinerai": "chromite", "modificateur": 1.18 }
+          { "idMinerai": "roche_carbonee", "modificateur": 0.88 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.92 },
+          { "idMinerai": "olivine", "modificateur": 0.98 },
+          { "idMinerai": "pyroxene", "modificateur": 1.06 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.14 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.08 },
+          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.16 },
+          { "idMinerai": "chromite", "modificateur": 1.1 }
         ]
       }
     },
@@ -124,16 +124,16 @@
         "atelier": false
       },
       "economie": {
-        "coutCarburantParUnite": 1,
+        "coutCarburantParUnite": 13,
         "modificateursMinerais": [
-          { "idMinerai": "roche_carbonee", "modificateur": 0.68 },
-          { "idMinerai": "poussiere_silicatee", "modificateur": 0.8 },
-          { "idMinerai": "olivine", "modificateur": 0.95 },
-          { "idMinerai": "pyroxene", "modificateur": 1.12 },
-          { "idMinerai": "fer_nickel_brut", "modificateur": 1.22 },
-          { "idMinerai": "cobalt_natif", "modificateur": 1.18 },
-          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.2 },
-          { "idMinerai": "chromite", "modificateur": 1.14 }
+          { "idMinerai": "roche_carbonee", "modificateur": 0.87 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.91 },
+          { "idMinerai": "olivine", "modificateur": 0.98 },
+          { "idMinerai": "pyroxene", "modificateur": 1.08 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.11 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.13 },
+          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.09 },
+          { "idMinerai": "chromite", "modificateur": 1.04 }
         ]
       }
     },
@@ -160,16 +160,16 @@
         "atelier": false
       },
       "economie": {
-        "coutCarburantParUnite": 1,
+        "coutCarburantParUnite": 14,
         "modificateursMinerais": [
-          { "idMinerai": "roche_carbonee", "modificateur": 0.58 },
-          { "idMinerai": "poussiere_silicatee", "modificateur": 0.7 },
-          { "idMinerai": "olivine", "modificateur": 0.82 },
-          { "idMinerai": "pyroxene", "modificateur": 1.02 },
-          { "idMinerai": "fer_nickel_brut", "modificateur": 1.18 },
-          { "idMinerai": "cobalt_natif", "modificateur": 1.4 },
-          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.38 },
-          { "idMinerai": "chromite", "modificateur": 1.45 }
+          { "idMinerai": "roche_carbonee", "modificateur": 0.85 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.89 },
+          { "idMinerai": "olivine", "modificateur": 0.95 },
+          { "idMinerai": "pyroxene", "modificateur": 1.03 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.1 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.16 },
+          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.18 },
+          { "idMinerai": "chromite", "modificateur": 1.2 }
         ]
       }
     },
@@ -196,16 +196,16 @@
         "atelier": false
       },
       "economie": {
-        "coutCarburantParUnite": 1,
+        "coutCarburantParUnite": 15,
         "modificateursMinerais": [
-          { "idMinerai": "roche_carbonee", "modificateur": 0.6 },
-          { "idMinerai": "poussiere_silicatee", "modificateur": 0.72 },
-          { "idMinerai": "olivine", "modificateur": 0.84 },
-          { "idMinerai": "pyroxene", "modificateur": 1.0 },
-          { "idMinerai": "fer_nickel_brut", "modificateur": 1.15 },
-          { "idMinerai": "cobalt_natif", "modificateur": 1.32 },
-          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.42 },
-          { "idMinerai": "chromite", "modificateur": 1.55 }
+          { "idMinerai": "roche_carbonee", "modificateur": 0.84 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.88 },
+          { "idMinerai": "olivine", "modificateur": 0.94 },
+          { "idMinerai": "pyroxene", "modificateur": 1.02 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.08 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.15 },
+          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.2 },
+          { "idMinerai": "chromite", "modificateur": 1.24 }
         ]
       }
     },
