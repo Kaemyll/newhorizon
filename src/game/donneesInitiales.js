@@ -53,7 +53,7 @@ export function creerEtatInitialJeu() {
     },
 
     economie: {
-      coutDroneMinier: 20,
+      coutDroneMinier: 400,
     },
 
     exploration: {

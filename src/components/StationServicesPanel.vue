@@ -28,6 +28,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  economie: {
+    type: Object,
+    required: true,
+  },
 })
 
 const emit = defineEmits([
@@ -56,6 +60,8 @@ const tauxTaxe = computed(() => calculerTauxTaxePourSecurite(secteur.value?.secu
 const taxeLocalePourcent = computed(() => formaterPourcentageTaxe(tauxTaxe.value))
 
 const coursLocaux = computed(() => calculerCoursLocauxPourStation(station.value))
+
+const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
 </script>
 
 <template>
@@ -230,7 +236,13 @@ const coursLocaux = computed(() => calculerCoursLocauxPourStation(station.value)
         </p>
 
         <div class="action-group">
-          <button @click="emit('acheter-drone')">Acheter un drone minier</button>
+          <div class="station-service-metric">
+            <span class="station-service-label">Drone minier</span>
+            <strong>{{ coutDroneMinier }} crédits / unité</strong>
+          </div>
+          <button @click="emit('acheter-drone')">
+            Acheter un drone minier — {{ coutDroneMinier }} crédits
+          </button>
         </div>
 
         <div class="station-upgrade-shell">

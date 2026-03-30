@@ -279,19 +279,37 @@ export function deployerDrones() {
     return
   }
 
-  let nombreDeployes = 0
+  const dronesPrets = etat.industrie.drones.filter(
+    (drone) => drone.etat === 'embarque' && drone.ticksRechargeRestants === 0,
+  )
 
-  for (const drone of etat.industrie.drones) {
-    if (drone.etat === 'embarque' && drone.ticksRechargeRestants === 0) {
-      drone.etat = 'deploie'
-      nombreDeployes += 1
-      ajouterAuJournal(`Drone #${drone.id} déployé en zone d’opérations.`, 'evenements')
+  if (dronesPrets.length === 0) {
+    const dronesEnRecharge = etat.industrie.drones.filter(
+      (drone) => drone.etat === 'embarque' && drone.ticksRechargeRestants > 0,
+    ).length
+
+    if (dronesEnRecharge > 0) {
+      ajouterAuJournal(
+        `Aucun drone prêt à être déployé. ${dronesEnRecharge} drone(s) encore en recharge.`,
+        'evenements',
+        'info',
+      )
+      return
     }
+
+    ajouterAuJournal('Aucun drone prêt à être déployé.', 'evenements')
+    return
   }
 
-  if (nombreDeployes === 0) {
-    ajouterAuJournal('Aucun drone prêt à être déployé.', 'evenements')
+  for (const drone of dronesPrets) {
+    drone.etat = 'deploie'
   }
+
+  ajouterAuJournal(
+    `${dronesPrets.length} drone(s) déployé(s) en zone d’opérations.`,
+    'evenements',
+    'succes',
+  )
 }
 
 export function rappelerDrones(estAutomatique = false) {
@@ -304,24 +322,26 @@ export function rappelerDrones(estAutomatique = false) {
     return
   }
 
-  let nombreRappeles = 0
+  const dronesDeployes = etat.industrie.drones.filter((drone) => drone.etat === 'deploie')
 
-  for (const drone of etat.industrie.drones) {
-    if (drone.etat === 'deploie') {
-      drone.etat = 'embarque'
-      nombreRappeles += 1
-      ajouterAuJournal(
-        estAutomatique
-          ? `Drone #${drone.id} rappelé automatiquement.`
-          : `Drone #${drone.id} rappelé au vaisseau.`,
-        'evenements',
-      )
+  if (dronesDeployes.length === 0) {
+    if (!estAutomatique) {
+      ajouterAuJournal('Aucun drone déployé à rappeler.', 'evenements')
     }
+    return
   }
 
-  if (nombreRappeles === 0 && !estAutomatique) {
-    ajouterAuJournal('Aucun drone déployé à rappeler.', 'evenements')
+  for (const drone of dronesDeployes) {
+    drone.etat = 'embarque'
   }
+
+  ajouterAuJournal(
+    estAutomatique
+      ? `${dronesDeployes.length} drone(s) rappelé(s) automatiquement.`
+      : `${dronesDeployes.length} drone(s) rappelé(s) au vaisseau.`,
+    'evenements',
+    'info',
+  )
 }
 
 export function faireTournerDrones() {
@@ -335,17 +355,34 @@ export function faireTournerDrones() {
     return
   }
 
+  const dronesDeployes = etat.industrie.drones.filter((drone) => drone.etat === 'deploie')
+
+  // Si aucun amas actif n'existe, on rappelle automatiquement les drones déployés
+  // pour éviter les logs répétés à chaque tick.
+  if (dronesDeployes.length > 0 && !etat.exploration?.siteActif) {
+    for (const drone of dronesDeployes) {
+      drone.etat = 'embarque'
+    }
+
+    ajouterAuJournal(
+      `⚠ Aucun amas actif. ${dronesDeployes.length} drone(s) rappelé(s) automatiquement.`,
+      'evenements',
+      'alerte',
+    )
+    return
+  }
+
+  let dronesRecharges = 0
+  let dronesRetourRecharge = 0
+  let extractionInterrompueSoute = false
+
   for (const drone of etat.industrie.drones) {
     if (drone.etat === 'embarque' && drone.ticksRechargeRestants > 0) {
       drone.ticksRechargeRestants -= 1
 
       if (drone.ticksRechargeRestants === 0) {
         drone.autonomieRestante = 8
-        ajouterAuJournal(
-          `✓ Drone #${drone.id} rechargé et prêt à être redéployé.`,
-          'evenements',
-          'info',
-        )
+        dronesRecharges += 1
       }
 
       continue
@@ -355,34 +392,41 @@ export function faireTournerDrones() {
       continue
     }
 
-    if (!etat.exploration?.siteActif) {
-      continue
-    }
-
     if (drone.etat !== 'deploie') {
       continue
     }
 
     if (etat.vaisseau.soute >= etat.vaisseau.souteMax) {
+      extractionInterrompueSoute = true
       continue
     }
 
     if (drone.autonomieRestante <= 0) {
       drone.etat = 'embarque'
       drone.ticksRechargeRestants = 2
+      dronesRetourRecharge += 1
+      continue
+    }
 
-      ajouterAuJournal(
-        `Drone #${drone.id} autonomie épuisée. Retour automatique au vaisseau pour recharge.`,
-        'evenements',
-      )
-
+    if (!etat.exploration?.siteActif) {
+      // Sécurité supplémentaire ; normalement géré plus haut.
+      drone.etat = 'embarque'
       continue
     }
 
     if (etat.exploration.siteActif.reserveRestante <= 0) {
+      const nbRappeles = etat.industrie.drones.filter((d) => d.etat === 'deploie').length
+
       etat.exploration.siteActif = null
+
+      for (const d of etat.industrie.drones) {
+        if (d.etat === 'deploie') {
+          d.etat = 'embarque'
+        }
+      }
+
       ajouterAuJournal(
-        '⚠ L’amas minier actif est épuisé. Les drones cessent leur extraction. Nouveau scan requis.',
+        `⚠ L’amas minier actif est épuisé. ${nbRappeles} drone(s) rappelé(s) automatiquement. Nouveau scan requis.`,
         'evenements',
         'alerte',
       )
@@ -399,14 +443,48 @@ export function faireTournerDrones() {
       ajouterAuJournal(`Drone #${drone.id} : +1 ${mineraiTire.nom}.`, 'evenements')
     }
 
+    // Si la consommation vient d'épuiser l'amas, on rappelle tous les drones encore déployés.
+    if (!etat.exploration?.siteActif) {
+      const nbRappeles = etat.industrie.drones.filter((d) => d.etat === 'deploie').length
+
+      for (const d of etat.industrie.drones) {
+        if (d.etat === 'deploie') {
+          d.etat = 'embarque'
+        }
+      }
+
+      ajouterAuJournal(
+        `⚠ Amas épuisé. ${nbRappeles} drone(s) rappelé(s) automatiquement. Nouveau scan requis.`,
+        'evenements',
+        'alerte',
+      )
+      return
+    }
+
     if (drone.autonomieRestante <= 0) {
       drone.etat = 'embarque'
       drone.ticksRechargeRestants = 2
-
-      ajouterAuJournal(
-        `Drone #${drone.id} autonomie épuisée. Retour automatique au vaisseau pour recharge.`,
-        'evenements',
-      )
+      dronesRetourRecharge += 1
     }
+  }
+
+  if (dronesRecharges > 0) {
+    ajouterAuJournal(
+      `✓ ${dronesRecharges} drone(s) rechargé(s) et prêts à être redéployés.`,
+      'evenements',
+      'info',
+    )
+  }
+
+  if (dronesRetourRecharge > 0) {
+    ajouterAuJournal(
+      `${dronesRetourRecharge} drone(s) reviennent en recharge automatique (2 ticks).`,
+      'evenements',
+      'info',
+    )
+  }
+
+  if (extractionInterrompueSoute) {
+    ajouterAuJournal('⚠ Extraction des drones interrompue : soute pleine.', 'evenements', 'alerte')
   }
 }
