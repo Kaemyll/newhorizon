@@ -4,12 +4,12 @@
     "nom": "Ceinture de Khepri",
     "securite": 1.0,
     "type": "ceinture_miniere",
-    "description": "Ceinture minière sûre et banale, adaptée aux petits indépendants et aux premiers contrats d’extraction.",
+    "description": "Ceinture minière sûre et banale, point d’entrée naturel pour les petits indépendants. Les infrastructures y sont fiables, mais la forte concurrence y compresse les marges sur les minerais les plus communs.",
     "stationPrincipale": {
       "id": "hawking_exchange",
       "nom": "Hawking Exchange",
       "type": "station_commerciale_orbitale",
-      "description": "Plateforme commerciale majeure du secteur, réputée pour sa stabilité, ses services complets et ses taxes élevées.",
+      "description": "Plateforme commerciale majeure du secteur, réputée pour la fiabilité de ses services, son trafic soutenu et ses taxes élevées. Khepri sert avant tout de hub de départ, de ravitaillement et d’échanges réguliers.",
       "services": {
         "ravitaillement": true,
         "commerce": true,
@@ -18,18 +18,21 @@
       "economie": {
         "coutCarburantParUnite": 1,
         "modificateursMinerais": [
-          { "idMinerai": "roche_carbonee", "modificateur": 0.76 },
-          { "idMinerai": "poussiere_silicatee", "modificateur": 0.84 },
-          { "idMinerai": "olivine", "modificateur": 0.92 },
+          { "idMinerai": "roche_carbonee", "modificateur": 0.75 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.82 },
+          { "idMinerai": "olivine", "modificateur": 0.9 },
           { "idMinerai": "pyroxene", "modificateur": 1.08 },
-          { "idMinerai": "chromite", "modificateur": 1.15 }
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.2 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.35 },
+          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.18 },
+          { "idMinerai": "chromite", "modificateur": 1.22 }
         ]
       }
     },
     "repartitionMinerais": [
       { "idMinerai": "roche_carbonee", "poids": 50 },
-      { "idMinerai": "poussiere_silicatee", "poids": 32 },
-      { "idMinerai": "olivine", "poids": 18 }
+      { "idMinerai": "poussiere_silicatee", "poids": 35 },
+      { "idMinerai": "olivine", "poids": 15 }
     ]
   },
   {
@@ -37,12 +40,12 @@
     "nom": "Anneau de Déméter",
     "securite": 0.6,
     "type": "anneau_minier",
-    "description": "Anneau dense et bien fréquenté, encore relativement sûr, mais déjà plus rentable que les ceintures de départ.",
+    "description": "Zone de transition plus riche et plus rude que Khepri, encore bien fréquentée. Déméter constitue le premier bassin réellement rentable pour les exploitants prêts à s’éloigner des routes les plus sûres.",
     "stationPrincipale": {
       "id": "demeter_prospect",
       "nom": "Demeter Prospect",
       "type": "station_industrielle_orbitale",
-      "description": "Installation minière active, tournée vers le transit des cargaisons et le ravitaillement rapide des indépendants.",
+      "description": "Installation minière dense, tournée vers le transit de cargaisons et le ravitaillement. Déméter joue le rôle d’interface entre les secteurs sûrs et les zones d’exploitation plus ambitieuses.",
       "services": {
         "ravitaillement": true,
         "commerce": true,
@@ -51,17 +54,21 @@
       "economie": {
         "coutCarburantParUnite": 1,
         "modificateursMinerais": [
-          { "idMinerai": "poussiere_silicatee", "modificateur": 0.88 },
-          { "idMinerai": "olivine", "modificateur": 1.02 },
-          { "idMinerai": "pyroxene", "modificateur": 1.16 },
-          { "idMinerai": "fer_nickel_brut", "modificateur": 1.08 }
+          { "idMinerai": "roche_carbonee", "modificateur": 0.7 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.92 },
+          { "idMinerai": "olivine", "modificateur": 1.05 },
+          { "idMinerai": "pyroxene", "modificateur": 1.18 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.08 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.15 },
+          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.12 },
+          { "idMinerai": "chromite", "modificateur": 1.1 }
         ]
       }
     },
     "repartitionMinerais": [
-      { "idMinerai": "poussiere_silicatee", "poids": 34 },
-      { "idMinerai": "olivine", "poids": 38 },
-      { "idMinerai": "pyroxene", "poids": 28 }
+      { "idMinerai": "poussiere_silicatee", "poids": 30 },
+      { "idMinerai": "olivine", "poids": 45 },
+      { "idMinerai": "pyroxene", "poids": 25 }
     ]
   },
   {
@@ -69,12 +76,12 @@
     "nom": "Forge de Tantale",
     "securite": 0.5,
     "type": "systeme_industriel",
-    "description": "Système industriel dense, alimenté par un trafic marchand soutenu et une activité métallurgique constante.",
+    "description": "Système industriel dense, alimenté par un trafic marchand soutenu et une activité métallurgique constante. Tantale constitue un pôle de valorisation privilégié pour les minerais utiles aux filières lourdes.",
     "stationPrincipale": {
       "id": "tantalus_yards",
       "nom": "Tantalus Yards",
       "type": "chantier_orbital",
-      "description": "Chantier et hub logistique tourné vers la métallurgie lourde, l’équipement industriel et les opérations de maintenance.",
+      "description": "Chantier et hub logistique tourné vers la métallurgie, le transport et l’équipement industriel. Les matières premières techniques y trouvent des débouchés plus réguliers que dans les secteurs généralistes.",
       "services": {
         "ravitaillement": true,
         "commerce": true,
@@ -83,17 +90,21 @@
       "economie": {
         "coutCarburantParUnite": 1,
         "modificateursMinerais": [
-          { "idMinerai": "olivine", "modificateur": 0.9 },
-          { "idMinerai": "pyroxene", "modificateur": 1.04 },
-          { "idMinerai": "fer_nickel_brut", "modificateur": 1.2 },
-          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.12 }
+          { "idMinerai": "roche_carbonee", "modificateur": 0.65 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.78 },
+          { "idMinerai": "olivine", "modificateur": 0.94 },
+          { "idMinerai": "pyroxene", "modificateur": 1.08 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.28 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.22 },
+          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.34 },
+          { "idMinerai": "chromite", "modificateur": 1.18 }
         ]
       }
     },
     "repartitionMinerais": [
-      { "idMinerai": "olivine", "poids": 26 },
-      { "idMinerai": "pyroxene", "poids": 36 },
-      { "idMinerai": "fer_nickel_brut", "poids": 38 }
+      { "idMinerai": "olivine", "poids": 18 },
+      { "idMinerai": "pyroxene", "poids": 37 },
+      { "idMinerai": "fer_nickel_brut", "poids": 45 }
     ]
   },
   {
@@ -101,12 +112,12 @@
     "nom": "Banc de Perséphone",
     "securite": 0.3,
     "type": "banc_asteroides",
-    "description": "Champ fragmenté, plus isolé, où l’on commence à trouver des extraits plus rares et plus rentables.",
+    "description": "Champ fragmenté, plus isolé, fréquenté par des exploitants indépendants et des équipages plus audacieux. Perséphone est avant tout une zone de production brute, où l’on extrait davantage qu’on ne s’installe durablement.",
     "stationPrincipale": {
       "id": "persephone_anchorage",
       "nom": "Persephone Anchorage",
       "type": "mouillage_orbital",
-      "description": "Mouillage excentré et rugueux, fréquenté par des opérateurs indépendants plus audacieux que prudents.",
+      "description": "Mouillage excentré et rugueux servant de point d’appui aux prospecteurs indépendants. Les cargaisons y transitent encore, mais l’endroit tient davantage du débouché frontalier que du marché de confort.",
       "services": {
         "ravitaillement": true,
         "commerce": true,
@@ -115,16 +126,21 @@
       "economie": {
         "coutCarburantParUnite": 1,
         "modificateursMinerais": [
-          { "idMinerai": "pyroxene", "modificateur": 0.96 },
-          { "idMinerai": "fer_nickel_brut", "modificateur": 1.16 },
-          { "idMinerai": "cobalt_natif", "modificateur": 1.22 }
+          { "idMinerai": "roche_carbonee", "modificateur": 0.68 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.8 },
+          { "idMinerai": "olivine", "modificateur": 0.95 },
+          { "idMinerai": "pyroxene", "modificateur": 1.12 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.22 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.18 },
+          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.2 },
+          { "idMinerai": "chromite", "modificateur": 1.14 }
         ]
       }
     },
     "repartitionMinerais": [
-      { "idMinerai": "pyroxene", "poids": 30 },
-      { "idMinerai": "fer_nickel_brut", "poids": 42 },
-      { "idMinerai": "cobalt_natif", "poids": 28 }
+      { "idMinerai": "olivine", "poids": 20 },
+      { "idMinerai": "pyroxene", "poids": 45 },
+      { "idMinerai": "fer_nickel_brut", "poids": 35 }
     ]
   },
   {
@@ -132,31 +148,35 @@
     "nom": "Dérive de Nyx",
     "securite": 0.2,
     "type": "zone_peripherique",
-    "description": "Région sombre et lointaine, peu surveillée, où circulent des cargaisons discrètes et des prospecteurs téméraires.",
+    "description": "Région sombre et lointaine, peu surveillée, utilisée comme point d’appui logistique avancé par les prospecteurs téméraires. Nyx n’est pas un véritable hub commercial : on s’y ravitaille, on s’y abrite, puis l’on repart avec sa cargaison.",
     "stationPrincipale": {
       "id": "nyx_freeport",
       "nom": "Nyx Freeport",
       "type": "port_franc_orbital",
-      "description": "Port franc périphérique, rude et spéculatif, où certaines cargaisons rares trouvent preneur à bon prix.",
+      "description": "Avant-poste périphérique rude et spéculatif, davantage tourné vers le soutien logistique que vers le commerce structuré. Son statut ambigu pourra, à terme, en faire une exception intéressante si le design introduit un véritable port lowSec.",
       "services": {
         "ravitaillement": true,
-        "commerce": true,
+        "commerce": false,
         "atelier": false
       },
       "economie": {
         "coutCarburantParUnite": 1,
         "modificateursMinerais": [
-          { "idMinerai": "fer_nickel_brut", "modificateur": 0.94 },
-          { "idMinerai": "cobalt_natif", "modificateur": 1.18 },
-          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.28 },
-          { "idMinerai": "chromite", "modificateur": 1.16 }
+          { "idMinerai": "roche_carbonee", "modificateur": 0.58 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.7 },
+          { "idMinerai": "olivine", "modificateur": 0.82 },
+          { "idMinerai": "pyroxene", "modificateur": 1.02 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.18 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.4 },
+          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.38 },
+          { "idMinerai": "chromite", "modificateur": 1.45 }
         ]
       }
     },
     "repartitionMinerais": [
-      { "idMinerai": "fer_nickel_brut", "poids": 24 },
+      { "idMinerai": "fer_nickel_brut", "poids": 35 },
       { "idMinerai": "cobalt_natif", "poids": 40 },
-      { "idMinerai": "magnetite_nickelifere", "poids": 36 }
+      { "idMinerai": "magnetite_nickelifere", "poids": 25 }
     ]
   },
   {
@@ -164,29 +184,34 @@
     "nom": "Nuée d’Hécate",
     "securite": 0.1,
     "type": "nuee_asteroides",
-    "description": "Zone lointaine et peu sûre, réputée pour ses gisements rares, sa logistique rude et ses profits potentiels.",
+    "description": "Zone lointaine et peu sûre, réputée pour ses gisements rares et son isolement. Hécate représente le front minier profond : on y vient pour extraire ce que les secteurs plus sûrs n’offrent plus, pas pour y commercer confortablement.",
     "stationPrincipale": {
       "id": "blackwake_terminal",
       "nom": "Blackwake Terminal",
       "type": "terminal_orbital_avance",
-      "description": "Terminal lointain au trafic plus âpre, où l’on échange des cargaisons rares sous forte spéculation.",
+      "description": "Terminal avancé de survie technique, austère et éloigné, maintenant juste assez d’infrastructure pour soutenir les expéditions minières profondes. Les équipages y réparent l’essentiel, ravitaillent, puis repartent vers des marchés plus civilisés.",
       "services": {
         "ravitaillement": true,
-        "commerce": true,
+        "commerce": false,
         "atelier": false
       },
       "economie": {
         "coutCarburantParUnite": 1,
         "modificateursMinerais": [
-          { "idMinerai": "cobalt_natif", "modificateur": 1.08 },
-          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.22 },
-          { "idMinerai": "chromite", "modificateur": 1.38 }
+          { "idMinerai": "roche_carbonee", "modificateur": 0.6 },
+          { "idMinerai": "poussiere_silicatee", "modificateur": 0.72 },
+          { "idMinerai": "olivine", "modificateur": 0.84 },
+          { "idMinerai": "pyroxene", "modificateur": 1.0 },
+          { "idMinerai": "fer_nickel_brut", "modificateur": 1.15 },
+          { "idMinerai": "cobalt_natif", "modificateur": 1.32 },
+          { "idMinerai": "magnetite_nickelifere", "modificateur": 1.42 },
+          { "idMinerai": "chromite", "modificateur": 1.55 }
         ]
       }
     },
     "repartitionMinerais": [
-      { "idMinerai": "cobalt_natif", "poids": 34 },
-      { "idMinerai": "magnetite_nickelifere", "poids": 36 },
+      { "idMinerai": "cobalt_natif", "poids": 35 },
+      { "idMinerai": "magnetite_nickelifere", "poids": 35 },
       { "idMinerai": "chromite", "poids": 30 }
     ]
   }
