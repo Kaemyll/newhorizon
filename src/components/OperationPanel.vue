@@ -81,9 +81,19 @@ const statutVol = computed(() =>
 )
 
 const statutCanon = computed(() => {
+  if ((props.vaisseau?.puissanceMiniere || 0) <= 0) return 'Aucun canon'
   if (props.navigation.enVoyage) return 'Indisponible'
   if (props.positionLocale !== 'operations') return 'Hors zone'
   return 'Prêt'
+})
+
+const rendementMinierLabel = computed(() => {
+  const puissance = props.vaisseau?.puissanceMiniere || 0
+
+  if (puissance >= 3) return '2 unités / action'
+  if (puissance >= 2) return '1 à 2 unités / action'
+  if (puissance >= 1) return '1 unité / action'
+  return 'Aucun rendement'
 })
 
 const typeScannerLabel = computed(() => {
@@ -319,6 +329,11 @@ function decrireDrone(drone) {
           <div class="ops-system-item">
             <span class="ops-system-name">Puissance minière</span>
             <span class="ops-system-value">{{ vaisseau.puissanceMiniere }}</span>
+          </div>
+
+          <div class="ops-system-item">
+            <span class="ops-system-name">Rendement manuel</span>
+            <span class="ops-system-value">{{ rendementMinierLabel }}</span>
           </div>
 
           <div class="ops-system-item">
