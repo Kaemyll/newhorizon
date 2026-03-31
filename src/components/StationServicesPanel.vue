@@ -39,6 +39,7 @@ const emit = defineEmits([
   'vendre',
   'ravitailler',
   'acheter-drone',
+  'aller-operations',
   'retour-station',
 ])
 
@@ -69,6 +70,9 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
     <div class="station-services-header">
       <h2>⌘ Services de station</h2>
       <p class="station-services-subtitle">{{ station.nom }} — {{ station.type }}</p>
+    </div>
+    <div v-if="positionLocale === 'station'" class="action-group action-group--station-launch">
+      <button @click="emit('aller-operations')">Rejoindre la zone d’opérations</button>
     </div>
 
     <template v-if="positionLocale !== 'station'">

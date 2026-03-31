@@ -26,6 +26,7 @@ export function creerEtatInitialJeu() {
       nom: vaisseauDepart.nom,
       constructeur: vaisseauDepart.constructeur,
       coque: vaisseauDepart.coqueMax,
+
       coqueMax: vaisseauDepart.coqueMax,
       soute: 0,
       souteMax: vaisseauDepart.souteMax,
