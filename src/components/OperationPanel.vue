@@ -183,6 +183,15 @@ const statutOperationnel = computed(() => {
     }
   }
 
+  if ((props.vaisseau?.puissanceMiniere || 0) <= 0) {
+    return {
+      niveau: 'info',
+      titre: 'Vaisseau marchand',
+      texte:
+        'Ce châssis ne dispose pas de canon de minage. Privilégiez le transport et le commerce.',
+    }
+  }
+
   if (!props.exploration?.siteActif) {
     return {
       niveau: 'alerte',
@@ -216,6 +225,7 @@ const scannerDisponible = computed(
 
 const minageDisponible = computed(
   () =>
+    (props.vaisseau?.puissanceMiniere || 0) > 0 &&
     !props.navigation.enVoyage &&
     props.positionLocale === 'operations' &&
     !props.assistance.remorquageEnCours,
