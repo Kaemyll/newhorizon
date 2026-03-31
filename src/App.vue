@@ -35,7 +35,7 @@ const etat = reactive({})
 
 function creerEtatUIInitial() {
   return {
-    modeActif: 'operations',
+    modeActif: 'station',
     sousModeStation: 'commerce',
   }
 }
@@ -78,6 +78,18 @@ function normaliserSousModeStation() {
   ui.sousModeStation = 'commerce'
 }
 
+function synchroniserModeActifAvecPositionLocale() {
+  if (etat.positionLocale === 'station') {
+    ui.modeActif = 'station'
+    normaliserSousModeStation()
+    return
+  }
+
+  if (etat.positionLocale === 'operations') {
+    ui.modeActif = 'operations'
+  }
+}
+
 function synchroniserEtat() {
   const etatCourant = structuredClone(recupererEtatJeu())
 
@@ -87,7 +99,7 @@ function synchroniserEtat() {
 
   Object.assign(etat, etatCourant)
 
-  normaliserSousModeStation()
+  synchroniserModeActifAvecPositionLocale()
 }
 
 function gererMinageManuel() {
@@ -151,15 +163,28 @@ function gererAmelioration(idAmelioration) {
 }
 
 function gererAllerOperations() {
+  const positionAvant = etat.positionLocale
+
   allerEnZoneOperations()
   sauvegarderJeu()
   synchroniserEtat()
+
+  if (positionAvant !== etat.positionLocale && etat.positionLocale === 'operations') {
+    ui.modeActif = 'operations'
+  }
 }
 
 function gererRetourStation() {
+  const positionAvant = etat.positionLocale
+
   retourALaStation()
   sauvegarderJeu()
   synchroniserEtat()
+
+  if (positionAvant !== etat.positionLocale && etat.positionLocale === 'station') {
+    ui.modeActif = 'station'
+    normaliserSousModeStation()
+  }
 }
 
 function gererReinitialisation() {
@@ -281,6 +306,7 @@ onUnmounted(() => {
             @ravitailler="gererRavitaillement"
             @acheter-drone="gererAchatDrone"
             @retour-station="gererRetourStation"
+            @aller-operations="gererAllerOperations"
           >
             <template #atelier>
               <UpgradePanel
