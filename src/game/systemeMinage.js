@@ -10,7 +10,7 @@ function obtenirHorodatageTick() {
   return `[T${String(tick).padStart(4, '0')}]`
 }
 
-export function ajouterAuJournal(message, categorie = 'evenements', niveau = 'normal') {
+export function ajouterAuJournal(message, categorie = 'evenements', niveau = 'standard') {
   const etat = recupererEtatJeu()
 
   etat.journal.unshift({
@@ -69,18 +69,19 @@ function verifierSiteActifExploitable() {
 
   if (!site) {
     ajouterAuJournal(
-      '⚠ Aucun amas minier actif. Lancez un nouveau scan pour reprendre l’extraction.',
+      'Aucun amas minier actif. Lancez un nouveau scan pour reprendre l’extraction.',
       'evenements',
       'alerte',
     )
     return false
   }
 
-  if (site.reserveRestante <= 0) {ajouterAuJournal(
-    '⚠ L’amas minier actif est épuisé. Un nouveau scan est requis.',
-    'evenements',
-    'alerte',
-  )
+  if (site.reserveRestante <= 0) {
+    ajouterAuJournal(
+      'L’amas minier actif est épuisé. Un nouveau scan est requis.',
+      'evenements',
+      'alerte',
+    )
     etat.exploration.siteActif = null
     return false
   }
@@ -100,7 +101,7 @@ function consommerReserveSite(quantite = 1) {
 
   if (site.reserveRestante === 0) {
     ajouterAuJournal(
-      `⚠ ${site.nom} est épuisé. Nouveau scan requis pour détecter un autre amas.`,
+      `${site.nom} est épuisé. Nouveau scan requis pour détecter un autre amas.`,
       'evenements',
       'alerte',
     )
@@ -112,17 +113,21 @@ export function minerMineraiManuellement() {
   const etat = recupererEtatJeu()
 
   if (etat.navigation?.enVoyage) {
-    ajouterAuJournal('Impossible de miner pendant un trajet.', 'evenements')
+    ajouterAuJournal('Impossible de miner pendant un trajet.', 'evenements', 'alerte')
     return
   }
 
   if (etat.assistance?.remorquageEnCours) {
-    ajouterAuJournal('Impossible de miner pendant un remorquage.', 'evenements')
+    ajouterAuJournal('Impossible de miner pendant un remorquage.', 'evenements', 'alerte')
     return
   }
 
   if (etat.positionLocale !== 'operations') {
-    ajouterAuJournal('Le minage manuel n’est possible qu’en zone d’opérations.', 'evenements')
+    ajouterAuJournal(
+      'Le minage manuel n’est possible qu’en zone d’opérations.',
+      'evenements',
+      'alerte',
+    )
     return
   }
 
@@ -132,7 +137,7 @@ export function minerMineraiManuellement() {
 
   if (etat.vaisseau.soute >= etat.vaisseau.souteMax) {
     ajouterAuJournal(
-      '⚠ Soute pleine : extraction impossible. Retour à la station ou vente requis.',
+      'Soute pleine : extraction impossible. Retour à la station ou vente requis.',
       'evenements',
       'alerte',
     )
@@ -144,7 +149,7 @@ export function minerMineraiManuellement() {
   const mineraiTire = tirerMineraiDepuisComposition(etat.exploration.siteActif.composition)
 
   if (!mineraiTire) {
-    ajouterAuJournal('Aucune ressource exploitable détectée dans cet amas.', 'evenements')
+    ajouterAuJournal('Aucune ressource exploitable détectée dans cet amas.', 'evenements', 'alerte')
     return
   }
 
@@ -153,7 +158,7 @@ export function minerMineraiManuellement() {
   faireTournerDrones()
   verifierPanneSecheEtDeclencher()
 
-  ajouterAuJournal(`Extraction manuelle : +1 ${mineraiTire.nom}.`, 'evenements')
+  ajouterAuJournal(`Extraction manuelle : +1 ${mineraiTire.nom}.`, 'evenements', 'succes')
 }
 
 export function vendreTousLesMinerais() {
@@ -162,17 +167,21 @@ export function vendreTousLesMinerais() {
   const station = secteurCourant?.stationPrincipale
 
   if (etat.navigation?.enVoyage) {
-    ajouterAuJournal('Impossible de vendre la cargaison pendant un trajet.', 'commerce')
+    ajouterAuJournal('Impossible de vendre la cargaison pendant un trajet.', 'commerce', 'alerte')
     return
   }
 
   if (etat.positionLocale !== 'station') {
-    ajouterAuJournal('La vente n’est possible qu’à la station.', 'commerce')
+    ajouterAuJournal('La vente n’est possible qu’à la station.', 'commerce', 'alerte')
     return
   }
 
   if (!station?.services?.commerce) {
-    ajouterAuJournal('Aucun service commercial disponible dans cette station.', 'commerce')
+    ajouterAuJournal(
+      'Aucun service commercial disponible dans cette station.',
+      'commerce',
+      'alerte',
+    )
     return
   }
 
@@ -195,7 +204,7 @@ export function vendreTousLesMinerais() {
   }
 
   if (quantiteTotaleVendue <= 0) {
-    ajouterAuJournal('Aucun minerai à vendre.', 'commerce')
+    ajouterAuJournal('Aucun minerai à vendre.', 'commerce', 'info')
     return
   }
 
@@ -210,6 +219,7 @@ export function vendreTousLesMinerais() {
   ajouterAuJournal(
     `${details.join(' + ')} : transaction brute ${valeurBrute} cr, taxe ${montantTaxe} cr, montant net ${valeurNette} cr.`,
     'commerce',
+    'succes',
   )
 }
 
@@ -218,22 +228,22 @@ export function acheterDroneMinier() {
   const cout = etat.economie.coutDroneMinier
 
   if (etat.navigation?.enVoyage) {
-    ajouterAuJournal('Impossible d’acheter un drone pendant un trajet.', 'commerce')
+    ajouterAuJournal('Impossible d’acheter un drone pendant un trajet.', 'commerce', 'alerte')
     return
   }
 
   if (etat.positionLocale !== 'station') {
-    ajouterAuJournal('L’achat d’un drone n’est possible qu’à la station.', 'commerce')
+    ajouterAuJournal('L’achat d’un drone n’est possible qu’à la station.', 'commerce', 'alerte')
     return
   }
 
   if (etat.industrie.drones.length >= etat.vaisseau.dronesMiniersMax) {
-    ajouterAuJournal('Capacité maximale de drones atteinte.', 'commerce')
+    ajouterAuJournal('Capacité maximale de drones atteinte.', 'commerce', 'alerte')
     return
   }
 
   if (etat.ressources.credits < cout) {
-    ajouterAuJournal('Crédits insuffisants pour acheter un drone minier.', 'commerce')
+    ajouterAuJournal('Crédits insuffisants pour acheter un drone minier.', 'commerce', 'alerte')
     return
   }
 
@@ -249,24 +259,32 @@ export function acheterDroneMinier() {
   etat.industrie.drones.push(nouveauDrone)
   etat.industrie.prochainDroneId += 1
 
-  ajouterAuJournal(`Drone minier #${nouveauDrone.id} acheté et embarqué.`, 'commerce')
+  ajouterAuJournal(`Drone minier #${nouveauDrone.id} acheté et embarqué.`, 'commerce', 'succes')
 }
 
 export function deployerDrones() {
   const etat = recupererEtatJeu()
 
   if (etat.navigation?.enVoyage) {
-    ajouterAuJournal('Impossible de déployer les drones pendant un trajet.', 'evenements')
+    ajouterAuJournal('Impossible de déployer les drones pendant un trajet.', 'evenements', 'alerte')
     return
   }
 
   if (etat.assistance?.remorquageEnCours) {
-    ajouterAuJournal('Impossible de déployer les drones pendant un remorquage.', 'evenements')
+    ajouterAuJournal(
+      'Impossible de déployer les drones pendant un remorquage.',
+      'evenements',
+      'alerte',
+    )
     return
   }
 
   if (etat.positionLocale !== 'operations') {
-    ajouterAuJournal('Les drones ne peuvent être déployés qu’en zone d’opérations.', 'evenements')
+    ajouterAuJournal(
+      'Les drones ne peuvent être déployés qu’en zone d’opérations.',
+      'evenements',
+      'alerte',
+    )
     return
   }
 
@@ -275,7 +293,7 @@ export function deployerDrones() {
   }
 
   if (!etat.industrie?.drones?.length) {
-    ajouterAuJournal('Aucun drone embarqué à déployer.', 'evenements')
+    ajouterAuJournal('Aucun drone embarqué à déployer.', 'evenements', 'alerte')
     return
   }
 
@@ -297,7 +315,7 @@ export function deployerDrones() {
       return
     }
 
-    ajouterAuJournal('Aucun drone prêt à être déployé.', 'evenements')
+    ajouterAuJournal('Aucun drone prêt à être déployé.', 'evenements', 'alerte')
     return
   }
 
@@ -317,7 +335,7 @@ export function rappelerDrones(estAutomatique = false) {
 
   if (!etat.industrie?.drones?.length) {
     if (!estAutomatique) {
-      ajouterAuJournal('Aucun drone à rappeler.', 'evenements')
+      ajouterAuJournal('Aucun drone à rappeler.', 'evenements', 'info')
     }
     return
   }
@@ -326,7 +344,7 @@ export function rappelerDrones(estAutomatique = false) {
 
   if (dronesDeployes.length === 0) {
     if (!estAutomatique) {
-      ajouterAuJournal('Aucun drone déployé à rappeler.', 'evenements')
+      ajouterAuJournal('Aucun drone déployé à rappeler.', 'evenements', 'info')
     }
     return
   }
@@ -357,15 +375,13 @@ export function faireTournerDrones() {
 
   const dronesDeployes = etat.industrie.drones.filter((drone) => drone.etat === 'deploie')
 
-  // Si aucun amas actif n'existe, on rappelle automatiquement les drones déployés
-  // pour éviter les logs répétés à chaque tick.
   if (dronesDeployes.length > 0 && !etat.exploration?.siteActif) {
     for (const drone of dronesDeployes) {
       drone.etat = 'embarque'
     }
 
     ajouterAuJournal(
-      `⚠ Aucun amas actif. ${dronesDeployes.length} drone(s) rappelé(s) automatiquement.`,
+      `Aucun amas actif. ${dronesDeployes.length} drone(s) rappelé(s) automatiquement.`,
       'evenements',
       'alerte',
     )
@@ -409,7 +425,6 @@ export function faireTournerDrones() {
     }
 
     if (!etat.exploration?.siteActif) {
-      // Sécurité supplémentaire ; normalement géré plus haut.
       drone.etat = 'embarque'
       continue
     }
@@ -426,7 +441,7 @@ export function faireTournerDrones() {
       }
 
       ajouterAuJournal(
-        `⚠ L’amas minier actif est épuisé. ${nbRappeles} drone(s) rappelé(s) automatiquement. Nouveau scan requis.`,
+        `L’amas minier actif est épuisé. ${nbRappeles} drone(s) rappelé(s) automatiquement. Nouveau scan requis.`,
         'evenements',
         'alerte',
       )
@@ -440,10 +455,9 @@ export function faireTournerDrones() {
     if (mineraiTire) {
       ajouterMineraiDansSoute(mineraiTire.id, 1)
       consommerReserveSite(1)
-      ajouterAuJournal(`Drone #${drone.id} : +1 ${mineraiTire.nom}.`, 'evenements')
+      ajouterAuJournal(`Drone #${drone.id} : +1 ${mineraiTire.nom}.`, 'evenements', 'info')
     }
 
-    // Si la consommation vient d'épuiser l'amas, on rappelle tous les drones encore déployés.
     if (!etat.exploration?.siteActif) {
       const nbRappeles = etat.industrie.drones.filter((d) => d.etat === 'deploie').length
 
@@ -454,7 +468,7 @@ export function faireTournerDrones() {
       }
 
       ajouterAuJournal(
-        `⚠ Amas épuisé. ${nbRappeles} drone(s) rappelé(s) automatiquement. Nouveau scan requis.`,
+        `Amas épuisé. ${nbRappeles} drone(s) rappelé(s) automatiquement. Nouveau scan requis.`,
         'evenements',
         'alerte',
       )
@@ -470,7 +484,7 @@ export function faireTournerDrones() {
 
   if (dronesRecharges > 0) {
     ajouterAuJournal(
-      `✓ ${dronesRecharges} drone(s) rechargé(s) et prêts à être redéployés.`,
+      `${dronesRecharges} drone(s) rechargé(s) et prêts à être redéployés.`,
       'evenements',
       'info',
     )
@@ -485,6 +499,6 @@ export function faireTournerDrones() {
   }
 
   if (extractionInterrompueSoute) {
-    ajouterAuJournal('⚠ Extraction des drones interrompue : soute pleine.', 'evenements', 'alerte')
+    ajouterAuJournal('Extraction des drones interrompue : soute pleine.', 'evenements', 'alerte')
   }
 }

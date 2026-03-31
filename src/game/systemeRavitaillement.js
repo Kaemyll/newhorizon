@@ -12,12 +12,16 @@ export function ravitaillerCarburant() {
   const etat = recupererEtatJeu()
 
   if (etat.navigation?.enVoyage) {
-    ajouterAuJournal('Impossible de ravitailler le vaisseau pendant un trajet.', 'commerce')
+    ajouterAuJournal(
+      'Impossible de ravitailler le vaisseau pendant un trajet.',
+      'commerce',
+      'alerte',
+    )
     return
   }
 
   if (etat.positionLocale !== 'station') {
-    ajouterAuJournal('Le ravitaillement n’est possible qu’à la station.', 'commerce')
+    ajouterAuJournal('Le ravitaillement n’est possible qu’à la station.', 'commerce', 'alerte')
     return
   }
 
@@ -25,21 +29,25 @@ export function ravitaillerCarburant() {
   const station = secteurCourant?.stationPrincipale
 
   if (!station?.services?.ravitaillement) {
-    ajouterAuJournal('Aucun service de ravitaillement disponible dans cette station.', 'commerce')
+    ajouterAuJournal(
+      'Aucun service de ravitaillement disponible dans cette station.',
+      'commerce',
+      'alerte',
+    )
     return
   }
 
   const carburantManquant = etat.vaisseau.carburantMax - etat.ressources.carburant
 
   if (carburantManquant <= 0) {
-    ajouterAuJournal(`Réservoir déjà plein à ${station.nom}.`, 'commerce')
+    ajouterAuJournal(`Réservoir déjà plein à ${station.nom}.`, 'commerce', 'info')
     return
   }
 
   const prixParUnite = station.economie?.coutCarburantParUnite ?? 1
 
   if (etat.ressources.credits <= 0) {
-    ajouterAuJournal('Crédits insuffisants pour procéder au ravitaillement.', 'commerce')
+    ajouterAuJournal('Crédits insuffisants pour procéder au ravitaillement.', 'commerce', 'alerte')
     return
   }
 
@@ -49,7 +57,7 @@ export function ravitaillerCarburant() {
   )
 
   if (unitesAchetables <= 0) {
-    ajouterAuJournal('Crédits insuffisants pour procéder au ravitaillement.', 'commerce')
+    ajouterAuJournal('Crédits insuffisants pour procéder au ravitaillement.', 'commerce', 'alerte')
     return
   }
 
@@ -62,6 +70,7 @@ export function ravitaillerCarburant() {
     ajouterAuJournal(
       `Ravitaillement terminé à ${station.nom} : +${unitesAchetables} carburant pour ${coutFinal} crédits.`,
       'commerce',
+      'succes',
     )
     return
   }
@@ -69,5 +78,6 @@ export function ravitaillerCarburant() {
   ajouterAuJournal(
     `Ravitaillement partiel à ${station.nom} : +${unitesAchetables} carburant pour ${coutFinal} crédits.`,
     'commerce',
+    'succes',
   )
 }

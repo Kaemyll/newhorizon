@@ -787,50 +787,145 @@ select {
 
 .log-list {
   margin: 0;
-  padding-left: 16px;
+  padding-left: 0;
+  list-style: none;
   font-size: 0.78rem;
-  line-height: 1.12;
+  line-height: 1.16;
 }
 
 .log-list li {
-  margin-bottom: 4px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 5px;
+  padding: 4px 6px;
+  border-left: 2px solid transparent;
+  border-radius: 6px;
   word-break: break-word;
 }
 
 .log-timestamp {
-  margin-right: 5px;
+  flex: 0 0 auto;
+  margin-right: 0;
   font-size: 0.74rem;
   font-style: normal;
   color: #c7a84a;
+  white-space: nowrap;
+}
+
+.log-tag {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 68px;
+  padding: 0.1rem 0.42rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .log-message {
+  min-width: 0;
   font-style: italic;
   opacity: 0.96;
 }
 
 .log-placeholder {
   list-style: none;
-  margin-left: -16px;
+  margin-left: 0;
+  padding-left: 0;
   opacity: 0.7;
 }
 
-.log-entry-critical {
-  margin-left: -6px;
-  padding: 5px 6px;
-  border-left: 3px solid rgba(186, 86, 66, 0.95);
-  border-radius: 6px;
-  background: rgba(120, 28, 20, 0.22);
+/* ===== Niveaux de ligne ===== */
+
+.log-entry-standard {
+  border-left-color: rgba(125, 184, 255, 0.12);
 }
 
-.log-entry-critical .log-timestamp {
+.log-entry-standard .log-message {
+  color: #d7e1ea;
+}
+
+.log-entry-info {
+  border-left-color: rgba(92, 150, 220, 0.45);
+  background: rgba(46, 95, 160, 0.08);
+}
+
+.log-entry-info .log-message {
+  color: #d6e8ff;
+}
+
+.log-entry-succes {
+  border-left-color: rgba(86, 196, 124, 0.5);
+  background: rgba(39, 122, 73, 0.08);
+}
+
+.log-entry-succes .log-message {
+  color: #d8f3df;
+}
+
+.log-entry-alerte {
+  border-left-color: rgba(214, 146, 58, 0.55);
+  background: rgba(168, 104, 32, 0.1);
+}
+
+.log-entry-alerte .log-message {
+  color: #f3dfbd;
+  font-style: normal;
+}
+
+.log-entry-critique {
+  border-left-color: rgba(224, 90, 90, 0.75);
+  background: rgba(150, 44, 44, 0.14);
+}
+
+.log-entry-critique .log-timestamp {
   color: #e1b164;
 }
 
-.log-entry-critical .log-message {
+.log-entry-critique .log-message {
   font-style: normal;
   font-weight: 600;
   color: #f2d7d2;
+}
+
+/* ===== Tags ===== */
+
+.log-tag-standard {
+  color: #ced7e2;
+  background: rgba(120, 132, 146, 0.14);
+  border-color: rgba(160, 172, 186, 0.22);
+}
+
+.log-tag-info {
+  color: #b8d7ff;
+  background: rgba(46, 95, 160, 0.2);
+  border-color: rgba(92, 150, 220, 0.3);
+}
+
+.log-tag-succes {
+  color: #b9f0c9;
+  background: rgba(39, 122, 73, 0.2);
+  border-color: rgba(86, 196, 124, 0.3);
+}
+
+.log-tag-alerte {
+  color: #f5d7a1;
+  background: rgba(168, 104, 32, 0.22);
+  border-color: rgba(214, 146, 58, 0.34);
+}
+
+.log-tag-critique {
+  color: #ffcdcd;
+  background: rgba(150, 44, 44, 0.24);
+  border-color: rgba(224, 90, 90, 0.38);
 }
 
 /* =========================================================
