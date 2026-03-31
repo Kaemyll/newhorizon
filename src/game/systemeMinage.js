@@ -109,6 +109,74 @@ function consommerReserveSite(quantite = 1) {
   }
 }
 
+function obtenirRendementExtractionManuelle(puissanceMiniere = 1) {
+  if (puissanceMiniere >= 3) return 2
+  if (puissanceMiniere >= 2) return 1.5
+  if (puissanceMiniere <= 0) return 0
+  return 1
+}
+
+function determinerQuantiteExtractionManuelle(puissanceMiniere, reserveRestante, espaceDisponible) {
+  const rendement = obtenirRendementExtractionManuelle(puissanceMiniere)
+
+  if (rendement <= 0 || reserveRestante <= 0 || espaceDisponible <= 0) {
+    return 0
+  }
+
+  const baseGarantie = Math.floor(rendement)
+  const partieVariable = rendement - baseGarantie
+  const bonus = Math.random() < partieVariable ? 1 : 0
+
+  return Math.min(baseGarantie + bonus, reserveRestante, espaceDisponible)
+}
+
+function extraireDepuisSiteActif(quantiteDemandee) {
+  const etat = recupererEtatJeu()
+  const site = etat.exploration?.siteActif
+
+  if (!site || quantiteDemandee <= 0) {
+    return {}
+  }
+
+  const detailsExtraction = {}
+
+  for (let index = 0; index < quantiteDemandee; index += 1) {
+    if (!etat.exploration?.siteActif || etat.exploration.siteActif.reserveRestante <= 0) {
+      break
+    }
+
+    const mineraiTire = tirerMineraiDepuisComposition(etat.exploration.siteActif.composition)
+
+    if (!mineraiTire) {
+      break
+    }
+
+    ajouterMineraiDansSoute(mineraiTire.id, 1)
+    consommerReserveSite(1)
+
+    if (!Object.prototype.hasOwnProperty.call(detailsExtraction, mineraiTire.id)) {
+      detailsExtraction[mineraiTire.id] = {
+        nom: mineraiTire.nom,
+        quantite: 0,
+      }
+    }
+
+    detailsExtraction[mineraiTire.id].quantite += 1
+  }
+
+  return detailsExtraction
+}
+
+function formaterDetailsExtraction(detailsExtraction) {
+  const lignes = Object.values(detailsExtraction)
+
+  if (lignes.length === 0) {
+    return ''
+  }
+
+  return lignes.map((ligne) => `+${ligne.quantite} ${ligne.nom}`).join(', ')
+}
+
 export function minerMineraiManuellement() {
   const etat = recupererEtatJeu()
 
@@ -144,21 +212,47 @@ export function minerMineraiManuellement() {
     return
   }
 
-  avancerTemps(1)
+  const puissanceMiniere = etat.vaisseau?.puissanceMiniere || 0
 
-  const mineraiTire = tirerMineraiDepuisComposition(etat.exploration.siteActif.composition)
-
-  if (!mineraiTire) {
-    ajouterAuJournal('Aucune ressource exploitable détectée dans cet amas.', 'evenements', 'alerte')
+  if (puissanceMiniere <= 0) {
+    ajouterAuJournal(
+      'Ce vaisseau ne dispose pas de canon de minage opérationnel.',
+      'evenements',
+      'alerte',
+    )
     return
   }
 
-  ajouterMineraiDansSoute(mineraiTire.id, 1)
-  consommerReserveSite(1)
+  avancerTemps(1)
+
+  const reserveRestante = etat.exploration?.siteActif?.reserveRestante || 0
+  const espaceDisponible = etat.vaisseau.souteMax - etat.vaisseau.soute
+
+  const quantiteExtraite = determinerQuantiteExtractionManuelle(
+    puissanceMiniere,
+    reserveRestante,
+    espaceDisponible,
+  )
+
+  if (quantiteExtraite <= 0) {
+    faireTournerDrones()
+    verifierPanneSecheEtDeclencher()
+
+    ajouterAuJournal(
+      'Extraction manuelle impossible dans les conditions actuelles.',
+      'evenements',
+      'alerte',
+    )
+    return
+  }
+
+  const detailsExtraction = extraireDepuisSiteActif(quantiteExtraite)
+  const resumeExtraction = formaterDetailsExtraction(detailsExtraction)
+
   faireTournerDrones()
   verifierPanneSecheEtDeclencher()
 
-  ajouterAuJournal(`Extraction manuelle : +1 ${mineraiTire.nom}.`, 'evenements', 'succes')
+  ajouterAuJournal(`Extraction manuelle : ${resumeExtraction}.`, 'evenements', 'succes')
 }
 
 export function vendreTousLesMinerais() {

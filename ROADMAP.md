@@ -1,380 +1,150 @@
 # ROADMAP — New Horizon
 
-## Vision générale
+## À propos du projet
 
-**New Horizon** est un prototype de jeu spatial incrémental / semi-idle, centré sur l’extraction minière, la logistique, le commerce, l’exploration locale et la progression du vaisseau.
+**New Horizon** est un prototype de jeu spatial incrémental / semi-idle centré sur :
 
-Le développement suit une logique simple :
+- le minage
+- le transport
+- le commerce
+- l’exploration locale
+- la progression du vaisseau
 
-- chaque version doit être **jouable**
-- chaque évolution doit être **compréhensible**
-- les systèmes doivent être ajoutés **brique par brique**
-- l’interface doit rester **sobre, lisible et immersive**
-- les données du jeu doivent progressivement devenir **propres, exportables et réutilisables**
-
-L’objectif à long terme est de construire un spacesim minimaliste mais riche en systèmes, où le joueur gère :
-- ses déplacements,
-- son carburant,
-- son extraction,
-- ses drones,
-- ses cargos,
-- ses ventes,
-- ses risques,
-- puis plus tard son réseau commercial, ses finances et sa flotte.
+Le projet avance version par version, avec une règle simple :  
+**chaque étape doit rester jouable, lisible et utile.**
 
 ---
 
-## Principes de développement
+## État actuel du prototype
 
-### 1. Jouable à chaque version
-Chaque version doit laisser le jeu dans un état jouable, même si le système n’est encore que partiellement développé.
+Le jeu permet déjà de :
 
-### 2. Complexité progressive
-Les nouveaux systèmes doivent s’ajouter sans casser les fondations existantes.
+- quitter la station et rejoindre une zone d’opérations
+- scanner un site minier
+- exploiter un amas
+- utiliser des drones miniers
+- gérer le carburant
+- vendre sa cargaison
+- ravitailler et améliorer son vaisseau
+- voyager entre plusieurs secteurs
 
-### 3. Lisibilité avant sophistication
-Les mécaniques doivent être claires avant d’être complexes.
-
-### 4. Données séparées de la logique
-Le projet doit tendre vers une architecture où :
-- les **données** sont stockées proprement
-- la **logique** du jeu les exploite
-- l’export externe reste possible
-
-### 5. Versionnement explicite
-Chaque version du projet doit correspondre à une avancée identifiable, documentée par un commit clair.
+Le cœur du prototype est désormais en place :  
+**scanner → exploiter → vendre → optimiser → repartir**
 
 ---
 
-## Règles de versionnement
+## Version actuelle
 
-Le projet suit une logique de type :
+### v0.3.12 — Base jouable consolidée
+Cette version a posé les fondations du gameplay actuel :
 
-`vMAJEUR.MINEUR.PATCH`
-
-### MAJEUR
-Change lorsqu’un cap structurant ou une nouvelle ère du projet est franchie.
-
-### MINEUR
-Change lorsqu’un nouveau système important ou une refonte significative est introduit.
-
-### PATCH
-Change lorsqu’on améliore, corrige, consolide ou affine un système existant.
-
----
-
-## Versions déjà réalisées
-
-### v0.3.6
-Consolidation du temps de simulation et densification de l’interface.
-
-- formalisation du tick comme unité de temps
-- minage manuel consommant un tick
-- densification du panneau commerce local
-- réinitialisation complète du jeu via reconstruction de l’état initial
-
-### v0.3.7
-Distinction locale entre station et zone d’opérations.
-
-- séparation station / opérations
-- minage autorisé uniquement en zone d’opérations
-- services de station accessibles uniquement à quai
-- mouvements locaux coûtant du carburant et du temps
-
-### v0.3.8
-Gestion active des drones et refonte immersive du panneau Opérations.
-
-- déploiement et rappel des drones
-- autonomie des drones
-- recharge automatique
-- panneau Opérations transformé en console de bord
-- meilleur signal visuel station / opérations
-
-### v0.3.9
-Scanner, amas miniers et sécurité carburant.
-
-- ajout du scanner
-- introduction d’un amas minier actif
-- exploitation sur réserve locale
-- épuisement des sites
-- gestion du carburant critique hors station
-- remorquage automatique
-- crédits négatifs autorisés en cas d’assistance
+- boucle de minage jouable
+- scanner et amas miniers
+- drones actifs
+- distinction station / opérations
+- navigation inter-sectorielle
+- journal de bord plus lisible
+- premiers profils miniers par secteur
+- ravitaillement et services de station plus clairs
 
 ---
 
-## Priorités immédiates
+## Prochaine étape
 
-### Priorité 1 — Structuration des données
-Le projet doit migrer progressivement vers des données stockées dans des fichiers JSON propres et homogènes, afin de :
-- faciliter l’équilibrage
-- permettre l’export externe
-- préparer des outils de suivi
-- réduire la dépendance du code à des données embarquées dans les systèmes
+### v0.3.13 — Vaisseaux et commerce
+Objectif : proposer de vrais styles de jeu selon le vaisseau utilisé.
 
-### Priorité 2 — Suivi du projet
-Le projet doit disposer d’une vraie roadmap maintenue et d’un suivi clair des versions à venir.
+Au programme :
 
-### Priorité 3 — Extension contrôlée du contenu
-Avant d’ouvrir de gros systèmes supplémentaires, il faut enrichir progressivement :
-- les données du monde
-- la variété des vaisseaux
-- les minerais
-- les secteurs
+- différenciation réelle des vaisseaux
+- rendement minier selon le canon
+- transporteur marchand dédié au commerce
+- premiers écarts de prix entre stations
+- achat / revente de cargaison
+- interface adaptée selon le rôle du vaisseau
+- amélioration visuelle du cockpit
 
----
-
-## Versions prévues à court terme
-
-### v0.3.10 — Migration initiale vers des données JSON
-Objectif : rationaliser les données du projet.
-
-#### Contenu prévu
-- création du dossier `src/data/`
-- migration progressive de :
-    - `minerais`
-    - `vaisseaux`
-    - `secteurs`
-    - `trajets`
-      vers des fichiers `.json`
-- création de modules d’accès / adaptateurs côté jeu
-- homogénéisation des clés et identifiants
-- préparation à l’export externe vers Google Sheets ou autres outils
-
-#### Résultat attendu
-- données plus propres
-- architecture plus claire
-- meilleure maintenabilité
-- base saine pour les prochains systèmes
+**But recherché :**  
+donner au joueur de vrais choix entre extraction, transport et logistique.
 
 ---
 
-### v0.3.11 — Suivi projet et backlog structuré
-Objectif : formaliser le pilotage du projet.
+## Ensuite
 
-#### Contenu prévu
-- ajout et stabilisation de `ROADMAP.md`
-- mise en place d’un tableau de suivi (GitHub Projects ou équivalent)
-- classement des tâches :
-    - gameplay
-    - données
-    - interface
-    - économie
-    - monde
-    - dette technique
-- intégration de la migration JSON dans le suivi de production
+### v0.3.14 — Risques et maintenance
+Objectif : ajouter de la tension et de la robustesse au gameplay.
 
-#### Résultat attendu
-- développement plus lisible
-- meilleure priorisation
-- meilleure communication sur GitHub et Discord
+Prévu :
+
+- dégâts environnementaux sur certains amas
+- affichage de la coque
+- réparation en station
+- restrictions en cas de coque critique
+- amélioration visuelle des états de risque
+- nettoyage et découpage du CSS
 
 ---
 
-### v0.3.12 — Extension du contenu minier et sectoriel
-Objectif : enrichir le monde à petite échelle.
+### v0.3.15 — Ambiance et identité du pilote
+Objectif : renforcer la sensation de cockpit.
 
-#### Contenu prévu
-- ajout de **1 ou 2 nouveaux secteurs**
-- ajout de **1 ou 2 nouveaux minerais**
-- ajustement des tables de répartition par secteur
-- premières différences plus marquées entre zones économiques
+Prévu :
 
-#### Résultat attendu
-- boucle de minage plus variée
-- meilleure sensation de progression géographique
-- bases plus solides pour le commerce
+- animations visuelles légères
+- variations d’état discrètes
+- panneau Joueur
+- affichage de l’identité, du statut et de la fortune
 
 ---
 
-### v0.3.13 — Nouveaux vaisseaux
-Objectif : introduire une vraie diversité de coques.
+## Cap suivant
 
-#### Vaisseaux prévus
-- **Mineur lourd**
-    - plus grosse soute
-    - meilleure capacité d’extraction
-    - capacités défensives limitées
-- **Transporteur marchand**
-    - grande soute
-    - faible vocation minière
-    - pensé pour le commerce et le transport
-- **Mineur renforcé**
-    - plus robuste défensivement
-    - moins rentable qu’un mineur pur
-    - pensé pour des zones plus risquées
+### v0.4.0 — Carte spatiale et navigation galactique
+Objectif : donner une vraie structure au monde.
 
-#### Résultat attendu
-- premiers choix de spécialisation
-- meilleure projection du joueur
-- base pour une progression multi-vaisseaux
+Prévu :
 
----
-
-## Cap de développement intermédiaire
-
-### v0.4.0 — Stargates et carte sectorielle
-Objectif : transformer la navigation inter-sectorielle en vraie structure spatiale.
-
-#### Contenu prévu
-- ajout des **stargates**
-- connexions réelles entre secteurs
-- tous les secteurs ne communiquent plus directement
-- introduction d’une topologie spatiale lisible
-- début de la cartographie du monde
-
-#### Résultat attendu
-- voyages plus crédibles
-- routes commerciales réelles
-- secteurs périphériques / centraux
-- base pour futurs systèmes de sécurité, de contrôle et de risque
-
----
-
-## Versions prévues à moyen terme
-
-### v0.4.1 — Qualité de scan et sites plus riches
-- amélioration du scanner
-- meilleure détection des amas
-- meilleure lecture des réserves
-- premières différences qualitatives de sites
-
-### v0.4.2 — Événements locaux et sécurité
-- premiers événements liés au niveau de sécurité
-- incidents mineurs en zone d’opérations
-- début de la tension entre High-Sec et Low-Sec
-
-### v0.4.3 — Finances et service bancaire
-- service **Finances** dans certaines stations
-- gestion des crédits négatifs
-- découvert / remboursement / frais éventuels
-- dépôt et retrait de fonds
-- premières bases d’épargne ou de placement
-
-### v0.5.0 — Marchandises et commerce étendu
-- achat et revente de marchandises
-- transport commercial au-delà du minerai
-- enrichissement des marchés stationnaires
-- premiers circuits de profit logistique
-
----
-
-## Chantiers structurels permanents
-
-### Données
-- homogénéiser les fichiers de données
-- documenter les schémas
-- rendre les exports possibles
-
-### Interface
-- maintenir une interface sobre et dense
-- conserver un journal de bord lisible
-- améliorer la sensation de “console de bord”
-
-### Équilibrage
-- ajuster valeurs, coûts, réserves, autonomie, taxation
-- garder une progression lisible
-
-### Documentation
-- README à jour
-- roadmap à jour
-- messages de commit explicites
-- historique des versions
-
----
-
-## Backlog d’idées
-
-### Monde et navigation
 - stargates
-- cartographie
-- hubs régionaux
-- zones frontières
-- zones très risquées
-
-### Minage et exploitation
-- scanner amélioré
-- sites spéciaux
-- anomalies
-- meilleure lecture des rendements
-- qualité des amas
-
-### Vaisseaux
-- nouvelles coques
-- rôles spécialisés
-- capacités défensives
-- modules spécifiques
-- progression technologique
-
-### Économie
-- marchandises
-- commerce régional
-- finances
-- dette
-- investissement
-- spéculation
-
-### Risques et sécurité
-- incidents en Low-Sec
-- pirates
-- avaries
-- coûts d’assistance variables
-- menaces sur les drones
-
-### Industrie et automatisation
-- drones spécialisés
-- améliorations avancées
-- modules plus complexes
-- production / transformation plus tard
+- topologie des secteurs
+- routes spatiales plus crédibles
+- première vue galactique
 
 ---
 
-## Dette technique identifiée
+### v0.4.1 — Destruction, secours et assurance
+Objectif : donner un vrai poids aux risques.
 
-- migration vers des données JSON propres
-- séparation toujours plus nette entre données et logique
-- nettoyage progressif des imports
-- centralisation de certaines règles système
-- meilleure standardisation des messages et niveaux d’alerte du journal
+Prévu :
 
----
-
-## Mode de suivi recommandé
-
-Le suivi du projet peut être doublé :
-
-### 1. Documentation dans le dépôt
-- `README.md`
-- `ROADMAP.md`
-
-### 2. Suivi des tâches
-À gérer de préférence via :
-- **GitHub Projects**  
-  ou éventuellement
-- **Trello** si un outil plus visuel est préféré
+- destruction du vaisseau si la coque tombe à 0
+- retour en capsule vers la station
+- perte de cargaison
+- frais de secours
+- premier système d’assurance
 
 ---
 
-## Prochaine étape recommandée
+## Direction du projet
 
-### Prochaine priorité proposée
-**v0.3.10 — migration initiale vers des données JSON**
+À moyen terme, **New Horizon** veut développer :
 
-Pourquoi :
-- le projet a désormais assez de matière pour justifier une vraie séparation données / logique
-- les prochaines extensions (nouveaux vaisseaux, nouveaux secteurs, nouveaux minerais) seront beaucoup plus simples à gérer ainsi
-- cela prépare les exports et le suivi externe
+- davantage de vaisseaux spécialisés
+- un commerce plus riche
+- une carte plus crédible
+- plus de risques hors station
+- une progression économique plus marquée
+- une ambiance de cockpit plus immersive
 
 ---
 
-## Résumé stratégique
+## En résumé
 
-Le projet doit maintenant entrer dans une phase de **consolidation structurante** :
+Le projet entre dans une nouvelle phase :
 
-1. rationaliser les données
-2. formaliser le suivi
-3. enrichir le contenu
-4. ouvrir progressivement la carte et l’économie
+- **la base jouable existe**
+- **les vaisseaux vont vraiment différencier le gameplay**
+- **le commerce va prendre de l’importance**
+- **les risques et la maintenance vont enrichir les décisions du joueur**
 
-Le cap reste le même :
-construire un spacesim incrémental, lisible, immersif et systémique, version après version.
+New Horizon continue d’avancer comme prévu :  
+**petit, jouable, lisible — mais de plus en plus systémique.**
