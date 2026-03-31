@@ -33,7 +33,13 @@
       { "idMinerai": "roche_carbonee", "poids": 50 },
       { "idMinerai": "poussiere_silicatee", "poids": 35 },
       { "idMinerai": "olivine", "poids": 15 }
-    ]
+    ],
+    "profilMinier": {
+      "amasSterile": 5,
+      "amas1": 60,
+      "amas2": 30,
+      "amas3": 5
+    }
   },
   {
     "id": "anneau_demeter",
@@ -69,7 +75,13 @@
       { "idMinerai": "poussiere_silicatee", "poids": 30 },
       { "idMinerai": "olivine", "poids": 45 },
       { "idMinerai": "pyroxene", "poids": 25 }
-    ]
+    ],
+    "profilMinier": {
+      "amasSterile": 8,
+      "amas1": 52,
+      "amas2": 30,
+      "amas3": 10
+    }
   },
   {
     "id": "forge_tantalus",
@@ -105,7 +117,13 @@
       { "idMinerai": "olivine", "poids": 18 },
       { "idMinerai": "pyroxene", "poids": 37 },
       { "idMinerai": "fer_nickel_brut", "poids": 45 }
-    ]
+    ],
+    "profilMinier": {
+      "amasSterile": 10,
+      "amas1": 40,
+      "amas2": 35,
+      "amas3": 15
+    }
   },
   {
     "id": "banc_persephone",
@@ -138,10 +156,16 @@
       }
     },
     "repartitionMinerais": [
-      { "idMinerai": "olivine", "poids": 20 },
       { "idMinerai": "pyroxene", "poids": 45 },
-      { "idMinerai": "fer_nickel_brut", "poids": 35 }
-    ]
+      { "idMinerai": "fer_nickel_brut", "poids": 35 },
+      { "idMinerai": "cobalt_natif", "poids": 20 }
+    ],
+    "profilMinier": {
+      "amasSterile": 20,
+      "amas1": 40,
+      "amas2": 30,
+      "amas3": 10
+    }
   },
   {
     "id": "drift_nyx",
@@ -177,7 +201,13 @@
       { "idMinerai": "fer_nickel_brut", "poids": 35 },
       { "idMinerai": "cobalt_natif", "poids": 40 },
       { "idMinerai": "magnetite_nickelifere", "poids": 25 }
-    ]
+    ],
+    "profilMinier": {
+      "amasSterile": 22,
+      "amas1": 33,
+      "amas2": 30,
+      "amas3": 15
+    }
   },
   {
     "id": "nuee_hecate",
@@ -213,6 +243,12 @@
       { "idMinerai": "cobalt_natif", "poids": 35 },
       { "idMinerai": "magnetite_nickelifere", "poids": 35 },
       { "idMinerai": "chromite", "poids": 30 }
-    ]
+    ],
+    "profilMinier": {
+      "amasSterile": 25,
+      "amas1": 25,
+      "amas2": 30,
+      "amas3": 20
+    }
   }
 ]

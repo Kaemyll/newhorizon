@@ -119,12 +119,26 @@ const compositionSiteLabel = computed(() => {
   const site = props.exploration?.siteActif
   if (!site) return 'Aucun amas actif'
 
-  return (site.composition || [])
+  if (!site.composition || site.composition.length === 0) {
+    return 'Aucune signature exploitable'
+  }
+
+  return site.composition
     .map((c) => donneesMinerais.find((m) => m.id === c.idMinerai)?.abreviation || c.idMinerai)
     .join(', ')
 })
 
 const nomSiteLabel = computed(() => props.exploration?.siteActif?.nom || 'Aucun amas actif')
+
+const typeAmasLabel = computed(() => {
+  const typeAmas = props.exploration?.siteActif?.typeAmas
+
+  if (typeAmas === 'sterile') return 'Amas pauvre'
+  if (typeAmas === 'mono') return 'Amas simple'
+  if (typeAmas === 'double') return 'Amas mixte'
+  if (typeAmas === 'triple') return 'Amas dense'
+  return '—'
+})
 
 const statutOperationnel = computed(() => {
   if (props.assistance.remorquageEnCours) {
@@ -338,6 +352,11 @@ function decrireDrone(drone) {
           </div>
 
           <div class="ops-system-item">
+            <span class="ops-system-name">Type d’amas</span>
+            <span class="ops-system-value">{{ typeAmasLabel }}</span>
+          </div>
+
+          <div class="ops-system-item">
             <span class="ops-system-name">Réserve</span>
             <span class="ops-system-value">{{ reserveSiteLabel }}</span>
           </div>
@@ -400,7 +419,7 @@ function decrireDrone(drone) {
     </div>
 
     <p class="panel-note">
-      Le scanner peut détecter un amas minier exploitable… ou ne rien trouver. La qualité du relevé
+      Le scanner peut détecter des amas pauvres, simples, mixtes ou denses. La qualité du relevé
       influence la réserve estimée et la composition du site.
     </p>
   </section>
