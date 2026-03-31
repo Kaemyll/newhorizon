@@ -40,14 +40,22 @@ function tirerReserveDepuisQualite(qualite) {
   return 18 + Math.floor(Math.random() * 11) // 18-28
 }
 
-function tirerNomAmas(qualite) {
+function tirerNomAmas(qualite, typeAmas = 'mono') {
   const prefixes = ['Amas minier', 'Amas fragmenté', 'Amas dense', 'Amas dérivant']
   const suffixes = ['I', 'II', 'III', 'IV', 'V', 'VI']
   const prefixe = prefixes[Math.floor(Math.random() * prefixes.length)]
   const suffixe = suffixes[Math.floor(Math.random() * suffixes.length)]
 
-  if (qualite === 'bonne') {
+  if (typeAmas === 'sterile') {
+    return `${prefixe} pauvre ${suffixe}`
+  }
+
+  if (qualite === 'bonne' && typeAmas === 'triple') {
     return `${prefixe} remarquable ${suffixe}`
+  }
+
+  if (qualite === 'bonne') {
+    return `${prefixe} riche ${suffixe}`
   }
 
   if (qualite === 'faible') {
@@ -57,43 +65,200 @@ function tirerNomAmas(qualite) {
   return `${prefixe} ${suffixe}`
 }
 
-function obtenirAjustementsComposition(qualite) {
-  if (qualite === 'faible') {
-    return [5, 0, -15]
-  }
-
-  if (qualite === 'bonne') {
-    return [15, 5, -5]
-  }
-
-  return [10, 0, -10]
-}
-
-function genererCompositionLocale(secteur, qualite) {
-  const repartition = [...(secteur?.repartitionMinerais || [])]
-    .sort((a, b) => b.poids - a.poids)
-    .slice(0, 3)
-
-  if (repartition.length === 0) {
-    return []
-  }
-
-  const ajustements = obtenirAjustementsComposition(qualite)
-
-  return repartition.map((entree, index) => ({
-    idMinerai: entree.idMinerai,
-    poids: Math.max(5, entree.poids + (ajustements[index] ?? 0)),
-  }))
-}
-
 function obtenirTypeScanner(etat) {
   return etat?.vaisseau?.scanner?.type || 'base'
 }
 
 function formaterComposition(composition) {
+  if (!composition || composition.length === 0) {
+    return 'aucune signature exploitable'
+  }
+
   return composition
     .map((c) => donneesMinerais.find((m) => m.id === c.idMinerai)?.abreviation || c.idMinerai)
     .join(', ')
+}
+
+function obtenirProfilMinier(secteur) {
+  return (
+    secteur?.profilMinier || {
+      amasSterile: 15,
+      amas1: 45,
+      amas2: 30,
+      amas3: 10,
+    }
+  )
+}
+
+function tirerAuPoids(elements) {
+  const elementsValides = elements.filter((element) => element.poids > 0)
+
+  if (elementsValides.length === 0) {
+    return null
+  }
+
+  const total = elementsValides.reduce((somme, element) => somme + element.poids, 0)
+  let tirage = Math.random() * total
+
+  for (const element of elementsValides) {
+    tirage -= element.poids
+    if (tirage <= 0) {
+      return element
+    }
+  }
+
+  return elementsValides[elementsValides.length - 1]
+}
+
+function tirerTypeAmas(profilMinier) {
+  const resultat = tirerAuPoids([
+    { type: 'sterile', poids: profilMinier.amasSterile },
+    { type: 'mono', poids: profilMinier.amas1 },
+    { type: 'double', poids: profilMinier.amas2 },
+    { type: 'triple', poids: profilMinier.amas3 },
+  ])
+
+  return resultat?.type || 'mono'
+}
+
+function tirerMineraisDistincts(repartitionMinerais, quantite) {
+  const disponibles = [...(repartitionMinerais || [])]
+  const resultat = []
+
+  while (disponibles.length > 0 && resultat.length < quantite) {
+    const selection = tirerAuPoids(disponibles)
+
+    if (!selection) {
+      break
+    }
+
+    resultat.push(selection)
+
+    const index = disponibles.findIndex((minerai) => minerai.idMinerai === selection.idMinerai)
+    if (index !== -1) {
+      disponibles.splice(index, 1)
+    }
+  }
+
+  return resultat
+}
+
+function determinerQuantiteMinerais(typeAmas, repartitionMinerais) {
+  if (typeAmas === 'sterile') return 0
+  if (typeAmas === 'mono') return 1
+  if (typeAmas === 'double') return Math.min(2, repartitionMinerais.length)
+  if (typeAmas === 'triple') return Math.min(3, repartitionMinerais.length)
+  return 1
+}
+
+function obtenirAjustementReserveSelonTypeAmas(typeAmas) {
+  if (typeAmas === 'sterile') return 0
+  if (typeAmas === 'mono') return 1
+  if (typeAmas === 'double') return 0.92
+  if (typeAmas === 'triple') return 0.85
+  return 1
+}
+
+function repartirReserveEntreMinerais(mineraisSelectionnes, reserveTotale) {
+  if (!mineraisSelectionnes.length || reserveTotale <= 0) {
+    return []
+  }
+
+  const totalPoids = mineraisSelectionnes.reduce((somme, minerai) => somme + minerai.poids, 0)
+
+  if (totalPoids <= 0) {
+    return mineraisSelectionnes.map((minerai, index) => ({
+      idMinerai: minerai.idMinerai,
+      poids: minerai.poids,
+      reserve: index === 0 ? reserveTotale : 0,
+    }))
+  }
+
+  let reserveDistribuee = 0
+
+  return mineraisSelectionnes.map((minerai, index) => {
+    if (index === mineraisSelectionnes.length - 1) {
+      return {
+        idMinerai: minerai.idMinerai,
+        poids: minerai.poids,
+        reserve: Math.max(1, reserveTotale - reserveDistribuee),
+      }
+    }
+
+    const reserve = Math.max(1, Math.round((reserveTotale * minerai.poids) / totalPoids))
+    reserveDistribuee += reserve
+
+    return {
+      idMinerai: minerai.idMinerai,
+      poids: minerai.poids,
+      reserve,
+    }
+  })
+}
+
+function genererCompositionLocale(secteur, qualite) {
+  const repartitionMinerais = [...(secteur?.repartitionMinerais || [])]
+  const profilMinier = obtenirProfilMinier(secteur)
+
+  if (repartitionMinerais.length === 0) {
+    return {
+      typeAmas: 'sterile',
+      reserveTotale: 0,
+      composition: [],
+    }
+  }
+
+  const typeAmas = tirerTypeAmas(profilMinier)
+
+  if (typeAmas === 'sterile') {
+    return {
+      typeAmas,
+      reserveTotale: 0,
+      composition: [],
+    }
+  }
+
+  const reserveBase = tirerReserveDepuisQualite(qualite)
+  const ajustementReserve = obtenirAjustementReserveSelonTypeAmas(typeAmas)
+  const reserveTotale = Math.max(1, Math.round(reserveBase * ajustementReserve))
+  const quantiteMinerais = determinerQuantiteMinerais(typeAmas, repartitionMinerais)
+
+  const mineraisSelectionnes = tirerMineraisDistincts(repartitionMinerais, quantiteMinerais)
+  const composition = repartirReserveEntreMinerais(mineraisSelectionnes, reserveTotale)
+
+  return {
+    typeAmas,
+    reserveTotale,
+    composition,
+  }
+}
+
+function obtenirLibelleTypeAmas(typeAmas) {
+  if (typeAmas === 'sterile') return 'amas pauvre'
+  if (typeAmas === 'mono') return 'amas simple'
+  if (typeAmas === 'double') return 'amas mixte'
+  if (typeAmas === 'triple') return 'amas dense'
+  return 'amas'
+}
+
+function construireMessageScan(siteActif, ancienSite) {
+  const { nom, qualiteScan, reserveTotale, composition, typeAmas } = siteActif
+  const compositionTexte = formaterComposition(composition)
+  const libelleType = obtenirLibelleTypeAmas(typeAmas)
+
+  let message = `Scan terminé : ${nom} détecté (${qualiteScan}). Type : ${libelleType}.`
+
+  if (typeAmas === 'sterile') {
+    message += ' Aucune signature minérale exploitable confirmée.'
+  } else {
+    message += ` Réserve estimée ${reserveTotale}. Composition : ${compositionTexte}.`
+  }
+
+  if (ancienSite) {
+    message += ` L’ancien relevé (${ancienSite.nom}) est remplacé.`
+  }
+
+  return message
 }
 
 export function scannerAmasMinier() {
@@ -143,16 +308,16 @@ export function scannerAmasMinier() {
     return
   }
 
-  const reserve = tirerReserveDepuisQualite(resultatScan)
-  const composition = genererCompositionLocale(secteur, resultatScan)
+  const { typeAmas, reserveTotale, composition } = genererCompositionLocale(secteur, resultatScan)
 
   etat.exploration.siteActif = {
     id: etat.exploration.prochainSiteId,
-    nom: tirerNomAmas(resultatScan),
+    nom: tirerNomAmas(resultatScan, typeAmas),
     type: 'amas_minier',
+    typeAmas,
     qualiteScan: resultatScan,
-    reserveTotale: reserve,
-    reserveRestante: reserve,
+    reserveTotale,
+    reserveRestante: reserveTotale,
     composition,
   }
 
@@ -161,18 +326,5 @@ export function scannerAmasMinier() {
   faireTournerDrones()
   verifierPanneSecheEtDeclencher()
 
-  const nomsMinerais = formaterComposition(composition)
-
-  if (ancienSite) {
-    ajouterAuJournal(
-      `Scan terminé : ${etat.exploration.siteActif.nom} détecté (${resultatScan}). Réserve estimée ${reserve}. Composition : ${nomsMinerais}. L’ancien relevé (${ancienSite.nom}) est remplacé.`,
-      'evenements',
-    )
-    return
-  }
-
-  ajouterAuJournal(
-    `Scan terminé : ${etat.exploration.siteActif.nom} détecté (${resultatScan}). Réserve estimée ${reserve}. Composition : ${nomsMinerais}.`,
-    'evenements',
-  )
+  ajouterAuJournal(construireMessageScan(etat.exploration.siteActif, ancienSite), 'evenements')
 }
