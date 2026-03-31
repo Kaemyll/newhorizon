@@ -51,9 +51,10 @@ const station = computed(() => secteur.value?.stationPrincipale ?? null)
 
 const carburantManquant = computed(() => props.vaisseau.carburantMax - props.ressources.carburant)
 
+const coutCarburantUnitaire = computed(() => station.value?.economie?.coutCarburantParUnite ?? 1)
+
 const coutRavitaillementComplet = computed(() => {
-  const coutUnitaire = station.value?.economie?.coutCarburantParUnite ?? 1
-  return Math.max(0, carburantManquant.value) * coutUnitaire
+  return Math.max(0, carburantManquant.value) * coutCarburantUnitaire.value
 })
 
 const tauxTaxe = computed(() => calculerTauxTaxePourSecurite(secteur.value?.securite ?? 1))
@@ -200,8 +201,13 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
           </div>
 
           <div class="station-service-metric">
+            <span class="station-service-label">Prix unitaire</span>
+            <strong>{{ coutCarburantUnitaire }} cr. / unité</strong>
+          </div>
+
+          <div class="station-service-metric">
             <span class="station-service-label">Coût du plein</span>
-            <strong>{{ coutRavitaillementComplet }} crédits</strong>
+            <strong>{{ coutRavitaillementComplet }} cr.</strong>
           </div>
         </div>
 
