@@ -30,14 +30,14 @@ function tirerResultatScan(typeScanner = 'base') {
 
 function tirerReserveDepuisQualite(qualite) {
   if (qualite === 'faible') {
-    return 5 + Math.floor(Math.random() * 5) // 5-9
+    return 8 + Math.floor(Math.random() * 6) // 8-13
   }
 
   if (qualite === 'moyenne') {
-    return 10 + Math.floor(Math.random() * 8) // 10-17
+    return 14 + Math.floor(Math.random() * 9) // 14-22
   }
 
-  return 18 + Math.floor(Math.random() * 11) // 18-28
+  return 24 + Math.floor(Math.random() * 13) // 24-36
 }
 
 function tirerNomAmas(qualite, typeAmas = 'mono') {
@@ -153,9 +153,9 @@ function determinerQuantiteMinerais(typeAmas, repartitionMinerais) {
 
 function obtenirAjustementReserveSelonTypeAmas(typeAmas) {
   if (typeAmas === 'sterile') return 0
-  if (typeAmas === 'mono') return 1
-  if (typeAmas === 'double') return 0.92
-  if (typeAmas === 'triple') return 0.85
+  if (typeAmas === 'mono') return 1.08
+  if (typeAmas === 'double') return 1
+  if (typeAmas === 'triple') return 0.94
   return 1
 }
 
