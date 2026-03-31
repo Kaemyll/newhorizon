@@ -76,6 +76,34 @@ const badgeLocal = computed(() =>
       },
 )
 
+const roleVaisseau = computed(() => props.vaisseau?.role || 'inconnu')
+
+const estTransporteurMarchand = computed(() => roleVaisseau.value === 'transporteur_marchand')
+
+const roleVaisseauLabel = computed(() => {
+  if (roleVaisseau.value === 'mineur_leger') return 'Mineur léger'
+  if (roleVaisseau.value === 'mineur_lourd') return 'Mineur lourd'
+  if (roleVaisseau.value === 'mineur_renforce') return 'Mineur renforcé'
+  if (roleVaisseau.value === 'transporteur_marchand') return 'Transporteur marchand'
+  return 'Châssis polyvalent'
+})
+
+const doctrineOperationnelle = computed(() => {
+  if (roleVaisseau.value === 'transporteur_marchand') {
+    return 'Logistique, transport et commerce'
+  }
+
+  if (roleVaisseau.value === 'mineur_lourd') {
+    return 'Extraction prioritaire à haut rendement'
+  }
+
+  if (roleVaisseau.value === 'mineur_renforce') {
+    return 'Exploitation en zones plus exigeantes'
+  }
+
+  return 'Prospection et exploitation locale'
+})
+
 const statutVol = computed(() =>
   props.navigation.enVoyage ? 'En transit inter-sectoriel' : 'Disponible localement',
 )
@@ -175,6 +203,15 @@ const statutOperationnel = computed(() => {
     }
   }
 
+  if (estTransporteurMarchand.value) {
+    return {
+      niveau: 'info',
+      titre: 'Configuration marchande',
+      texte:
+        'Ce vaisseau est conçu pour le transport et le commerce. Les actions d’exploitation locale sont limitées.',
+    }
+  }
+
   if (props.vaisseau.soute >= props.vaisseau.souteMax) {
     return {
       niveau: 'alerte',
@@ -218,6 +255,7 @@ const statutOperationnelClasse = computed(() => {
 
 const scannerDisponible = computed(
   () =>
+    !estTransporteurMarchand.value &&
     !props.navigation.enVoyage &&
     props.positionLocale === 'operations' &&
     !props.assistance.remorquageEnCours,
@@ -225,6 +263,7 @@ const scannerDisponible = computed(
 
 const minageDisponible = computed(
   () =>
+    !estTransporteurMarchand.value &&
     (props.vaisseau?.puissanceMiniere || 0) > 0 &&
     !props.navigation.enVoyage &&
     props.positionLocale === 'operations' &&
@@ -233,14 +272,19 @@ const minageDisponible = computed(
 
 const deploiementDronesDisponible = computed(
   () =>
+    !estTransporteurMarchand.value &&
     !props.navigation.enVoyage &&
     props.positionLocale === 'operations' &&
     !props.assistance.remorquageEnCours,
 )
 
 const rappelDronesDisponible = computed(
-  () => !props.navigation.enVoyage && !props.assistance.remorquageEnCours,
+  () => !props.navigation.enVoyage && !props.assistance.remorquageEnCours && nbDeployes.value > 0,
 )
+
+const afficherActionsExploitation = computed(() => !estTransporteurMarchand.value)
+
+const afficherActionsDrones = computed(() => !estTransporteurMarchand.value)
 
 function decrireDrone(drone) {
   if (drone.etat === 'deploie') {
@@ -332,6 +376,16 @@ function decrireDrone(drone) {
 
         <div class="ops-system-list">
           <div class="ops-system-item">
+            <span class="ops-system-name">Rôle</span>
+            <span class="ops-system-value">{{ roleVaisseauLabel }}</span>
+          </div>
+
+          <div class="ops-system-item ops-system-item--multiline">
+            <span class="ops-system-name">Doctrine</span>
+            <span class="ops-system-value">{{ doctrineOperationnelle }}</span>
+          </div>
+
+          <div class="ops-system-item">
             <span class="ops-system-name">Canon de minage</span>
             <span class="ops-system-value">{{ statutCanon }}</span>
           </div>
@@ -392,11 +446,15 @@ function decrireDrone(drone) {
           </div>
         </div>
 
-        <div class="action-group action-group--inline">
+        <div v-if="afficherActionsExploitation" class="action-group action-group--inline">
           <button :disabled="!scannerDisponible" @click="emit('scanner')">Scanner un amas</button>
 
           <button :disabled="!minageDisponible" @click="emit('miner')">Miner manuellement</button>
         </div>
+
+        <p v-else class="panel-note">
+          Ce châssis marchand n’est pas configuré pour la prospection ni l’extraction locale.
+        </p>
       </section>
 
       <section class="ops-block">
@@ -422,7 +480,7 @@ function decrireDrone(drone) {
           </div>
         </div>
 
-        <div class="action-group action-group--inline">
+        <div v-if="afficherActionsDrones" class="action-group action-group--inline">
           <button :disabled="!deploiementDronesDisponible" @click="emit('deployer-drones')">
             Déployer les drones
           </button>
@@ -431,6 +489,11 @@ function decrireDrone(drone) {
             Rappeler les drones
           </button>
         </div>
+
+        <p v-else class="panel-note">
+          Le rôle principal de ce vaisseau est le fret. Les opérations minières locales ne sont pas
+          proposées.
+        </p>
 
         <ul v-if="industrie.drones.length > 0" class="drone-status-list">
           <li v-for="drone in industrie.drones" :key="drone.id">
@@ -444,8 +507,14 @@ function decrireDrone(drone) {
     </div>
 
     <p class="panel-note">
-      Le scanner peut détecter des amas pauvres, simples, mixtes ou denses. La qualité du relevé
-      influence la réserve estimée et la composition du site.
+      <template v-if="estTransporteurMarchand">
+        Ce transporteur marchand est optimisé pour le fret et les rotations commerciales entre
+        stations.
+      </template>
+      <template v-else>
+        Le scanner peut détecter des amas pauvres, simples, mixtes ou denses. La qualité du relevé
+        influence la réserve estimée et la composition du site.
+      </template>
     </p>
   </section>
 </template>
