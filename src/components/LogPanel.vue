@@ -9,6 +9,34 @@ defineProps({
 function filtrerParCategorie(categorie) {
   return (entree) => entree.categorie === categorie
 }
+
+function normaliserNiveau(niveau) {
+  if (niveau === 'info') return 'info'
+  if (niveau === 'succes') return 'succes'
+  if (niveau === 'alerte') return 'alerte'
+  if (niveau === 'critique') return 'critique'
+  return 'standard'
+}
+
+function libelleNiveau(niveau) {
+  const niveauNormalise = normaliserNiveau(niveau)
+
+  if (niveauNormalise === 'info') return 'INFO'
+  if (niveauNormalise === 'succes') return 'SUCCÈS'
+  if (niveauNormalise === 'alerte') return 'ALERTE'
+  if (niveauNormalise === 'critique') return 'CRITIQUE'
+  return 'STANDARD'
+}
+
+function classeNiveau(niveau) {
+  const niveauNormalise = normaliserNiveau(niveau)
+  return `log-entry-${niveauNormalise}`
+}
+
+function classeTagNiveau(niveau) {
+  const niveauNormalise = normaliserNiveau(niveau)
+  return `log-tag-${niveauNormalise}`
+}
 </script>
 
 <template>
@@ -24,11 +52,12 @@ function filtrerParCategorie(categorie) {
           <li
             v-for="(entree, index) in entrees.filter(filtrerParCategorie('evenements'))"
             :key="`evt-${index}`"
-            :class="{
-              'log-entry-critical': entree.niveau === 'critique',
-            }"
+            :class="classeNiveau(entree.niveau)"
           >
             <span class="log-timestamp">{{ entree.horodatage }}</span>
+            <span class="log-tag" :class="classeTagNiveau(entree.niveau)">
+              {{ libelleNiveau(entree.niveau) }}
+            </span>
             <span class="log-message">{{ entree.message }}</span>
           </li>
           <li
@@ -46,11 +75,12 @@ function filtrerParCategorie(categorie) {
           <li
             v-for="(entree, index) in entrees.filter(filtrerParCategorie('commerce'))"
             :key="`com-${index}`"
-            :class="{
-              'log-entry-critical': entree.niveau === 'critique',
-            }"
+            :class="classeNiveau(entree.niveau)"
           >
             <span class="log-timestamp">{{ entree.horodatage }}</span>
+            <span class="log-tag" :class="classeTagNiveau(entree.niveau)">
+              {{ libelleNiveau(entree.niveau) }}
+            </span>
             <span class="log-message">{{ entree.message }}</span>
           </li>
           <li

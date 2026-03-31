@@ -29,12 +29,12 @@ export function lancerVoyageVersDestinationSelectionnee() {
   const etat = recupererEtatJeu()
 
   if (etat.assistance?.remorquageEnCours) {
-    ajouterAuJournal('Voyage impossible pendant un remorquage.', 'evenements')
+    ajouterAuJournal('Voyage impossible pendant un remorquage.', 'evenements', 'alerte')
     return
   }
 
   if (etat.navigation.enVoyage) {
-    ajouterAuJournal('Navigation déjà en cours.', 'evenements')
+    ajouterAuJournal('Navigation déjà en cours.', 'evenements', 'alerte')
     return
   }
 
@@ -42,6 +42,7 @@ export function lancerVoyageVersDestinationSelectionnee() {
     ajouterAuJournal(
       'Le voyage inter-sectoriel ne peut être lancé que depuis la station.',
       'evenements',
+      'alerte',
     )
     return
   }
@@ -50,12 +51,12 @@ export function lancerVoyageVersDestinationSelectionnee() {
   const idDestination = etat.navigation.destinationSelectionneeId
 
   if (!idDestination) {
-    ajouterAuJournal('Aucune destination sélectionnée.', 'evenements')
+    ajouterAuJournal('Aucune destination sélectionnée.', 'evenements', 'alerte')
     return
   }
 
   if (idOrigine === idDestination) {
-    ajouterAuJournal('Vous êtes déjà dans ce secteur.', 'evenements')
+    ajouterAuJournal('Vous êtes déjà dans ce secteur.', 'evenements', 'alerte')
     return
   }
 
@@ -63,12 +64,12 @@ export function lancerVoyageVersDestinationSelectionnee() {
   const trajet = recupererTrajet(idOrigine, idDestination)
 
   if (!secteurDestination || !trajet) {
-    ajouterAuJournal('Aucun trajet disponible vers cette destination.', 'evenements')
+    ajouterAuJournal('Aucun trajet disponible vers cette destination.', 'evenements', 'alerte')
     return
   }
 
   if (etat.ressources.carburant < trajet.coutCarburant) {
-    ajouterAuJournal('Carburant insuffisant pour effectuer ce trajet.', 'evenements')
+    ajouterAuJournal('Carburant insuffisant pour effectuer ce trajet.', 'evenements', 'alerte')
     return
   }
 
@@ -83,6 +84,7 @@ export function lancerVoyageVersDestinationSelectionnee() {
   ajouterAuJournal(
     `Départ vers ${secteurDestination.nom} — coût ${trajet.coutCarburant} carburant, durée ${trajet.tempsTrajet} ticks.`,
     'evenements',
+    'info',
   )
 }
 
@@ -112,8 +114,9 @@ export function faireAvancerVoyage() {
     ajouterAuJournal(
       `Arrivée dans le secteur ${secteurDestination.nom}. Amarrage local disponible.`,
       'evenements',
+      'info',
     )
   } else {
-    ajouterAuJournal('Arrivée dans le secteur de destination.', 'evenements')
+    ajouterAuJournal('Arrivée dans le secteur de destination.', 'evenements', 'info')
   }
 }

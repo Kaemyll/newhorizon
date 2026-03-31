@@ -268,17 +268,22 @@ export function scannerAmasMinier() {
     ajouterAuJournal(
       'Impossible d’utiliser le scanner pendant un trajet inter-sectoriel.',
       'evenements',
+      'alerte',
     )
     return
   }
 
   if (etat.assistance?.remorquageEnCours) {
-    ajouterAuJournal('Scanner indisponible pendant un remorquage.', 'evenements')
+    ajouterAuJournal('Scanner indisponible pendant un remorquage.', 'evenements', 'alerte')
     return
   }
 
   if (etat.positionLocale !== 'operations') {
-    ajouterAuJournal('Le scanner ne peut être utilisé qu’en zone d’opérations.', 'evenements')
+    ajouterAuJournal(
+      'Le scanner ne peut être utilisé qu’en zone d’opérations.',
+      'evenements',
+      'alerte',
+    )
     return
   }
 
@@ -300,11 +305,16 @@ export function scannerAmasMinier() {
       ajouterAuJournal(
         `Scan terminé : aucun amas exploitable détecté. Le relevé précédent (${ancienSite.nom}) est abandonné.`,
         'evenements',
+        'alerte',
       )
       return
     }
 
-    ajouterAuJournal('Scan terminé : aucun amas exploitable détecté dans la zone.', 'evenements')
+    ajouterAuJournal(
+      'Scan terminé : aucun amas exploitable détecté dans la zone.',
+      'evenements',
+      'alerte',
+    )
     return
   }
 
@@ -326,5 +336,9 @@ export function scannerAmasMinier() {
   faireTournerDrones()
   verifierPanneSecheEtDeclencher()
 
-  ajouterAuJournal(construireMessageScan(etat.exploration.siteActif, ancienSite), 'evenements')
+  ajouterAuJournal(
+    construireMessageScan(etat.exploration.siteActif, ancienSite),
+    'evenements',
+    'info',
+  )
 }

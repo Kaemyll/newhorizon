@@ -13,22 +13,31 @@ export function allerEnZoneOperations() {
     ajouterAuJournal(
       'Impossible de quitter la station pendant un trajet inter-sectoriel.',
       'evenements',
+      'alerte',
     )
     return
   }
 
   if (etat.assistance?.remorquageEnCours) {
-    ajouterAuJournal('Impossible de quitter la station pendant un remorquage.', 'evenements')
+    ajouterAuJournal(
+      'Impossible de quitter la station pendant un remorquage.',
+      'evenements',
+      'alerte',
+    )
     return
   }
 
   if (etat.positionLocale === 'operations') {
-    ajouterAuJournal('Le vaisseau est déjà en zone d’opérations.', 'evenements')
+    ajouterAuJournal('Le vaisseau est déjà en zone d’opérations.', 'evenements', 'alerte')
     return
   }
 
   if (etat.ressources.carburant < COUT_CARBURANT_LOCAL) {
-    ajouterAuJournal('Carburant insuffisant pour rejoindre la zone d’opérations.', 'evenements')
+    ajouterAuJournal(
+      'Carburant insuffisant pour rejoindre la zone d’opérations.',
+      'evenements',
+      'alerte',
+    )
     return
   }
 
@@ -39,7 +48,11 @@ export function allerEnZoneOperations() {
   verifierPanneSecheEtDeclencher()
 
   if (!etat.assistance.remorquageEnCours) {
-    ajouterAuJournal('Décollage de la station vers la zone d’opérations locale.', 'evenements')
+    ajouterAuJournal(
+      'Décollage de la station vers la zone d’opérations locale.',
+      'evenements',
+      'info',
+    )
   }
 }
 
@@ -50,17 +63,18 @@ export function retourALaStation() {
     ajouterAuJournal(
       'Impossible de retourner à la station pendant un trajet inter-sectoriel.',
       'evenements',
+      'alerte',
     )
     return
   }
 
   if (etat.assistance?.remorquageEnCours) {
-    ajouterAuJournal('Remorquage déjà en cours.', 'evenements')
+    ajouterAuJournal('Remorquage déjà en cours.', 'evenements', 'alerte')
     return
   }
 
   if (etat.positionLocale === 'station') {
-    ajouterAuJournal('Le vaisseau est déjà amarré à la station.', 'evenements')
+    ajouterAuJournal('Le vaisseau est déjà amarré à la station.', 'evenements', 'alerte')
     return
   }
 
@@ -76,5 +90,9 @@ export function retourALaStation() {
   avancerTemps(COUT_TICKS_LOCAL)
   etat.positionLocale = 'station'
 
-  ajouterAuJournal('Retour à la station locale et procédure d’amarrage terminée.', 'evenements')
+  ajouterAuJournal(
+    'Retour à la station locale et procédure d’amarrage terminée.',
+    'evenements',
+    'info',
+  )
 }
