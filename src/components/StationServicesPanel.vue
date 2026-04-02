@@ -38,6 +38,7 @@ const props = defineProps({
 const emit = defineEmits([
   'changer-sous-mode-station',
   'vendre',
+  'acheter-bien',
   'ravitailler',
   'acheter-drone',
   'aller-operations',
@@ -62,9 +63,13 @@ const tauxTaxe = computed(() => calculerTauxTaxePourSecurite(secteur.value?.secu
 
 const taxeLocalePourcent = computed(() => formaterPourcentageTaxe(tauxTaxe.value))
 
-const coursLocaux = computed(() => calculerCoursLocauxPourStation(station.value))
+const coursLocaux = computed(() =>
+  calculerCoursLocauxPourStation(station.value, props.ressources.minerais || {}),
+)
 
 const resumeMarche = computed(() => construireResumeMarcheStation(station.value))
+
+const souteRestante = computed(() => props.vaisseau.souteMax - props.vaisseau.soute)
 
 const profilMarcheLabel = computed(() => {
   const typeStation = station.value?.type || ''
@@ -161,6 +166,16 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
             <strong>{{ taxeLocalePourcent }}</strong>
           </div>
 
+          <div class="station-service-metric">
+            <span class="station-service-label">Soute</span>
+            <strong>{{ vaisseau.soute }} / {{ vaisseau.souteMax }}</strong>
+          </div>
+
+          <div class="station-service-metric">
+            <span class="station-service-label">Capacité restante</span>
+            <strong>{{ souteRestante }}</strong>
+          </div>
+
           <div class="station-service-metric station-service-metric--full">
             <span class="station-service-label">Profil de marché</span>
             <strong>{{ profilMarcheLabel }}</strong>
@@ -168,8 +183,9 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
         </div>
 
         <p class="station-service-description">
-          Les cours ci-dessous représentent les prix locaux bruts par unité. La taxe locale
-          s’applique une seule fois, sur le montant brut total de la transaction.
+          Les achats et ventes utilisent la même soute embarquée. Les cours ci-dessous représentent
+          les prix locaux bruts par unité. La taxe locale s’applique lors des ventes, sur le montant
+          brut total de la transaction.
         </p>
 
         <div class="station-market-insights station-market-insights--compact">
@@ -221,6 +237,18 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
 
               <span class="market-rate-average">moy. {{ minerai.prixMoyen }} cr</span>
             </div>
+
+            <div class="market-rate-row market-rate-row--bottom">
+              <span class="market-rate-average">En soute : {{ minerai.quantiteEnSoute }}</span>
+
+              <button
+                class="market-rate-buy-button"
+                :disabled="souteRestante <= 0 || ressources.credits < minerai.prixBrut"
+                @click="emit('acheter-bien', minerai.id)"
+              >
+                Acheter 1
+              </button>
+            </div>
           </div>
         </div>
 
@@ -229,7 +257,7 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
         </p>
 
         <div class="action-group">
-          <button @click="emit('vendre')">Vendre la cargaison</button>
+          <button @click="emit('vendre')">Vendre le contenu minéral de la soute</button>
         </div>
       </div>
 

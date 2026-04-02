@@ -19,6 +19,7 @@ export function creerEtatInitialJeu() {
       credits: 0,
       carburant: vaisseauDepart.carburantMax,
       minerais: creerStockMineraisInitial(),
+      cargaisonMarchande: {},
     },
 
     vaisseau: {

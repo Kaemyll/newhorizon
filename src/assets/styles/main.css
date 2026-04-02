@@ -575,6 +575,22 @@ select {
   opacity: 0.72;
 }
 
+.market-rate-buy-button {
+  min-height: 28px;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
+.market-rate-buy-button:disabled {
+  opacity: 0.45;
+}
+
+.market-rate-row .market-rate-average {
+  display: inline-flex;
+  align-items: center;
+}
+
 .station-service-badge {
   display: inline-block;
   padding: 0.2rem 0.45rem;

@@ -1,5 +1,27 @@
 import { donneesMinerais } from './dataMinerais'
 import { donneesSecteurs } from './dataSecteurs'
+import { recupererEtatJeu } from './etatJeu'
+import { avancerTemps, recupererTickCourant } from './systemeTemps'
+
+function obtenirHorodatageTick() {
+  const tick = recupererTickCourant()
+  return `[T${String(tick).padStart(4, '0')}]`
+}
+
+function ajouterAuJournalCommerce(message, niveau = 'standard') {
+  const etat = recupererEtatJeu()
+
+  etat.journal.unshift({
+    horodatage: obtenirHorodatageTick(),
+    message,
+    categorie: 'commerce',
+    niveau,
+  })
+
+  if (etat.journal.length > 50) {
+    etat.journal.pop()
+  }
+}
 
 export function calculerTauxTaxePourSecurite(securite) {
   const taxe = 0.18 + securite * 0.22
@@ -55,14 +77,8 @@ export function recupererVariationCours(station, minerai) {
 export function recupererSymboleVariation(station, minerai) {
   const variation = recupererVariationCours(station, minerai)
 
-  if (variation === 'hausse') {
-    return '↑'
-  }
-
-  if (variation === 'baisse') {
-    return '↓'
-  }
-
+  if (variation === 'hausse') return '↑'
+  if (variation === 'baisse') return '↓'
   return '='
 }
 
@@ -78,7 +94,7 @@ export function formaterVariationPrixPourcentage(valeur) {
   return '0 %'
 }
 
-export function calculerCoursLocauxPourStation(station) {
+export function calculerCoursLocauxPourStation(station, ressourcesMinerais = {}) {
   return donneesMinerais.map((minerai) => {
     const prixBrut = calculerPrixUnitaireLocalBrut(station, minerai)
     const variationPourcentage = calculerVariationPrixPourcentage(station, minerai)
@@ -92,6 +108,7 @@ export function calculerCoursLocauxPourStation(station) {
       modificateur: recupererModificateurMinerai(station, minerai.id),
       variationPourcentage,
       variationPourcentageLabel: formaterVariationPrixPourcentage(variationPourcentage),
+      quantiteEnSoute: ressourcesMinerais[minerai.id] || 0,
     }
   })
 }
@@ -111,12 +128,9 @@ export function recupererTopCoursBaissiers(station, limite = 3) {
 }
 
 export function construireResumeMarcheStation(station) {
-  const haussiers = recupererTopCoursHaussiers(station, 2)
-  const baissiers = recupererTopCoursBaissiers(station, 2)
-
   return {
-    haussiers,
-    baissiers,
+    haussiers: recupererTopCoursHaussiers(station, 2),
+    baissiers: recupererTopCoursBaissiers(station, 2),
   }
 }
 
@@ -141,4 +155,59 @@ export function calculerValeurCargaisonPourStation(ressourcesMinerais, station, 
     valeurNette,
     tauxTaxe,
   }
+}
+
+export function acheterMineraiEnStation(idMinerai, quantite = 1) {
+  const etat = recupererEtatJeu()
+
+  if (etat.navigation?.enVoyage) {
+    ajouterAuJournalCommerce('Impossible d’acheter un chargement pendant un trajet.', 'alerte')
+    return
+  }
+
+  if (etat.positionLocale !== 'station') {
+    ajouterAuJournalCommerce('Les achats ne sont possibles qu’à la station.', 'alerte')
+    return
+  }
+
+  const secteurCourant = recupererSecteurParId(etat.secteurCourant?.id)
+  const station = secteurCourant?.stationPrincipale
+
+  if (!station?.services?.commerce) {
+    ajouterAuJournalCommerce('Aucun service commercial disponible dans cette station.', 'alerte')
+    return
+  }
+
+  const minerai = donneesMinerais.find((entree) => entree.id === idMinerai)
+
+  if (!minerai) {
+    ajouterAuJournalCommerce('Bien commercial introuvable.', 'alerte')
+    return
+  }
+
+  const quantiteAchetee = Math.max(1, Math.floor(quantite))
+
+  if (etat.vaisseau.soute + quantiteAchetee > etat.vaisseau.souteMax) {
+    ajouterAuJournalCommerce('Soute insuffisante pour embarquer ce chargement.', 'alerte')
+    return
+  }
+
+  const prixUnitaire = calculerPrixUnitaireLocalBrut(station, minerai)
+  const coutTotal = prixUnitaire * quantiteAchetee
+
+  if (etat.ressources.credits < coutTotal) {
+    ajouterAuJournalCommerce('Crédits insuffisants pour cet achat.', 'alerte')
+    return
+  }
+
+  etat.ressources.credits -= coutTotal
+  etat.ressources.minerais[idMinerai] = (etat.ressources.minerais[idMinerai] || 0) + quantiteAchetee
+  etat.vaisseau.soute += quantiteAchetee
+
+  avancerTemps(1)
+
+  ajouterAuJournalCommerce(
+    `Achat embarqué en soute : +${quantiteAchetee} ${minerai.nom} pour ${coutTotal} cr.`,
+    'succes',
+  )
 }
