@@ -4,6 +4,7 @@ import { donneesSecteurs } from '../game/dataSecteurs'
 import {
   calculerCoursLocauxPourStation,
   calculerTauxTaxePourSecurite,
+  construireResumeMarcheStation,
   formaterPourcentageTaxe,
 } from '../game/systemeCommerce'
 
@@ -63,6 +64,20 @@ const taxeLocalePourcent = computed(() => formaterPourcentageTaxe(tauxTaxe.value
 
 const coursLocaux = computed(() => calculerCoursLocauxPourStation(station.value))
 
+const resumeMarche = computed(() => construireResumeMarcheStation(station.value))
+
+const profilMarcheLabel = computed(() => {
+  const typeStation = station.value?.type || ''
+
+  if (typeStation.includes('commerciale')) return 'Hub commercial généraliste'
+  if (typeStation.includes('industrielle')) return 'Marché industriel de transit'
+  if (typeStation.includes('chantier')) return 'Débouché métallurgique et logistique'
+  if (typeStation.includes('mouillage')) return 'Marché frontalier brut'
+  if (typeStation.includes('port_franc')) return 'Port spéculatif périphérique'
+  if (typeStation.includes('terminal')) return 'Point d’appui avancé'
+  return 'Marché local'
+})
+
 const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
 </script>
 
@@ -72,8 +87,39 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
       <h2>⌘ Services de station</h2>
       <p class="station-services-subtitle">{{ station.nom }} — {{ station.type }}</p>
     </div>
-    <div v-if="positionLocale === 'station'" class="action-group action-group--station-launch">
-      <button @click="emit('aller-operations')">Rejoindre la zone d’opérations</button>
+
+    <div class="station-mode-tabs station-mode-tabs--with-launch">
+      <button
+        v-if="positionLocale === 'station'"
+        class="station-launch-button"
+        @click="emit('aller-operations')"
+      >
+        🚀 Zone d’opérations
+      </button>
+
+      <button
+        v-if="station.services.commerce"
+        :class="{ 'is-active': sousModeStation === 'commerce' }"
+        @click="emit('changer-sous-mode-station', 'commerce')"
+      >
+        Commerce
+      </button>
+
+      <button
+        v-if="station.services.ravitaillement"
+        :class="{ 'is-active': sousModeStation === 'ravitaillement' }"
+        @click="emit('changer-sous-mode-station', 'ravitaillement')"
+      >
+        Ravitaillement
+      </button>
+
+      <button
+        v-if="station.services.atelier"
+        :class="{ 'is-active': sousModeStation === 'atelier' }"
+        @click="emit('changer-sous-mode-station', 'atelier')"
+      >
+        Atelier
+      </button>
     </div>
 
     <template v-if="positionLocale !== 'station'">
@@ -95,35 +141,9 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
     </template>
 
     <template v-else>
-      <div class="station-mode-tabs">
-        <button
-          v-if="station.services.commerce"
-          :class="{ 'is-active': sousModeStation === 'commerce' }"
-          @click="emit('changer-sous-mode-station', 'commerce')"
-        >
-          Commerce
-        </button>
-
-        <button
-          v-if="station.services.ravitaillement"
-          :class="{ 'is-active': sousModeStation === 'ravitaillement' }"
-          @click="emit('changer-sous-mode-station', 'ravitaillement')"
-        >
-          Ravitaillement
-        </button>
-
-        <button
-          v-if="station.services.atelier"
-          :class="{ 'is-active': sousModeStation === 'atelier' }"
-          @click="emit('changer-sous-mode-station', 'atelier')"
-        >
-          Atelier
-        </button>
-      </div>
-
       <div
         v-if="sousModeStation === 'commerce'"
-        class="station-service-card station-service-card-commerce"
+        class="station-service-card station-service-card-commerce station-service-card--scrollable"
       >
         <div class="station-service-card-header">
           <h3>¤ Commerce local</h3>
@@ -140,6 +160,11 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
             <span class="station-service-label">Taxe locale</span>
             <strong>{{ taxeLocalePourcent }}</strong>
           </div>
+
+          <div class="station-service-metric station-service-metric--full">
+            <span class="station-service-label">Profil de marché</span>
+            <strong>{{ profilMarcheLabel }}</strong>
+          </div>
         </div>
 
         <p class="station-service-description">
@@ -147,32 +172,60 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
           s’applique une seule fois, sur le montant brut total de la transaction.
         </p>
 
+        <div class="station-market-insights station-market-insights--compact">
+          <div class="station-market-insight-card">
+            <h4>Meilleures ventes locales</h4>
+            <ul v-if="resumeMarche.haussiers.length > 0" class="station-market-list">
+              <li v-for="minerai in resumeMarche.haussiers" :key="minerai.id">
+                <span>{{ minerai.nom }}</span>
+                <strong>{{ minerai.variationPourcentageLabel }}</strong>
+              </li>
+            </ul>
+            <p v-else class="panel-note">Aucune prime locale notable.</p>
+          </div>
+
+          <div class="station-market-insight-card">
+            <h4>Moins favorisées</h4>
+            <ul v-if="resumeMarche.baissiers.length > 0" class="station-market-list">
+              <li v-for="minerai in resumeMarche.baissiers" :key="minerai.id">
+                <span>{{ minerai.nom }}</span>
+                <strong>{{ minerai.variationPourcentageLabel }}</strong>
+              </li>
+            </ul>
+            <p v-else class="panel-note">Aucune décote locale notable.</p>
+          </div>
+        </div>
+
         <div class="market-rate-grid market-rate-grid-three-cols">
           <div v-for="minerai in coursLocaux" :key="minerai.id" class="market-rate-item">
-            <span class="market-rate-name">
-              <span class="resource-icon">{{ minerai.icone }}</span>
-              {{ minerai.abreviation }}
-            </span>
+            <div class="market-rate-row market-rate-row--top">
+              <span class="market-rate-name">
+                <span class="resource-icon">{{ minerai.icone }}</span>
+                {{ minerai.abreviation }}
+              </span>
 
-            <span
-              class="market-rate-variation"
-              :class="{
-                'market-rate-variation-up': minerai.variation === 'hausse',
-                'market-rate-variation-down': minerai.variation === 'baisse',
-                'market-rate-variation-stable': minerai.variation === 'stable',
-              }"
-            >
-              {{ minerai.variationSymbole }}
-            </span>
+              <span class="market-rate-values">{{ minerai.prixBrut }} cr</span>
+            </div>
 
-            <span class="market-rate-values"> {{ minerai.prixBrut }} cr </span>
+            <div class="market-rate-row market-rate-row--bottom">
+              <span
+                class="market-rate-variation"
+                :class="{
+                  'market-rate-variation-up': minerai.variation === 'hausse',
+                  'market-rate-variation-down': minerai.variation === 'baisse',
+                  'market-rate-variation-stable': minerai.variation === 'stable',
+                }"
+              >
+                {{ minerai.variationSymbole }} {{ minerai.variationPourcentageLabel }}
+              </span>
 
-            <span class="market-rate-average"> (moy. {{ minerai.prixMoyen }} cr) </span>
+              <span class="market-rate-average">moy. {{ minerai.prixMoyen }} cr</span>
+            </div>
           </div>
         </div>
 
         <p class="market-rate-legend">
-          Affichage : cours local brut par unité, comparé au cours moyen
+          Affichage : cours local brut par unité, comparé au cours moyen galactique.
         </p>
 
         <div class="action-group">

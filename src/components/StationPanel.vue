@@ -1,7 +1,11 @@
 <script setup>
 import { computed } from 'vue'
 import { donneesSecteurs } from '../game/dataSecteurs'
-import { calculerTauxTaxePourSecurite, formaterPourcentageTaxe } from '../game/systemeCommerce'
+import {
+  calculerTauxTaxePourSecurite,
+  construireResumeMarcheStation,
+  formaterPourcentageTaxe,
+} from '../game/systemeCommerce'
 
 const props = defineProps({
   secteurCourant: {
@@ -17,6 +21,20 @@ const secteur = computed(() =>
 const station = computed(() => secteur.value?.stationPrincipale ?? null)
 
 const taxeLocale = computed(() => calculerTauxTaxePourSecurite(secteur.value?.securite ?? 1))
+
+const resumeMarche = computed(() => construireResumeMarcheStation(station.value))
+
+const profilMarcheLabel = computed(() => {
+  const typeStation = station.value?.type || ''
+
+  if (typeStation.includes('commerciale')) return 'Hub commercial généraliste'
+  if (typeStation.includes('industrielle')) return 'Marché industriel de transit'
+  if (typeStation.includes('chantier')) return 'Débouché métallurgique et logistique'
+  if (typeStation.includes('mouillage')) return 'Marché frontalier brut'
+  if (typeStation.includes('port_franc')) return 'Port spéculatif périphérique'
+  if (typeStation.includes('terminal')) return 'Point d’appui avancé'
+  return 'Marché local'
+})
 </script>
 
 <template>
@@ -59,6 +77,17 @@ const taxeLocale = computed(() => calculerTauxTaxePourSecurite(secteur.value?.se
       <h3>Conditions locales</h3>
       <p>Carburant : {{ station.economie.coutCarburantParUnite }} crédit / unité</p>
       <p>Taxe commerciale : {{ formaterPourcentageTaxe(taxeLocale) }}</p>
+      <p>Profil de marché : {{ profilMarcheLabel }}</p>
+    </div>
+
+    <div class="station-summary-block">
+      <h3>Tendances locales</h3>
+      <p v-if="resumeMarche.haussiers.length > 0">
+        Mieux valorisés : {{ resumeMarche.haussiers.map((m) => m.abreviation).join(', ') }}
+      </p>
+      <p v-if="resumeMarche.baissiers.length > 0">
+        Moins recherchés : {{ resumeMarche.baissiers.map((m) => m.abreviation).join(', ') }}
+      </p>
     </div>
 
     <p class="sector-description">
