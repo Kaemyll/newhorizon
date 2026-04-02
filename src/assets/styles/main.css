@@ -206,7 +206,7 @@ select {
   flex-direction: column;
   gap: 10px;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
   padding-right: 2px;
 }
 
@@ -1089,6 +1089,20 @@ select {
 
 .ops-panel {
   min-height: 0;
+}
+
+.ops-panel--scrollable {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.35rem;
+  padding-bottom: 0.75rem;
+}
+
+.ops-panel--scrollable::after {
+  content: '';
+  display: block;
+  height: 8px;
 }
 
 .ops-header {

@@ -298,7 +298,7 @@ function decrireDrone(drone) {
 </script>
 
 <template>
-  <section class="panel ops-panel ops-panel--enhanced">
+  <section class="panel ops-panel ops-panel--enhanced ops-panel--scrollable">
     <div class="ops-header">
       <div>
         <h2>⌘ Opérations</h2>
