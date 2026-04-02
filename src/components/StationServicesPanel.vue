@@ -143,6 +143,13 @@ function vendreMineraiMax(minerai) {
       </button>
 
       <button
+        :class="{ 'is-active': sousModeStation === 'hangar' }"
+        @click="emit('changer-sous-mode-station', 'hangar')"
+      >
+        Hangar
+      </button>
+
+      <button
         v-if="station.services.commerce"
         :class="{ 'is-active': sousModeStation === 'commerce' }"
         @click="emit('changer-sous-mode-station', 'commerce')"
@@ -186,8 +193,12 @@ function vendreMineraiMax(minerai) {
     </template>
 
     <template v-else>
+      <div v-if="sousModeStation === 'hangar'" class="station-service-mode-hangar-scroll">
+        <slot name="hangar" />
+      </div>
+
       <div
-        v-if="sousModeStation === 'commerce'"
+        v-else-if="sousModeStation === 'commerce'"
         class="station-service-card station-service-card-commerce station-service-card--scrollable"
       >
         <div class="station-service-card-header">

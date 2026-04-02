@@ -5,8 +5,29 @@ function creerStockMineraisInitial() {
   return Object.fromEntries(donneesMinerais.map((minerai) => [minerai.id, 0]))
 }
 
+function creerInstanceVaisseauDepuisModele(modele) {
+  return {
+    id: `${modele.id}_001`,
+    modeleId: modele.id,
+    nom: modele.nom,
+    constructeur: modele.constructeur,
+    role: modele.role,
+    coque: modele.coqueMax,
+    coqueMax: modele.coqueMax,
+    soute: 0,
+    souteMax: modele.souteMax,
+    puissanceMiniere: modele.puissanceMiniere,
+    dronesMiniersMax: modele.dronesMiniersMax,
+    carburant: modele.carburantMax,
+    carburantMax: modele.carburantMax,
+    scanner: structuredClone(modele.scanner),
+    ameliorations: structuredClone(modele.ameliorations || []),
+  }
+}
+
 export function creerEtatInitialJeu() {
-  const vaisseauDepart = donneesVaisseaux.find((vaisseau) => vaisseau.id === 'hw_mule')
+  const modeleDepart = donneesVaisseaux.find((vaisseau) => vaisseau.id === 'hw_mule')
+  const vaisseauDepart = creerInstanceVaisseauDepuisModele(modeleDepart)
 
   return {
     meta: {
@@ -17,23 +38,29 @@ export function creerEtatInitialJeu() {
 
     ressources: {
       credits: 0,
-      carburant: vaisseauDepart.carburantMax,
+      carburant: vaisseauDepart.carburant,
       minerais: creerStockMineraisInitial(),
       cargaisonMarchande: {},
     },
 
+    vaisseauxPossedes: [vaisseauDepart],
+    vaisseauActifId: vaisseauDepart.id,
+
     vaisseau: {
       id: vaisseauDepart.id,
+      modeleId: vaisseauDepart.modeleId,
       nom: vaisseauDepart.nom,
       constructeur: vaisseauDepart.constructeur,
-      coque: vaisseauDepart.coqueMax,
-
+      role: vaisseauDepart.role,
+      coque: vaisseauDepart.coque,
       coqueMax: vaisseauDepart.coqueMax,
-      soute: 0,
+      soute: vaisseauDepart.soute,
       souteMax: vaisseauDepart.souteMax,
       puissanceMiniere: vaisseauDepart.puissanceMiniere,
       dronesMiniersMax: vaisseauDepart.dronesMiniersMax,
       carburantMax: vaisseauDepart.carburantMax,
+      scanner: structuredClone(vaisseauDepart.scanner),
+      ameliorations: structuredClone(vaisseauDepart.ameliorations),
     },
 
     industrie: {
