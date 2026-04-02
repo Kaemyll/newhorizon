@@ -10,6 +10,7 @@ import HeaderActions from './components/HeaderActions.vue'
 import LogPanel from './components/LogPanel.vue'
 import OperationPanel from './components/OperationPanel.vue'
 import StationServicesPanel from './components/StationServicesPanel.vue'
+import HangarPanel from './components/HangarPanel.vue'
 
 import { recupererEtatJeu, reinitialiserEtatJeu } from './game/etatJeu'
 import { chargerJeu, sauvegarderJeu } from './game/systemeSauvegarde'
@@ -20,6 +21,7 @@ import {
   deployerDrones,
   rappelerDrones,
 } from './game/systemeMinage'
+import { acheterMineraiEnStation, vendreMineraiEnStation } from './game/systemeCommerce'
 import { ravitaillerCarburant } from './game/systemeRavitaillement'
 import { ameliorerVaisseau } from './game/systemeAmeliorations'
 import {
@@ -30,6 +32,7 @@ import { allerEnZoneOperations, retourALaStation } from './game/systemeLocalisat
 import { scannerAmasMinier } from './game/systemeExploration'
 import { donneesSecteurs } from './game/dataSecteurs'
 import { demarrerBoucleJeu, arreterBoucleJeu } from './game/systemeTick'
+import { acheterVaisseau, changerVaisseauActif } from './game/systemeVaisseaux'
 
 const etat = reactive({})
 
@@ -51,8 +54,12 @@ const stationCourante = computed(() => secteurCourantComplet.value?.stationPrinc
 function normaliserSousModeStation() {
   const services = stationCourante.value?.services
 
+  if (ui.sousModeStation === 'hangar') {
+    return
+  }
+
   if (!services) {
-    ui.sousModeStation = 'commerce'
+    ui.sousModeStation = 'hangar'
     return
   }
 
@@ -60,22 +67,7 @@ function normaliserSousModeStation() {
   if (ui.sousModeStation === 'ravitaillement' && services.ravitaillement) return
   if (ui.sousModeStation === 'atelier' && services.atelier) return
 
-  if (services.commerce) {
-    ui.sousModeStation = 'commerce'
-    return
-  }
-
-  if (services.ravitaillement) {
-    ui.sousModeStation = 'ravitaillement'
-    return
-  }
-
-  if (services.atelier) {
-    ui.sousModeStation = 'atelier'
-    return
-  }
-
-  ui.sousModeStation = 'commerce'
+  ui.sousModeStation = 'hangar'
 }
 
 function synchroniserModeActifAvecPositionLocale() {
@@ -116,6 +108,18 @@ function gererScanner() {
 
 function gererVenteMinerai() {
   vendreTousLesMinerais()
+  sauvegarderJeu()
+  synchroniserEtat()
+}
+
+function gererVenteBien(idBien, quantite = 1) {
+  vendreMineraiEnStation(idBien, quantite)
+  sauvegarderJeu()
+  synchroniserEtat()
+}
+
+function gererAchatBien(idBien, quantite = 1) {
+  acheterMineraiEnStation(idBien, quantite)
   sauvegarderJeu()
   synchroniserEtat()
 }
@@ -187,6 +191,18 @@ function gererRetourStation() {
   }
 }
 
+function gererChangerVaisseau(idVaisseau) {
+  changerVaisseauActif(idVaisseau)
+  sauvegarderJeu()
+  synchroniserEtat()
+}
+
+function gererAcheterVaisseau(modeleId) {
+  acheterVaisseau(modeleId)
+  sauvegarderJeu()
+  synchroniserEtat()
+}
+
 function gererReinitialisation() {
   reinitialiserEtatJeu()
   Object.assign(ui, creerEtatUIInitial())
@@ -222,6 +238,8 @@ onUnmounted(() => {
     v-if="
       etat.ressources &&
       etat.vaisseau &&
+      etat.vaisseauxPossedes &&
+      etat.vaisseauActifId &&
       etat.industrie &&
       etat.economie &&
       etat.secteurCourant &&
@@ -303,11 +321,25 @@ onUnmounted(() => {
             :economie="etat.economie"
             @changer-sous-mode-station="changerSousModeStation"
             @vendre="gererVenteMinerai"
+            @vendre-bien="gererVenteBien"
+            @acheter-bien="gererAchatBien"
             @ravitailler="gererRavitaillement"
             @acheter-drone="gererAchatDrone"
             @retour-station="gererRetourStation"
             @aller-operations="gererAllerOperations"
           >
+            <template #hangar>
+              <HangarPanel
+                :secteur-courant="etat.secteurCourant"
+                :vaisseau-actif-id="etat.vaisseauActifId"
+                :vaisseaux-possedes="etat.vaisseauxPossedes"
+                :vaisseau="etat.vaisseau"
+                :ressources="etat.ressources"
+                @changer-vaisseau="gererChangerVaisseau"
+                @acheter-vaisseau="gererAcheterVaisseau"
+              />
+            </template>
+
             <template #atelier>
               <UpgradePanel
                 :vaisseau="etat.vaisseau"

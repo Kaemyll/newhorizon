@@ -12,26 +12,35 @@ const emit = defineEmits(['changer-mode', 'reinitialiser'])
 <template>
   <div class="header-actions">
     <button
+      class="action-button-with-icon"
       :class="{ 'is-active': modeActif === 'operations' }"
       @click="emit('changer-mode', 'operations')"
     >
-      Opérations
+      <span class="button-icon" aria-hidden="true">⌘</span>
+      <span>Opérations</span>
     </button>
 
     <button
+      class="action-button-with-icon"
       :class="{ 'is-active': modeActif === 'station' }"
       @click="emit('changer-mode', 'station')"
     >
-      Station
+      <span class="button-icon" aria-hidden="true">⌂</span>
+      <span>Station</span>
     </button>
 
     <button
+      class="action-button-with-icon"
       :class="{ 'is-active': modeActif === 'navigation' }"
       @click="emit('changer-mode', 'navigation')"
     >
-      Navigation
+      <span class="button-icon" aria-hidden="true">🧭</span>
+      <span>Navigation</span>
     </button>
 
-    <button @click="emit('reinitialiser')">Réinitialiser</button>
+    <button class="action-button-with-icon" @click="emit('reinitialiser')">
+      <span class="button-icon" aria-hidden="true">↺</span>
+      <span>Réinitialiser</span>
+    </button>
   </div>
 </template>

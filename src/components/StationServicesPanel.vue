@@ -4,6 +4,7 @@ import { donneesSecteurs } from '../game/dataSecteurs'
 import {
   calculerCoursLocauxPourStation,
   calculerTauxTaxePourSecurite,
+  construireResumeMarcheStation,
   formaterPourcentageTaxe,
 } from '../game/systemeCommerce'
 
@@ -37,6 +38,8 @@ const props = defineProps({
 const emit = defineEmits([
   'changer-sous-mode-station',
   'vendre',
+  'vendre-bien',
+  'acheter-bien',
   'ravitailler',
   'acheter-drone',
   'aller-operations',
@@ -61,9 +64,66 @@ const tauxTaxe = computed(() => calculerTauxTaxePourSecurite(secteur.value?.secu
 
 const taxeLocalePourcent = computed(() => formaterPourcentageTaxe(tauxTaxe.value))
 
-const coursLocaux = computed(() => calculerCoursLocauxPourStation(station.value))
+const coursLocaux = computed(() =>
+  calculerCoursLocauxPourStation(station.value, props.ressources.minerais || {}),
+)
+
+const resumeMarche = computed(() => construireResumeMarcheStation(station.value))
+
+const souteRestante = computed(() => props.vaisseau.souteMax - props.vaisseau.soute)
+
+const profilMarcheLabel = computed(() => {
+  const typeStation = station.value?.type || ''
+
+  if (typeStation.includes('commerciale')) return 'Hub commercial généraliste'
+  if (typeStation.includes('industrielle')) return 'Marché industriel de transit'
+  if (typeStation.includes('chantier')) return 'Débouché métallurgique et logistique'
+  if (typeStation.includes('mouillage')) return 'Marché frontalier brut'
+  if (typeStation.includes('port_franc')) return 'Port spéculatif périphérique'
+  if (typeStation.includes('terminal')) return 'Point d’appui avancé'
+  return 'Marché local'
+})
 
 const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
+
+function recupererQuantiteEnSoute(idMinerai) {
+  return props.ressources?.minerais?.[idMinerai] || 0
+}
+
+function calculerQuantiteMaxAchetable(minerai) {
+  const prixUnitaire = minerai?.prixBrut || 0
+
+  if (prixUnitaire <= 0) {
+    return 0
+  }
+
+  const quantiteParCredits = Math.floor((props.ressources.credits || 0) / prixUnitaire)
+  return Math.max(0, Math.min(souteRestante.value, quantiteParCredits))
+}
+
+function acheterUnMinerai(idMinerai) {
+  emit('acheter-bien', idMinerai, 1)
+}
+
+function acheterMineraiMax(minerai) {
+  const quantiteMax = calculerQuantiteMaxAchetable(minerai)
+
+  if (quantiteMax > 0) {
+    emit('acheter-bien', minerai.id, quantiteMax)
+  }
+}
+
+function vendreUnMinerai(idMinerai) {
+  emit('vendre-bien', idMinerai, 1)
+}
+
+function vendreMineraiMax(minerai) {
+  const quantiteMax = recupererQuantiteEnSoute(minerai.id)
+
+  if (quantiteMax > 0) {
+    emit('vendre-bien', minerai.id, quantiteMax)
+  }
+}
 </script>
 
 <template>
@@ -72,8 +132,55 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
       <h2>⌘ Services de station</h2>
       <p class="station-services-subtitle">{{ station.nom }} — {{ station.type }}</p>
     </div>
-    <div v-if="positionLocale === 'station'" class="action-group action-group--station-launch">
-      <button @click="emit('aller-operations')">Rejoindre la zone d’opérations</button>
+
+    <div class="station-mode-tabs station-mode-tabs--with-launch">
+      <button
+        v-if="positionLocale === 'station'"
+        class="station-launch-button action-button-with-icon"
+        @click="emit('aller-operations')"
+      >
+        <span class="button-icon" aria-hidden="true">⌘</span>
+        <span>Zone d’opérations</span>
+      </button>
+
+      <button
+        :class="{ 'is-active': sousModeStation === 'hangar' }"
+        class="action-button-with-icon"
+        @click="emit('changer-sous-mode-station', 'hangar')"
+      >
+        <span class="button-icon" aria-hidden="true">⌂</span>
+        <span>Hangar</span>
+      </button>
+
+      <button
+        v-if="station.services.commerce"
+        :class="{ 'is-active': sousModeStation === 'commerce' }"
+        class="action-button-with-icon"
+        @click="emit('changer-sous-mode-station', 'commerce')"
+      >
+        <span class="button-icon" aria-hidden="true">✦</span>
+        <span>Commerce</span>
+      </button>
+
+      <button
+        v-if="station.services.ravitaillement"
+        :class="{ 'is-active': sousModeStation === 'ravitaillement' }"
+        class="action-button-with-icon"
+        @click="emit('changer-sous-mode-station', 'ravitaillement')"
+      >
+        <span class="button-icon" aria-hidden="true">⛽</span>
+        <span>Ravitaillement</span>
+      </button>
+
+      <button
+        v-if="station.services.atelier"
+        :class="{ 'is-active': sousModeStation === 'atelier' }"
+        class="action-button-with-icon"
+        @click="emit('changer-sous-mode-station', 'atelier')"
+      >
+        <span class="button-icon" aria-hidden="true">⚙</span>
+        <span>Atelier</span>
+      </button>
     </div>
 
     <template v-if="positionLocale !== 'station'">
@@ -89,41 +196,22 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
         </p>
 
         <div class="action-group">
-          <button @click="emit('retour-station')">Retourner à la station</button>
+          <button class="action-button-with-icon" @click="emit('retour-station')">
+            <span class="button-icon" aria-hidden="true">⌂</span>
+            <span>Retourner à la station</span>
+          </button>
         </div>
       </div>
     </template>
 
     <template v-else>
-      <div class="station-mode-tabs">
-        <button
-          v-if="station.services.commerce"
-          :class="{ 'is-active': sousModeStation === 'commerce' }"
-          @click="emit('changer-sous-mode-station', 'commerce')"
-        >
-          Commerce
-        </button>
-
-        <button
-          v-if="station.services.ravitaillement"
-          :class="{ 'is-active': sousModeStation === 'ravitaillement' }"
-          @click="emit('changer-sous-mode-station', 'ravitaillement')"
-        >
-          Ravitaillement
-        </button>
-
-        <button
-          v-if="station.services.atelier"
-          :class="{ 'is-active': sousModeStation === 'atelier' }"
-          @click="emit('changer-sous-mode-station', 'atelier')"
-        >
-          Atelier
-        </button>
+      <div v-if="sousModeStation === 'hangar'" class="station-service-mode-hangar-scroll">
+        <slot name="hangar" />
       </div>
 
       <div
-        v-if="sousModeStation === 'commerce'"
-        class="station-service-card station-service-card-commerce"
+        v-else-if="sousModeStation === 'commerce'"
+        class="station-service-card station-service-card-commerce station-service-card--scrollable"
       >
         <div class="station-service-card-header">
           <h3>¤ Commerce local</h3>
@@ -140,43 +228,130 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
             <span class="station-service-label">Taxe locale</span>
             <strong>{{ taxeLocalePourcent }}</strong>
           </div>
+
+          <div class="station-service-metric">
+            <span class="station-service-label">Soute</span>
+            <strong>{{ vaisseau.soute }} / {{ vaisseau.souteMax }}</strong>
+          </div>
+
+          <div class="station-service-metric">
+            <span class="station-service-label">Capacité restante</span>
+            <strong>{{ souteRestante }}</strong>
+          </div>
+
+          <div class="station-service-metric station-service-metric--full">
+            <span class="station-service-label">Profil de marché</span>
+            <strong>{{ profilMarcheLabel }}</strong>
+          </div>
         </div>
 
         <p class="station-service-description">
-          Les cours ci-dessous représentent les prix locaux bruts par unité. La taxe locale
-          s’applique une seule fois, sur le montant brut total de la transaction.
+          Les achats et ventes utilisent la même soute embarquée. Les cours ci-dessous représentent
+          les prix locaux bruts par unité. La taxe locale s’applique lors des ventes, sur le montant
+          brut total de la transaction.
         </p>
+
+        <div class="station-market-insights station-market-insights--compact">
+          <div class="station-market-insight-card">
+            <h4>Meilleures ventes locales</h4>
+            <ul v-if="resumeMarche.haussiers.length > 0" class="station-market-list">
+              <li v-for="minerai in resumeMarche.haussiers" :key="minerai.id">
+                <span>{{ minerai.nom }}</span>
+                <strong>{{ minerai.variationPourcentageLabel }}</strong>
+              </li>
+            </ul>
+            <p v-else class="panel-note">Aucune prime locale notable.</p>
+          </div>
+
+          <div class="station-market-insight-card">
+            <h4>Moins favorisées</h4>
+            <ul v-if="resumeMarche.baissiers.length > 0" class="station-market-list">
+              <li v-for="minerai in resumeMarche.baissiers" :key="minerai.id">
+                <span>{{ minerai.nom }}</span>
+                <strong>{{ minerai.variationPourcentageLabel }}</strong>
+              </li>
+            </ul>
+            <p v-else class="panel-note">Aucune décote locale notable.</p>
+          </div>
+        </div>
 
         <div class="market-rate-grid market-rate-grid-three-cols">
           <div v-for="minerai in coursLocaux" :key="minerai.id" class="market-rate-item">
-            <span class="market-rate-name">
-              <span class="resource-icon">{{ minerai.icone }}</span>
-              {{ minerai.abreviation }}
-            </span>
+            <div class="market-rate-row market-rate-row--top">
+              <span class="market-rate-name">
+                <span class="resource-icon">{{ minerai.icone }}</span>
+                {{ minerai.abreviation }}
+              </span>
 
-            <span
-              class="market-rate-variation"
-              :class="{
-                'market-rate-variation-up': minerai.variation === 'hausse',
-                'market-rate-variation-down': minerai.variation === 'baisse',
-                'market-rate-variation-stable': minerai.variation === 'stable',
-              }"
-            >
-              {{ minerai.variationSymbole }}
-            </span>
+              <span class="market-rate-values">{{ minerai.prixBrut }} cr</span>
+            </div>
 
-            <span class="market-rate-values"> {{ minerai.prixBrut }} cr </span>
+            <div class="market-rate-row market-rate-row--bottom">
+              <span
+                class="market-rate-variation"
+                :class="{
+                  'market-rate-variation-up': minerai.variation === 'hausse',
+                  'market-rate-variation-down': minerai.variation === 'baisse',
+                  'market-rate-variation-stable': minerai.variation === 'stable',
+                }"
+              >
+                {{ minerai.variationSymbole }} {{ minerai.variationPourcentageLabel }}
+              </span>
 
-            <span class="market-rate-average"> (moy. {{ minerai.prixMoyen }} cr) </span>
+              <span class="market-rate-average">moy. {{ minerai.prixMoyen }} cr</span>
+            </div>
+
+            <div class="market-rate-row market-rate-row--bottom">
+              <span class="market-rate-average">
+                En soute : {{ recupererQuantiteEnSoute(minerai.id) }}
+              </span>
+            </div>
+
+            <div class="action-group-market">
+              <button
+                class="market-rate-buy-button"
+                :disabled="souteRestante <= 0 || ressources.credits < minerai.prixBrut"
+                @click="acheterUnMinerai(minerai.id)"
+              >
+                +1
+              </button>
+
+              <button
+                class="market-rate-buy-button"
+                :disabled="calculerQuantiteMaxAchetable(minerai) <= 0"
+                @click="acheterMineraiMax(minerai)"
+              >
+                +Max
+              </button>
+
+              <button
+                class="market-rate-buy-button"
+                :disabled="recupererQuantiteEnSoute(minerai.id) <= 0"
+                @click="vendreUnMinerai(minerai.id)"
+              >
+                -1
+              </button>
+
+              <button
+                class="market-rate-buy-button"
+                :disabled="recupererQuantiteEnSoute(minerai.id) <= 0"
+                @click="vendreMineraiMax(minerai)"
+              >
+                -Max
+              </button>
+            </div>
           </div>
         </div>
 
         <p class="market-rate-legend">
-          Affichage : cours local brut par unité, comparé au cours moyen
+          Affichage : cours local brut par unité, comparé au cours moyen galactique.
         </p>
 
         <div class="action-group">
-          <button @click="emit('vendre')">Vendre la cargaison</button>
+          <button class="action-button-with-icon" @click="emit('vendre')">
+            <span class="button-icon" aria-hidden="true">✦</span>
+            <span>Vendre le contenu minéral de la soute</span>
+          </button>
         </div>
       </div>
 
@@ -216,7 +391,10 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
         </p>
 
         <div class="action-group">
-          <button @click="emit('ravitailler')">Ravitailler le vaisseau</button>
+          <button class="action-button-with-icon" @click="emit('ravitailler')">
+            <span class="button-icon" aria-hidden="true">⛽</span>
+            <span>Ravitailler le vaisseau</span>
+          </button>
         </div>
       </div>
 
@@ -250,8 +428,9 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
             <span class="station-service-label">Drone minier</span>
             <strong>{{ coutDroneMinier }} crédits / unité</strong>
           </div>
-          <button @click="emit('acheter-drone')">
-            Acheter un drone minier — {{ coutDroneMinier }} crédits
+          <button class="action-button-with-icon" @click="emit('acheter-drone')">
+            <span class="button-icon" aria-hidden="true">⇪</span>
+            <span>Acheter un drone minier — {{ coutDroneMinier }} crédits</span>
           </button>
         </div>
 

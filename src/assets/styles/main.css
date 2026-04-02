@@ -43,10 +43,11 @@ button {
   background: linear-gradient(180deg, #284059 0%, #1d3042 100%);
   color: #f3f8fc;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03);
-  transition: background 0.15s ease,
-  border-color 0.15s ease,
-  transform 0.05s ease,
-  box-shadow 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.05s ease,
+    box-shadow 0.15s ease;
 }
 
 button:hover {
@@ -205,7 +206,7 @@ select {
   flex-direction: column;
   gap: 10px;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
   padding-right: 2px;
 }
 
@@ -433,10 +434,14 @@ select {
 
 .station-services-panel {
   min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .station-services-header {
   margin-bottom: 8px;
+  flex: 0 0 auto;
 }
 
 .station-services-subtitle {
@@ -450,6 +455,7 @@ select {
   flex-wrap: wrap;
   gap: 6px;
   margin-bottom: 10px;
+  flex: 0 0 auto;
 }
 
 .station-mode-tabs button {
@@ -484,7 +490,7 @@ select {
   display: grid;
   grid-template-columns: 1fr;
   gap: 6px;
-  margin-bottom: 8px;
+  margin-bottom: 14px;
 }
 
 .market-rate-grid-three-cols {
@@ -493,50 +499,73 @@ select {
 }
 
 .market-rate-item {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 16px auto;
-  align-items: baseline;
-  gap: 6px;
-  padding: 6px 7px;
-  border: 1px solid rgba(125, 184, 255, 0.08);
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid rgba(120, 170, 220, 0.14);
+  border-radius: 10px;
+  background: rgba(10, 22, 40, 0.32);
+  min-height: 72px;
+}
+
+.market-rate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.market-rate-row--top {
+  align-items: flex-start;
+}
+
+.market-rate-row--bottom {
+  align-items: center;
 }
 
 .market-rate-name {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: #dcecff;
   min-width: 0;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
 }
 
 .market-rate-values {
-  flex-shrink: 0;
-  font-size: 0.74rem;
-  opacity: 0.9;
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: #f4fbff;
+  white-space: nowrap;
 }
 
 .market-rate-average {
-  display: none;
+  font-size: 0.8rem;
+  color: #8ea6bf;
+  white-space: nowrap;
 }
 
 .market-rate-variation {
-  text-align: center;
-  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.86rem;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .market-rate-variation-up {
-  opacity: 0.95;
+  color: #78d694;
 }
 
 .market-rate-variation-down {
-  opacity: 0.95;
+  color: #ff8f8f;
 }
 
 .market-rate-variation-stable {
-  opacity: 0.7;
+  color: #a9bdd4;
 }
 
 .market-rate-legend {
@@ -544,6 +573,22 @@ select {
   font-size: 0.76rem;
   font-style: italic;
   opacity: 0.72;
+}
+
+.market-rate-buy-button {
+  min-height: 28px;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
+.market-rate-buy-button:disabled {
+  opacity: 0.45;
+}
+
+.market-rate-row .market-rate-average {
+  display: inline-flex;
+  align-items: center;
 }
 
 .station-service-badge {
@@ -568,6 +613,10 @@ select {
   border: 1px solid rgba(125, 184, 255, 0.08);
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.12);
+}
+
+.station-service-metric--full {
+  grid-column: 1 / -1;
 }
 
 .station-service-label {
@@ -595,18 +644,6 @@ select {
 
 .station-service-card-workshop {
   border-color: rgba(140, 145, 220, 0.14);
-}
-
-.station-mode-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
-.station-mode-tabs button {
-  padding: 0.46rem 0.7rem;
-  font-size: 0.84rem;
 }
 
 .station-upgrade-shell {
@@ -697,6 +734,124 @@ select {
   padding-inline: 16px;
 }
 
+.station-mode-tabs--with-launch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.station-launch-button {
+  border: 1px solid rgba(102, 181, 255, 0.55);
+  background: linear-gradient(
+    180deg,
+    rgba(34, 89, 148, 0.55) 0%,
+    rgba(20, 51, 90, 0.72) 100%
+  );
+  color: #d9ecff;
+  box-shadow: inset 0 0 0 1px rgba(180, 220, 255, 0.08);
+}
+
+.station-launch-button:hover:not(:disabled) {
+  border-color: rgba(130, 200, 255, 0.8);
+  background: linear-gradient(
+    180deg,
+    rgba(44, 112, 185, 0.62) 0%,
+    rgba(24, 63, 110, 0.82) 100%
+  );
+}
+
+.station-service-card--scrollable {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.35rem;
+  padding-bottom: 0.9rem;
+}
+
+.station-service-mode-hangar-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.35rem;
+}
+
+.station-service-card--scrollable > *:last-child {
+  margin-bottom: 0;
+}
+
+.station-service-card--scrollable::after {
+  content: '';
+  display: block;
+  height: 8px;
+}
+
+.station-service-mode {
+  min-height: 0;
+}
+
+.station-service-mode--fill {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.station-service-mode--fill > * {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.station-market-insights--compact {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0.85rem 0 1rem;
+}
+
+.station-market-insight-card {
+  border: 1px solid rgba(120, 170, 220, 0.16);
+  border-radius: 10px;
+  background: rgba(10, 22, 40, 0.32);
+  padding: 0.75rem 0.9rem;
+}
+
+.station-market-insight-card h4 {
+  margin: 0 0 0.55rem;
+  font-size: 0.84rem;
+  line-height: 1.2;
+  opacity: 0.94;
+}
+
+.station-market-list {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.station-market-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0.22rem 0;
+  font-size: 0.84rem;
+}
+
+.action-group-market {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.action-group-market .market-rate-buy-button {
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 0.32rem 0.5rem;
+  min-height: 28px;
+  min-width: 54px;
+  white-space: nowrap;
+}
+
 /* =========================================================
    14. ATELIER / AMÉLIORATIONS
    ========================================================= */
@@ -732,6 +887,126 @@ select {
 .upgrade-item button {
   padding: 0.45rem 0.7rem;
   font-size: 0.86rem;
+}
+
+.upgrade-panel--atelier {
+  min-height: 0;
+}
+
+.upgrade-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.65rem;
+}
+
+.upgrade-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-height: 0;
+  padding: 0.8rem;
+  border: 1px solid rgba(125, 184, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.upgrade-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.upgrade-card-head strong {
+  font-size: 0.9rem;
+  line-height: 1.18;
+}
+
+.upgrade-card-description {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.25;
+  font-style: italic;
+  opacity: 0.86;
+}
+
+.upgrade-card-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem 0.75rem;
+}
+
+.upgrade-card-stats p {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+  font-size: 0.75rem;
+}
+
+.upgrade-card-stats p span {
+  color: rgba(210, 225, 245, 0.62);
+}
+
+.upgrade-card-stats p strong {
+  color: #f3f7ff;
+  font-size: 0.84rem;
+}
+
+.upgrade-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.16rem 0.46rem;
+  border-radius: 999px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.upgrade-badge--max {
+  background: rgba(110, 220, 170, 0.12);
+  color: #92f0c2;
+}
+
+.station-upgrade-shell {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding-right: 4px;
+  padding-bottom: 10px;
+}
+
+.station-upgrade-shell::after {
+  content: '';
+  display: block;
+  height: 10px;
+  flex: 0 0 auto;
+}
+
+.station-service-card-workshop {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.station-upgrade-shell {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding-right: 4px;
+  padding-bottom: 10px;
+}
+
+@media (max-width: 900px) {
+  .upgrade-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .upgrade-card-stats {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* =========================================================
@@ -934,6 +1209,20 @@ select {
 
 .ops-panel {
   min-height: 0;
+}
+
+.ops-panel--scrollable {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.35rem;
+  padding-bottom: 0.75rem;
+}
+
+.ops-panel--scrollable::after {
+  content: '';
+  display: block;
+  height: 8px;
 }
 
 .ops-header {
@@ -1322,7 +1611,7 @@ select {
   width: 100%;
 }
 
-/* ===== Responsive ===== */
+/* ===== Responsive console opérations ===== */
 
 @media (max-width: 720px) {
   .ops-grid,
@@ -1348,7 +1637,257 @@ select {
 }
 
 /* =========================================================
-   17. RESPONSIVE
+   17. SHIP
+   ========================================================= */
+
+.ship-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.ship-panel-title-block {
+  min-width: 0;
+}
+
+.ship-panel-subtitle {
+  margin: 0.18rem 0 0;
+  font-size: 0.78rem;
+  color: rgba(210, 225, 245, 0.8);
+  line-height: 1.25;
+  word-break: keep-all;
+}
+
+.ship-panel-ship-name {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.ship-panel-separator {
+  margin: 0 0.25rem;
+  color: rgba(210, 225, 245, 0.55);
+}
+
+.ship-panel-builder {
+  color: rgba(210, 225, 245, 0.72);
+}
+
+.ship-role-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.14rem 0.42rem;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
+
+.ship-role-badge--light {
+  background: rgba(120, 170, 255, 0.12);
+  color: #bcd3ff;
+}
+
+.ship-role-badge--heavy {
+  background: rgba(255, 196, 90, 0.12);
+  color: #ffd27a;
+}
+
+.ship-role-badge--reinforced {
+  background: rgba(255, 140, 140, 0.12);
+  color: #ffb0b0;
+}
+
+.ship-role-badge--trade {
+  background: rgba(110, 220, 170, 0.12);
+  color: #92f0c2;
+}
+
+.ship-panel-role-line {
+  margin: 0 0 0.65rem;
+  font-size: 0.8rem;
+  color: rgba(210, 225, 245, 0.74);
+  line-height: 1.3;
+}
+
+.ship-panel-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem 0.9rem;
+}
+
+.ship-panel-metrics p {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+  font-size: 0.76rem;
+  line-height: 1.2;
+}
+
+.ship-panel-metrics p span {
+  color: rgba(210, 225, 245, 0.62);
+}
+
+.ship-panel-metrics p strong {
+  color: #f3f7ff;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .ship-panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ship-panel-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   18. HANGAR
+   ========================================================= */
+
+.hangar-section {
+  margin-top: 1rem;
+}
+
+.hangar-section h4 {
+  margin: 0 0 0.6rem;
+  font-size: 0.95rem;
+}
+
+.hangar-ship-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.hangar-ship-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.hangar-ship-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-bottom: 0.45rem;
+}
+
+.hangar-ship-meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: rgba(210, 225, 245, 0.72);
+}
+
+.hangar-ship-badge,
+.hangar-ship-price {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.16rem 0.48rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.hangar-ship-badge {
+  background: rgba(110, 220, 170, 0.12);
+  color: #92f0c2;
+}
+
+.hangar-ship-price {
+  background: rgba(120, 170, 255, 0.12);
+  color: #bcd3ff;
+}
+
+.hangar-ship-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.45rem 0.8rem;
+  margin-top: 0.55rem;
+}
+
+.hangar-ship-stats p {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+  font-size: 0.75rem;
+}
+
+.hangar-ship-stats p span {
+  color: rgba(210, 225, 245, 0.62);
+}
+
+.hangar-ship-stats p strong {
+  color: #f3f7ff;
+  font-size: 0.84rem;
+}
+
+.panel-note-warning {
+  color: #ffcc8a;
+}
+
+@media (max-width: 720px) {
+  .hangar-ship-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================================================
+   19. ICONES DE BOUTON
+   ========================================================= */
+
+.action-button-with-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.button-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.header-actions .action-button-with-icon {
+  gap: 0.42rem;
+}
+
+.header-actions .button-icon {
+  font-size: 0.92rem;
+}
+
+.ops-panel .action-button-with-icon,
+.station-services-panel .action-button-with-icon {
+  gap: 0.46rem;
+}
+
+.ops-panel .button-icon,
+.station-services-panel .button-icon {
+  font-size: 0.9rem;
+}
+
+/* =========================================================
+   20. RESPONSIVE
    ========================================================= */
 
 @media (max-width: 1450px) {
@@ -1435,6 +1974,18 @@ select {
 
   .market-rate-grid-three-cols {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .station-market-insights--compact {
+    grid-template-columns: 1fr;
+  }
+
+  .station-service-card--scrollable {
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 0;
   }
 
 }
