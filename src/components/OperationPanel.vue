@@ -90,7 +90,7 @@ const roleVaisseauLabel = computed(() => {
 
 const doctrineOperationnelle = computed(() => {
   if (roleVaisseau.value === 'transporteur_marchand') {
-    return 'Logistique, transport et commerce'
+    return 'Transport, fret et rotations commerciales'
   }
 
   if (roleVaisseau.value === 'mineur_lourd') {
@@ -207,8 +207,7 @@ const statutOperationnel = computed(() => {
     return {
       niveau: 'info',
       titre: 'Configuration marchande',
-      texte:
-        'Ce vaisseau est conçu pour le transport et le commerce. Les actions d’exploitation locale sont limitées.',
+      texte: 'Ce châssis privilégie le fret et le commerce plutôt que le minage manuel.',
     }
   }
 
@@ -223,9 +222,8 @@ const statutOperationnel = computed(() => {
   if ((props.vaisseau?.puissanceMiniere || 0) <= 0) {
     return {
       niveau: 'info',
-      titre: 'Vaisseau marchand',
-      texte:
-        'Ce châssis ne dispose pas de canon de minage. Privilégiez le transport et le commerce.',
+      titre: 'Configuration non minière',
+      texte: 'Ce châssis ne dispose pas de canon de minage.',
     }
   }
 
@@ -453,7 +451,7 @@ function decrireDrone(drone) {
         </div>
 
         <p v-else class="panel-note">
-          Ce châssis marchand n’est pas configuré pour la prospection ni l’extraction locale.
+          Ce châssis marchand n’est pas configuré pour l’extraction manuelle.
         </p>
       </section>
 
@@ -491,8 +489,7 @@ function decrireDrone(drone) {
         </div>
 
         <p v-else class="panel-note">
-          Le rôle principal de ce vaisseau est le fret. Les opérations minières locales ne sont pas
-          proposées.
+          Ce transporteur privilégie le fret et les rotations commerciales entre stations.
         </p>
 
         <ul v-if="industrie.drones.length > 0" class="drone-status-list">
@@ -508,8 +505,7 @@ function decrireDrone(drone) {
 
     <p class="panel-note">
       <template v-if="estTransporteurMarchand">
-        Ce transporteur marchand est optimisé pour le fret et les rotations commerciales entre
-        stations.
+        Ce transporteur marchand est optimisé pour le fret et les rotations commerciales.
       </template>
       <template v-else>
         Le scanner peut détecter des amas pauvres, simples, mixtes ou denses. La qualité du relevé
