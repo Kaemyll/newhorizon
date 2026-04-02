@@ -20,7 +20,7 @@ import {
   deployerDrones,
   rappelerDrones,
 } from './game/systemeMinage'
-import { acheterMineraiEnStation } from './game/systemeCommerce'
+import { acheterMineraiEnStation, vendreMineraiEnStation } from './game/systemeCommerce'
 import { ravitaillerCarburant } from './game/systemeRavitaillement'
 import { ameliorerVaisseau } from './game/systemeAmeliorations'
 import {
@@ -121,8 +121,14 @@ function gererVenteMinerai() {
   synchroniserEtat()
 }
 
-function gererAchatBien(idBien) {
-  acheterMineraiEnStation(idBien)
+function gererVenteBien(idBien, quantite = 1) {
+  vendreMineraiEnStation(idBien, quantite)
+  sauvegarderJeu()
+  synchroniserEtat()
+}
+
+function gererAchatBien(idBien, quantite = 1) {
+  acheterMineraiEnStation(idBien, quantite)
   sauvegarderJeu()
   synchroniserEtat()
 }
@@ -310,8 +316,8 @@ onUnmounted(() => {
             :economie="etat.economie"
             @changer-sous-mode-station="changerSousModeStation"
             @vendre="gererVenteMinerai"
+            @vendre-bien="gererVenteBien"
             @acheter-bien="gererAchatBien"
-
             @ravitailler="gererRavitaillement"
             @acheter-drone="gererAchatDrone"
             @retour-station="gererRetourStation"
