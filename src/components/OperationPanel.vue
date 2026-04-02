@@ -222,8 +222,9 @@ const statutOperationnel = computed(() => {
   if ((props.vaisseau?.puissanceMiniere || 0) <= 0) {
     return {
       niveau: 'info',
-      titre: 'Configuration non minière',
-      texte: 'Ce châssis ne dispose pas de canon de minage.',
+      titre: 'Vaisseau marchand',
+      texte:
+        'Ce châssis ne dispose pas de canon de minage. Privilégiez le transport et le commerce.',
     }
   }
 
@@ -316,20 +317,22 @@ function decrireDrone(drone) {
 
         <button
           v-if="positionLocale === 'station'"
-          class="ops-context-button"
+          class="ops-context-button action-button-with-icon"
           :disabled="navigation.enVoyage || assistance.remorquageEnCours"
           @click="emit('aller-operations')"
         >
-          Rejoindre la zone d’opérations
+          <span class="button-icon" aria-hidden="true">🚀</span>
+          <span>Rejoindre la zone d’opérations</span>
         </button>
 
         <button
           v-if="positionLocale === 'operations'"
-          class="ops-context-button"
+          class="ops-context-button action-button-with-icon"
           :disabled="navigation.enVoyage || assistance.remorquageEnCours"
           @click="emit('retour-station')"
         >
-          Retourner à la station
+          <span class="button-icon" aria-hidden="true">⌂</span>
+          <span>Retourner à la station</span>
         </button>
       </div>
     </div>
@@ -445,13 +448,27 @@ function decrireDrone(drone) {
         </div>
 
         <div v-if="afficherActionsExploitation" class="action-group action-group--inline">
-          <button :disabled="!scannerDisponible" @click="emit('scanner')">Scanner un amas</button>
+          <button
+            class="action-button-with-icon"
+            :disabled="!scannerDisponible"
+            @click="emit('scanner')"
+          >
+            <span class="button-icon" aria-hidden="true">⌘</span>
+            <span>Scanner un amas</span>
+          </button>
 
-          <button :disabled="!minageDisponible" @click="emit('miner')">Miner manuellement</button>
+          <button
+            class="action-button-with-icon"
+            :disabled="!minageDisponible"
+            @click="emit('miner')"
+          >
+            <span class="button-icon" aria-hidden="true">⛏</span>
+            <span>Miner manuellement</span>
+          </button>
         </div>
 
         <p v-else class="panel-note">
-          Ce châssis marchand n’est pas configuré pour l’extraction manuelle.
+          Ce châssis marchand n’est pas configuré pour la prospection ni l’extraction locale.
         </p>
       </section>
 
@@ -479,17 +496,28 @@ function decrireDrone(drone) {
         </div>
 
         <div v-if="afficherActionsDrones" class="action-group action-group--inline">
-          <button :disabled="!deploiementDronesDisponible" @click="emit('deployer-drones')">
-            Déployer les drones
+          <button
+            class="action-button-with-icon"
+            :disabled="!deploiementDronesDisponible"
+            @click="emit('deployer-drones')"
+          >
+            <span class="button-icon" aria-hidden="true">⇪</span>
+            <span>Déployer les drones</span>
           </button>
 
-          <button :disabled="!rappelDronesDisponible" @click="emit('rappeler-drones')">
-            Rappeler les drones
+          <button
+            class="action-button-with-icon"
+            :disabled="!rappelDronesDisponible"
+            @click="emit('rappeler-drones')"
+          >
+            <span class="button-icon" aria-hidden="true">⇩</span>
+            <span>Rappeler les drones</span>
           </button>
         </div>
 
         <p v-else class="panel-note">
-          Ce transporteur privilégie le fret et les rotations commerciales entre stations.
+          Le rôle principal de ce vaisseau est le fret. Les opérations minières locales ne sont pas
+          proposées.
         </p>
 
         <ul v-if="industrie.drones.length > 0" class="drone-status-list">
@@ -505,7 +533,8 @@ function decrireDrone(drone) {
 
     <p class="panel-note">
       <template v-if="estTransporteurMarchand">
-        Ce transporteur marchand est optimisé pour le fret et les rotations commerciales.
+        Ce transporteur marchand est optimisé pour le fret et les rotations commerciales entre
+        stations.
       </template>
       <template v-else>
         Le scanner peut détecter des amas pauvres, simples, mixtes ou denses. La qualité du relevé

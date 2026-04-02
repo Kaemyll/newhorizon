@@ -136,41 +136,50 @@ function vendreMineraiMax(minerai) {
     <div class="station-mode-tabs station-mode-tabs--with-launch">
       <button
         v-if="positionLocale === 'station'"
-        class="station-launch-button"
+        class="station-launch-button action-button-with-icon"
         @click="emit('aller-operations')"
       >
-        🚀 Zone d’opérations
+        <span class="button-icon" aria-hidden="true">⌘</span>
+        <span>Zone d’opérations</span>
       </button>
 
       <button
         :class="{ 'is-active': sousModeStation === 'hangar' }"
+        class="action-button-with-icon"
         @click="emit('changer-sous-mode-station', 'hangar')"
       >
-        Hangar
+        <span class="button-icon" aria-hidden="true">⌂</span>
+        <span>Hangar</span>
       </button>
 
       <button
         v-if="station.services.commerce"
         :class="{ 'is-active': sousModeStation === 'commerce' }"
+        class="action-button-with-icon"
         @click="emit('changer-sous-mode-station', 'commerce')"
       >
-        Commerce
+        <span class="button-icon" aria-hidden="true">✦</span>
+        <span>Commerce</span>
       </button>
 
       <button
         v-if="station.services.ravitaillement"
         :class="{ 'is-active': sousModeStation === 'ravitaillement' }"
+        class="action-button-with-icon"
         @click="emit('changer-sous-mode-station', 'ravitaillement')"
       >
-        Ravitaillement
+        <span class="button-icon" aria-hidden="true">⛽</span>
+        <span>Ravitaillement</span>
       </button>
 
       <button
         v-if="station.services.atelier"
         :class="{ 'is-active': sousModeStation === 'atelier' }"
+        class="action-button-with-icon"
         @click="emit('changer-sous-mode-station', 'atelier')"
       >
-        Atelier
+        <span class="button-icon" aria-hidden="true">⚙</span>
+        <span>Atelier</span>
       </button>
     </div>
 
@@ -187,7 +196,10 @@ function vendreMineraiMax(minerai) {
         </p>
 
         <div class="action-group">
-          <button @click="emit('retour-station')">Retourner à la station</button>
+          <button class="action-button-with-icon" @click="emit('retour-station')">
+            <span class="button-icon" aria-hidden="true">⌂</span>
+            <span>Retourner à la station</span>
+          </button>
         </div>
       </div>
     </template>
@@ -336,7 +348,10 @@ function vendreMineraiMax(minerai) {
         </p>
 
         <div class="action-group">
-          <button @click="emit('vendre')">Vendre le contenu minéral de la soute</button>
+          <button class="action-button-with-icon" @click="emit('vendre')">
+            <span class="button-icon" aria-hidden="true">✦</span>
+            <span>Vendre le contenu minéral de la soute</span>
+          </button>
         </div>
       </div>
 
@@ -376,7 +391,10 @@ function vendreMineraiMax(minerai) {
         </p>
 
         <div class="action-group">
-          <button @click="emit('ravitailler')">Ravitailler le vaisseau</button>
+          <button class="action-button-with-icon" @click="emit('ravitailler')">
+            <span class="button-icon" aria-hidden="true">⛽</span>
+            <span>Ravitailler le vaisseau</span>
+          </button>
         </div>
       </div>
 
@@ -410,8 +428,9 @@ function vendreMineraiMax(minerai) {
             <span class="station-service-label">Drone minier</span>
             <strong>{{ coutDroneMinier }} crédits / unité</strong>
           </div>
-          <button @click="emit('acheter-drone')">
-            Acheter un drone minier — {{ coutDroneMinier }} crédits
+          <button class="action-button-with-icon" @click="emit('acheter-drone')">
+            <span class="button-icon" aria-hidden="true">⇪</span>
+            <span>Acheter un drone minier — {{ coutDroneMinier }} crédits</span>
           </button>
         </div>
 

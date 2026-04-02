@@ -73,7 +73,10 @@ const trajetSelectionne = computed(() =>
       </template>
 
       <div class="action-group">
-        <button @click="emit('voyager')">Lancer le trajet</button>
+        <button class="action-button-with-icon" @click="$emit('voyager')">
+          <span class="button-icon" aria-hidden="true">🧭</span>
+          <span>Lancer le trajet</span>
+        </button>
       </div>
 
       <p class="navigation-status">Statut : À quai</p>
