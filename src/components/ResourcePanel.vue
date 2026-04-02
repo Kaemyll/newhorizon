@@ -19,10 +19,6 @@ const props = defineProps({
   },
 })
 
-const totalMineraisEmbarques = computed(() =>
-  Object.values(props.ressources.minerais || {}).reduce((total, quantite) => total + quantite, 0),
-)
-
 const secteur = computed(() =>
   donneesSecteurs.find((entree) => entree.id === props.secteurCourant.id),
 )
@@ -51,11 +47,11 @@ const estimationCargaison = computed(() => {
     <h2>◈ Ressources</h2>
     <p>Crédits : {{ ressources.credits }}</p>
     <p>Carburant : {{ ressources.carburant }} / {{ vaisseau.carburantMax }}</p>
-    <p>Total embarqué : {{ totalMineraisEmbarques }} / {{ vaisseau.souteMax }}</p>
+    <p>Soute : {{ vaisseau.soute }} / {{ vaisseau.souteMax }}</p>
     <p>Valeur brute estimée : {{ estimationCargaison.valeurBrute }} crédits</p>
     <p>Valeur nette estimée : {{ estimationCargaison.valeurNette }} crédits</p>
 
-    <h3>Minerais en soute</h3>
+    <h3>Contenu minéral de la soute</h3>
     <ul class="resource-list resource-list-compact resource-list-mineraux">
       <li v-for="minerai in donneesMinerais" :key="minerai.id">
         <span class="resource-inline">
