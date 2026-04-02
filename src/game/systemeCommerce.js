@@ -1,3 +1,4 @@
+// systemeCommerce.js
 import { donneesMinerais } from './dataMinerais'
 import { donneesSecteurs } from './dataSecteurs'
 import { recupererEtatJeu } from './etatJeu'
@@ -208,6 +209,65 @@ export function acheterMineraiEnStation(idMinerai, quantite = 1) {
 
   ajouterAuJournalCommerce(
     `Achat embarqué en soute : +${quantiteAchetee} ${minerai.nom} pour ${coutTotal} cr.`,
+    'succes',
+  )
+}
+
+export function vendreMineraiEnStation(idMinerai, quantite = 1) {
+  const etat = recupererEtatJeu()
+
+  if (etat.navigation?.enVoyage) {
+    ajouterAuJournalCommerce('Impossible de vendre un chargement pendant un trajet.', 'alerte')
+    return
+  }
+
+  if (etat.positionLocale !== 'station') {
+    ajouterAuJournalCommerce('Les ventes ne sont possibles qu’à la station.', 'alerte')
+    return
+  }
+
+  const secteurCourant = recupererSecteurParId(etat.secteurCourant?.id)
+  const station = secteurCourant?.stationPrincipale
+
+  if (!station?.services?.commerce) {
+    ajouterAuJournalCommerce('Aucun service commercial disponible dans cette station.', 'alerte')
+    return
+  }
+
+  const minerai = donneesMinerais.find((entree) => entree.id === idMinerai)
+
+  if (!minerai) {
+    ajouterAuJournalCommerce('Chargement introuvable.', 'alerte')
+    return
+  }
+
+  const quantiteDemandee = Math.max(1, Math.floor(quantite))
+  const quantiteDisponible = etat.ressources.minerais[idMinerai] || 0
+
+  if (quantiteDisponible <= 0) {
+    ajouterAuJournalCommerce(`Aucun stock de ${minerai.nom} à vendre en soute.`, 'alerte')
+    return
+  }
+
+  const quantiteVendue = Math.min(quantiteDemandee, quantiteDisponible)
+  const valeurBrute = calculerPrixLigneBrut(station, minerai, quantiteVendue)
+  const tauxTaxe = calculerTauxTaxePourSecurite(secteurCourant?.securite ?? 1)
+  const montantTaxe = Math.floor(valeurBrute * tauxTaxe)
+  const valeurNette = valeurBrute - montantTaxe
+
+  etat.ressources.minerais[idMinerai] = quantiteDisponible - quantiteVendue
+
+  if (etat.ressources.minerais[idMinerai] <= 0) {
+    delete etat.ressources.minerais[idMinerai]
+  }
+
+  etat.vaisseau.soute = Math.max(0, etat.vaisseau.soute - quantiteVendue)
+  etat.ressources.credits += valeurNette
+
+  avancerTemps(1)
+
+  ajouterAuJournalCommerce(
+    `Vente locale : -${quantiteVendue} ${minerai.nom} | brut ${valeurBrute} cr. | taxe ${montantTaxe} cr. | net ${valeurNette} cr.`,
     'succes',
   )
 }

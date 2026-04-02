@@ -38,6 +38,7 @@ const props = defineProps({
 const emit = defineEmits([
   'changer-sous-mode-station',
   'vendre',
+  'vendre-bien',
   'acheter-bien',
   'ravitailler',
   'acheter-drone',
@@ -84,6 +85,45 @@ const profilMarcheLabel = computed(() => {
 })
 
 const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
+
+function recupererQuantiteEnSoute(idMinerai) {
+  return props.ressources?.minerais?.[idMinerai] || 0
+}
+
+function calculerQuantiteMaxAchetable(minerai) {
+  const prixUnitaire = minerai?.prixBrut || 0
+
+  if (prixUnitaire <= 0) {
+    return 0
+  }
+
+  const quantiteParCredits = Math.floor((props.ressources.credits || 0) / prixUnitaire)
+  return Math.max(0, Math.min(souteRestante.value, quantiteParCredits))
+}
+
+function acheterUnMinerai(idMinerai) {
+  emit('acheter-bien', idMinerai, 1)
+}
+
+function acheterMineraiMax(minerai) {
+  const quantiteMax = calculerQuantiteMaxAchetable(minerai)
+
+  if (quantiteMax > 0) {
+    emit('acheter-bien', minerai.id, quantiteMax)
+  }
+}
+
+function vendreUnMinerai(idMinerai) {
+  emit('vendre-bien', idMinerai, 1)
+}
+
+function vendreMineraiMax(minerai) {
+  const quantiteMax = recupererQuantiteEnSoute(minerai.id)
+
+  if (quantiteMax > 0) {
+    emit('vendre-bien', minerai.id, quantiteMax)
+  }
+}
 </script>
 
 <template>
@@ -239,14 +279,42 @@ const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
             </div>
 
             <div class="market-rate-row market-rate-row--bottom">
-              <span class="market-rate-average">En soute : {{ minerai.quantiteEnSoute }}</span>
+              <span class="market-rate-average">
+                En soute : {{ recupererQuantiteEnSoute(minerai.id) }}
+              </span>
+            </div>
 
+            <div class="action-group-market">
               <button
                 class="market-rate-buy-button"
                 :disabled="souteRestante <= 0 || ressources.credits < minerai.prixBrut"
-                @click="emit('acheter-bien', minerai.id)"
+                @click="acheterUnMinerai(minerai.id)"
               >
-                Acheter 1
+                +1
+              </button>
+
+              <button
+                class="market-rate-buy-button"
+                :disabled="calculerQuantiteMaxAchetable(minerai) <= 0"
+                @click="acheterMineraiMax(minerai)"
+              >
+                +Max
+              </button>
+
+              <button
+                class="market-rate-buy-button"
+                :disabled="recupererQuantiteEnSoute(minerai.id) <= 0"
+                @click="vendreUnMinerai(minerai.id)"
+              >
+                -1
+              </button>
+
+              <button
+                class="market-rate-buy-button"
+                :disabled="recupererQuantiteEnSoute(minerai.id) <= 0"
+                @click="vendreMineraiMax(minerai)"
+              >
+                -Max
               </button>
             </div>
           </div>

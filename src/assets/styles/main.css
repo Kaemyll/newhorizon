@@ -813,6 +813,22 @@ select {
   font-size: 0.84rem;
 }
 
+.action-group-market {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.action-group-market .market-rate-buy-button {
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 0.32rem 0.5rem;
+  min-height: 28px;
+  min-width: 54px;
+  white-space: nowrap;
+}
+
 /* =========================================================
    14. ATELIER / AMÉLIORATIONS
    ========================================================= */
