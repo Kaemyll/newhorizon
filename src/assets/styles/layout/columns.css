@@ -1,0 +1,66 @@
+/* =========================================================
+   LAYOUT — COLONNES PRINCIPALES
+   ---------------------------------------------------------
+   Rôle :
+   - colonnes gauche / centre / droite
+   - comportements de scroll
+   - protection anti-débordement dans les panneaux
+   ========================================================= */
+
+.main-column,
+.right-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  padding-right: 2px;
+}
+
+.main-column-left,
+.right-aside {
+  overflow-y: auto;
+}
+
+.right-aside {
+  border-left: 1px solid rgba(125, 184, 255, 0.08);
+  padding-left: 10px;
+}
+
+.main-column > .panel,
+.right-aside > .panel {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.main-column-center {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 220px;
+  gap: 10px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.center-top {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow: hidden;
+  padding-right: 2px;
+}
+
+.journal-panel {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Sécurité anti-débordement */
+.right-aside .panel p,
+.right-aside .panel li,
+.right-aside .panel span,
+.main-column .panel p,
+.main-column .panel li,
+.main-column .panel span {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}

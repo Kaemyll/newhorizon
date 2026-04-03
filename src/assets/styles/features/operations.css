@@ -1,0 +1,412 @@
+/* =========================================================
+   FEATURE — CONSOLE OPÉRATIONS
+   ---------------------------------------------------------
+   Rôle :
+   - structure du panneau opérations
+   - badges, statuts et métriques
+   - systèmes, drones et groupes d’actions
+   ========================================================= */
+
+.ops-panel {
+  min-height: 0;
+}
+
+.ops-panel--scrollable {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.35rem;
+  padding-bottom: 0.75rem;
+}
+
+.ops-panel--scrollable::after {
+  content: '';
+  display: block;
+  height: 8px;
+}
+
+/* ===== Header ===== */
+
+.ops-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.ops-header h2,
+.ops-block h3,
+.ops-block-header h3 {
+  margin: 0;
+  line-height: 1.1;
+}
+
+.ops-subtitle {
+  margin: 2px 0 0 0;
+  font-size: 0.8rem;
+  opacity: 0.82;
+}
+
+.ops-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ops-context-button {
+  min-height: 36px;
+  padding: 6px 12px;
+  white-space: nowrap;
+}
+
+/* ===== Badge scan ===== */
+
+.ops-badge-scan {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  min-width: 88px;
+  padding: 0.18rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+  transform: translateY(-1px);
+}
+
+.ops-badge-scan-faible {
+  color: #f5d7a1;
+  background: rgba(168, 104, 32, 0.22);
+  border-color: rgba(214, 146, 58, 0.4);
+}
+
+.ops-badge-scan-moyenne {
+  color: #b8d7ff;
+  background: rgba(46, 95, 160, 0.22);
+  border-color: rgba(92, 150, 220, 0.4);
+}
+
+.ops-badge-scan-bonne {
+  color: #b9f0c9;
+  background: rgba(39, 122, 73, 0.22);
+  border-color: rgba(86, 196, 124, 0.4);
+}
+
+.ops-badge-scan-neutre {
+  color: #c8d0da;
+  background: rgba(120, 132, 146, 0.16);
+  border-color: rgba(160, 172, 186, 0.24);
+}
+
+/* ===== Badge local station / opérations ===== */
+
+.ops-local-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 185px;
+  padding: 8px 10px;
+  border: 1px solid rgba(125, 184, 255, 0.18);
+  border-radius: 10px;
+  background: rgba(125, 184, 255, 0.06);
+}
+
+.ops-local-badge-station {
+  border-color: rgba(125, 184, 255, 0.2);
+  background: rgba(125, 184, 255, 0.07);
+}
+
+.ops-local-badge-operations {
+  border-color: rgba(186, 163, 96, 0.22);
+  background: rgba(186, 163, 96, 0.09);
+}
+
+.ops-local-badge-icon {
+  font-size: 1rem;
+  opacity: 0.95;
+}
+
+.ops-local-badge-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ops-local-badge-text strong {
+  font-size: 0.84rem;
+  line-height: 1.08;
+}
+
+.ops-local-badge-text span {
+  font-size: 0.74rem;
+  opacity: 0.8;
+  line-height: 1.08;
+}
+
+/* ===== Bandeau de statut ===== */
+
+.ops-status-banner {
+  margin-bottom: 10px;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.ops-status-banner-head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.3rem;
+}
+
+.ops-status-banner p {
+  margin: 0;
+  line-height: 1.35;
+  opacity: 0.92;
+}
+
+.ops-status-dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.ops-status-standard {
+  color: #d6dde6;
+  background: rgba(120, 132, 146, 0.14);
+  border-color: rgba(160, 172, 186, 0.2);
+}
+
+.ops-status-info {
+  color: #b8d7ff;
+  background: rgba(46, 95, 160, 0.18);
+  border-color: rgba(92, 150, 220, 0.26);
+}
+
+.ops-status-success {
+  color: #b9f0c9;
+  background: rgba(39, 122, 73, 0.18);
+  border-color: rgba(86, 196, 124, 0.26);
+}
+
+.ops-status-warning {
+  color: #f5d7a1;
+  background: rgba(168, 104, 32, 0.18);
+  border-color: rgba(214, 146, 58, 0.26);
+}
+
+.ops-status-critical {
+  color: #ffb8b8;
+  background: rgba(150, 44, 44, 0.2);
+  border-color: rgba(224, 90, 90, 0.28);
+}
+
+/* ===== Grilles et blocs ===== */
+
+.ops-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.ops-grid--top,
+.ops-grid--main {
+  align-items: start;
+}
+
+.ops-block {
+  padding-top: 6px;
+  border-top: 1px solid rgba(125, 184, 255, 0.12);
+}
+
+.ops-block:first-of-type {
+  padding-top: 0;
+  border-top: none;
+}
+
+.ops-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+/* ===== Cartes de métriques ===== */
+
+.ops-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ops-metric-card {
+  padding: 8px 9px;
+  border: 1px solid rgba(125, 184, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.ops-metric-label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 0.75rem;
+  opacity: 0.82;
+}
+
+/* ===== Systèmes ===== */
+
+.ops-system-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ops-system-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  padding: 5px 8px;
+  border: 1px solid rgba(125, 184, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.ops-system-item--multiline {
+  align-items: flex-start;
+}
+
+.ops-system-name {
+  font-size: 0.84rem;
+}
+
+.ops-system-value {
+  font-size: 0.78rem;
+  opacity: 0.88;
+  max-width: 60%;
+  text-align: right;
+}
+
+.ops-system-item--multiline .ops-system-value {
+  max-width: 60%;
+  line-height: 1.35;
+  text-align: right;
+}
+
+/* ===== Drones ===== */
+
+.ops-drone-summary {
+  font-size: 0.76rem;
+  opacity: 0.82;
+}
+
+.ops-drone-counters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.ops-mini-counter {
+  padding: 0.45rem 0.65rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ops-mini-counter-label {
+  display: block;
+  font-size: 0.68rem;
+  opacity: 0.76;
+  margin-bottom: 0.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ops-mini-counter strong {
+  display: block;
+  font-size: 1rem;
+  line-height: 1.1;
+}
+
+.drone-status-list {
+  list-style: none;
+  margin: 8px 0 0 0;
+  padding-left: 0;
+}
+
+.drone-status-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 5px;
+  padding: 5px 6px;
+  border: 1px solid rgba(125, 184, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  font-size: 0.84rem;
+  line-height: 1.14;
+}
+
+.drone-status-name {
+  font-weight: 600;
+}
+
+.drone-status-meta {
+  font-size: 0.78rem;
+  opacity: 0.86;
+}
+
+/* ===== Groupes d’actions ===== */
+
+.ops-panel .action-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ops-panel .action-group button {
+  min-height: 34px;
+  padding: 6px 12px;
+  font-size: 0.92rem;
+  line-height: 1.1;
+}
+
+.ops-panel .action-group--inline {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.ops-panel .action-group--inline button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+}
+
+.ops-panel .action-group--stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.ops-panel .action-group--stack button {
+  width: 100%;
+}

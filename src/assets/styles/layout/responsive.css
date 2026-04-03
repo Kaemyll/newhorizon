@@ -1,0 +1,196 @@
+/* =========================================================
+   LAYOUT — RESPONSIVE GLOBAL
+   ---------------------------------------------------------
+   Rôle :
+   - centraliser toutes les adaptations responsive
+   - conserver un point de recherche unique pour les
+     comportements selon largeur d’écran
+   - éviter la dispersion des media queries dans les modules
+   ========================================================= */
+
+/* =========================================================
+   <= 1450px
+   ========================================================= */
+@media (max-width: 1450px) {
+  .app-shell {
+    width: min(99vw, 1800px);
+    padding-inline: 10px;
+  }
+
+  .app-main {
+    grid-template-columns: 260px minmax(0, 1fr) 310px;
+  }
+}
+
+/* =========================================================
+   <= 1200px
+   ========================================================= */
+@media (max-width: 1200px) {
+  body {
+    overflow: auto;
+  }
+
+  .app-shell {
+    grid-template-rows: auto auto;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .app-main {
+    grid-template-columns: 1fr;
+  }
+
+  .main-column,
+  .right-aside,
+  .center-top {
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  .main-column-center {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: visible;
+  }
+
+  .right-aside {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  .journal-panel {
+    min-height: unset;
+    overflow: visible;
+  }
+
+  .journal-footer {
+    min-height: unset;
+    height: auto;
+  }
+
+  .journal-shell {
+    grid-template-columns: 1fr;
+    flex: initial;
+    height: auto;
+  }
+
+  .journal-column {
+    max-height: 160px;
+  }
+
+  .journal-column + .journal-column {
+    border-top: 1px solid rgba(125, 184, 255, 0.1);
+    border-left: none;
+  }
+
+  .resource-list-compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .resource-list-mineraux-three-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .market-rate-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .market-rate-grid-three-cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   <= 900px
+   ========================================================= */
+@media (max-width: 900px) {
+  .upgrade-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .upgrade-card-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .station-market-insights--compact {
+    grid-template-columns: 1fr;
+  }
+
+  .station-service-card--scrollable {
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 0;
+  }
+}
+
+/* =========================================================
+   <= 800px
+   ========================================================= */
+@media (max-width: 800px) {
+  .app-shell {
+    padding: 10px;
+  }
+
+  .title-line {
+    gap: 8px;
+    font-size: 2rem;
+  }
+
+  .title-icon {
+    font-size: 1.35rem;
+  }
+
+  .panel {
+    min-height: unset;
+  }
+
+  .resource-list-compact,
+  .resource-list-mineraux-three-cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   <= 720px
+   ========================================================= */
+@media (max-width: 720px) {
+  .ops-grid,
+  .ops-panel--enhanced .ops-grid--top,
+  .ops-panel--enhanced .ops-grid--main {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .ops-drone-counters {
+    grid-template-columns: 1fr;
+  }
+
+  .ops-block-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .ops-system-item--multiline .ops-system-value {
+    max-width: 100%;
+    text-align: left;
+  }
+
+  .hangar-ship-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================================================
+   <= 640px
+   ========================================================= */
+@media (max-width: 640px) {
+  .ship-panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ship-panel-metrics {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,47 @@
+/* =========================================================
+   COMPONENTS — PANNEAUX GÉNÉRIQUES
+   ---------------------------------------------------------
+   Rôle :
+   - apparence commune des panneaux
+   - titres, paragraphes et notes partagées
+   ========================================================= */
+
+.panel {
+  min-height: 152px;
+  padding: 11px 11px 10px;
+  border: 1px solid #243241;
+  border-radius: 12px;
+  background: #101923;
+  box-shadow: inset 0 0 0 1px rgba(125, 184, 255, 0.03);
+  overflow: hidden;
+}
+
+.panel h2 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 0.98rem;
+}
+
+.panel h3 {
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-size: 0.88rem;
+  opacity: 0.92;
+}
+
+.panel p {
+  margin: 0 0 6px 0;
+  line-height: 1.18;
+  font-size: 0.9rem;
+}
+
+.panel-note {
+  margin-top: 10px;
+  font-style: italic;
+  font-size: 0.84rem;
+  opacity: 0.84;
+}
+
+.panel-note-warning {
+  color: #ffcc8a;
+}

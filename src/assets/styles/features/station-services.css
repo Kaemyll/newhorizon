@@ -1,0 +1,431 @@
+/* =========================================================
+   FEATURE — SERVICES DE STATION
+   ---------------------------------------------------------
+   Rôle :
+   - structure du panneau des services station
+   - onglets de modes
+   - cartes de service
+   - marché local et métriques station
+   - scroll interne des services
+   ========================================================= */
+
+.station-services-panel {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.station-services-header {
+  margin-bottom: 8px;
+  flex: 0 0 auto;
+}
+
+.station-services-subtitle {
+  margin: 2px 0 0 0;
+  font-size: 0.82rem;
+  opacity: 0.72;
+}
+
+/* ===== Onglets / modes ===== */
+
+.station-mode-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex: 0 0 auto;
+}
+
+.station-mode-tabs button {
+  padding: 0.46rem 0.7rem;
+  font-size: 0.84rem;
+}
+
+.station-mode-tabs--with-launch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* ===== Cartes de service ===== */
+
+.station-service-card {
+  padding: 10px;
+  border: 1px solid rgba(125, 184, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(125, 184, 255, 0.03);
+}
+
+.station-service-card + .station-service-card {
+  margin-top: 8px;
+}
+
+.station-service-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.station-service-card-header h3 {
+  margin: 0;
+}
+
+.station-service-card-commerce {
+  border-color: rgba(206, 180, 97, 0.14);
+}
+
+.station-service-card-fuel {
+  border-color: rgba(114, 167, 214, 0.14);
+}
+
+.station-service-card-workshop {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-color: rgba(140, 145, 220, 0.14);
+}
+
+/* ===== Badges / indicateurs ===== */
+
+.station-service-badge {
+  display: inline-block;
+  padding: 0.2rem 0.45rem;
+  border: 1px solid rgba(125, 184, 255, 0.18);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  opacity: 0.84;
+  background: rgba(125, 184, 255, 0.05);
+}
+
+.station-service-state {
+  margin-left: auto;
+  font-size: 0.82rem;
+  opacity: 0.78;
+}
+
+/* ===== Grilles / métriques ===== */
+
+.station-service-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.station-service-metric {
+  padding: 8px 9px;
+  border: 1px solid rgba(125, 184, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.station-service-metric--full {
+  grid-column: 1 / -1;
+}
+
+.station-service-label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 0.75rem;
+  opacity: 0.72;
+}
+
+.station-service-description {
+  margin-bottom: 8px;
+  font-size: 0.84rem;
+  font-style: italic;
+  line-height: 1.16;
+  opacity: 0.88;
+}
+
+/* ===== Listes station ===== */
+
+.station-service-list {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+.station-service-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 5px;
+  line-height: 1.16;
+  font-size: 0.88rem;
+}
+
+.station-service-icon {
+  display: inline-block;
+  width: 14px;
+  text-align: center;
+  opacity: 0.92;
+  font-size: 0.86rem;
+}
+
+/* ===== Bloc résumé station ===== */
+
+.station-summary-panel strong {
+  font-size: 0.96rem;
+}
+
+.station-summary-block {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(125, 184, 255, 0.08);
+}
+
+.station-summary-list {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+.station-summary-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 5px;
+  font-size: 0.86rem;
+  line-height: 1.16;
+}
+
+/* ===== Lancement depuis la station ===== */
+
+.action-group--station-launch {
+  margin-bottom: 10px;
+  justify-content: flex-start;
+}
+
+.action-group--station-launch button {
+  min-height: 36px;
+  min-width: 260px;
+  max-width: 320px;
+  padding-inline: 16px;
+}
+
+.station-launch-button {
+  border: 1px solid rgba(102, 181, 255, 0.55);
+  background: linear-gradient(
+    180deg,
+    rgba(34, 89, 148, 0.55) 0%,
+    rgba(20, 51, 90, 0.72) 100%
+  );
+  color: #d9ecff;
+  box-shadow: inset 0 0 0 1px rgba(180, 220, 255, 0.08);
+}
+
+.station-launch-button:hover:not(:disabled) {
+  border-color: rgba(130, 200, 255, 0.8);
+  background: linear-gradient(
+    180deg,
+    rgba(44, 112, 185, 0.62) 0%,
+    rgba(24, 63, 110, 0.82) 100%
+  );
+}
+
+/* ===== Scroll / remplissage ===== */
+
+.station-service-card--scrollable {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.35rem;
+  padding-bottom: 0.9rem;
+}
+
+.station-service-card--scrollable > *:last-child {
+  margin-bottom: 0;
+}
+
+.station-service-card--scrollable::after {
+  content: '';
+  display: block;
+  height: 8px;
+}
+
+.station-service-mode {
+  min-height: 0;
+}
+
+.station-service-mode--fill {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.station-service-mode--fill > * {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.station-service-mode-hangar-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.35rem;
+}
+
+/* ===== Marché local ===== */
+
+.market-rate-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.market-rate-grid-three-cols {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px 8px;
+}
+
+.market-rate-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid rgba(120, 170, 220, 0.14);
+  border-radius: 10px;
+  background: rgba(10, 22, 40, 0.32);
+  min-height: 72px;
+}
+
+.market-rate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.market-rate-row--top {
+  align-items: flex-start;
+}
+
+.market-rate-row--bottom {
+  align-items: center;
+}
+
+.market-rate-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: #dcecff;
+  min-width: 0;
+  font-size: 0.82rem;
+}
+
+.market-rate-values {
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: #f4fbff;
+  white-space: nowrap;
+}
+
+.market-rate-average {
+  font-size: 0.8rem;
+  color: #8ea6bf;
+  white-space: nowrap;
+}
+
+.market-rate-row .market-rate-average {
+  display: inline-flex;
+  align-items: center;
+}
+
+.market-rate-variation {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.market-rate-variation-up {
+  color: #78d694;
+}
+
+.market-rate-variation-down {
+  color: #ff8f8f;
+}
+
+.market-rate-variation-stable {
+  color: #a9bdd4;
+}
+
+.market-rate-legend {
+  margin-bottom: 8px;
+  font-size: 0.76rem;
+  font-style: italic;
+  opacity: 0.72;
+}
+
+.market-rate-buy-button {
+  min-height: 28px;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
+.market-rate-buy-button:disabled {
+  opacity: 0.45;
+}
+
+/* ===== Encarts de lecture du marché ===== */
+
+.station-market-insights--compact {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0.85rem 0 1rem;
+}
+
+.station-market-insight-card {
+  border: 1px solid rgba(120, 170, 220, 0.16);
+  border-radius: 10px;
+  background: rgba(10, 22, 40, 0.32);
+  padding: 0.75rem 0.9rem;
+}
+
+.station-market-insight-card h4 {
+  margin: 0 0 0.55rem;
+  font-size: 0.84rem;
+  line-height: 1.2;
+  opacity: 0.94;
+}
+
+.station-market-list {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.station-market-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0.22rem 0;
+  font-size: 0.84rem;
+}
+
+.action-group-market {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.action-group-market .market-rate-buy-button {
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 0.32rem 0.5rem;
+  min-height: 28px;
+  min-width: 54px;
+  white-space: nowrap;
+}

@@ -1,0 +1,158 @@
+/* =========================================================
+   FEATURE — ATELIER / AMÉLIORATIONS
+   ---------------------------------------------------------
+   Rôle :
+   - items d’améliorations
+   - cartes d’atelier
+   - grille d’améliorations
+   - shell scrollable de l’atelier
+   ========================================================= */
+
+.upgrade-item {
+  padding: 8px 0;
+  border-top: 1px solid rgba(125, 184, 255, 0.08);
+}
+
+.upgrade-item:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.upgrade-header {
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+.upgrade-description {
+  margin-bottom: 6px;
+  font-style: italic;
+  font-size: 0.84rem;
+  line-height: 1.18;
+  opacity: 0.86;
+}
+
+.upgrade-item p {
+  font-size: 0.86rem;
+  margin-bottom: 5px;
+}
+
+.upgrade-item button {
+  padding: 0.45rem 0.7rem;
+  font-size: 0.86rem;
+}
+
+.upgrade-panel--atelier {
+  min-height: 0;
+}
+
+/* ===== Grille de cartes ===== */
+
+.upgrade-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.65rem;
+}
+
+.upgrade-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-height: 0;
+  padding: 0.8rem;
+  border: 1px solid rgba(125, 184, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.upgrade-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.upgrade-card-head strong {
+  font-size: 0.9rem;
+  line-height: 1.18;
+}
+
+.upgrade-card-description {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.25;
+  font-style: italic;
+  opacity: 0.86;
+}
+
+.upgrade-card-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem 0.75rem;
+}
+
+.upgrade-card-stats p {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+  font-size: 0.75rem;
+}
+
+.upgrade-card-stats p span {
+  color: rgba(210, 225, 245, 0.62);
+}
+
+.upgrade-card-stats p strong {
+  color: #f3f7ff;
+  font-size: 0.84rem;
+}
+
+.upgrade-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.16rem 0.46rem;
+  border-radius: 999px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.upgrade-badge--max {
+  background: rgba(110, 220, 170, 0.12);
+  color: #92f0c2;
+}
+
+/* ===== Conteneur scrollable de l’atelier en station ===== */
+
+.station-upgrade-shell {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding-right: 4px;
+  padding-bottom: 10px;
+  margin-top: 10px;
+  max-height: 320px;
+}
+
+.station-upgrade-shell::after {
+  content: '';
+  display: block;
+  height: 10px;
+  flex: 0 0 auto;
+}
+
+.station-upgrade-shell .panel {
+  min-height: unset;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.station-upgrade-shell .upgrade-item {
+  min-width: 0;
+}

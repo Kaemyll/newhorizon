@@ -1,0 +1,29 @@
+/* =========================================================
+   LAYOUT — APP SHELL
+   ---------------------------------------------------------
+   Rôle :
+   - conteneur principal de l’application
+   - grille générale header + contenu
+   - grille principale en 3 colonnes
+   ========================================================= */
+
+.app-shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100vh;
+  width: min(98vw, 1800px);
+  margin: 0 auto;
+  padding: 12px 14px 12px;
+  gap: 10px;
+}
+
+.app-header {
+  min-height: 0;
+}
+
+.app-main {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr) 330px;
+  gap: 12px;
+  min-height: 0;
+}
