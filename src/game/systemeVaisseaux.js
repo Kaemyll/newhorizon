@@ -1,6 +1,7 @@
 import { donneesVaisseaux } from './dataVaisseaux'
 import { recupererEtatJeu } from './etatJeu'
 import { recupererTickCourant } from './systemeTemps'
+import { recupererEtatCoque } from './systemeCoque'
 
 function obtenirHorodatageTick() {
   const tick = recupererTickCourant()
@@ -53,6 +54,25 @@ export function recupererVaisseauActif(etat = recupererEtatJeu()) {
   }
 
   return etat.vaisseauxPossedes.find((vaisseau) => vaisseau.id === etat.vaisseauActifId) || null
+}
+
+export function recupererInformationsCoqueVaisseau(vaisseau) {
+  if (!vaisseau) {
+    return {
+      code: 'hors_service',
+      label: 'Hors service',
+      seuilMin: 0,
+      seuilMax: 0,
+      pourcentage: 0,
+    }
+  }
+
+  return recupererEtatCoque(vaisseau.coque, vaisseau.coqueMax)
+}
+
+export function recupererInformationsCoqueVaisseauActif(etat = recupererEtatJeu()) {
+  const vaisseauActif = recupererVaisseauActif(etat)
+  return recupererInformationsCoqueVaisseau(vaisseauActif)
 }
 
 export function synchroniserFlotteDepuisVaisseauActif(etat = recupererEtatJeu()) {
