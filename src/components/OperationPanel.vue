@@ -147,6 +147,21 @@ const qualiteScanClasse = computed(() => {
   return 'ops-badge-scan-neutre'
 })
 
+const risqueAmasLabel = computed(() => {
+  const risque = props.exploration?.siteActif?.libelleRisque
+  if (!risque) return '—'
+  return risque.charAt(0).toUpperCase() + risque.slice(1)
+})
+
+const risqueAmasClasse = computed(() => {
+  const niveauRisque = Number(props.exploration?.siteActif?.niveauRisque || 0)
+
+  if (niveauRisque <= 0) return 'ops-badge-risk-negligeable'
+  if (niveauRisque === 1) return 'ops-badge-risk-faible'
+  if (niveauRisque === 2) return 'ops-badge-risk-modere'
+  return 'ops-badge-risk-eleve'
+})
+
 const reserveSiteLabel = computed(() => {
   const site = props.exploration?.siteActif
   if (!site) return '—'
@@ -420,9 +435,16 @@ function decrireDrone(drone) {
       <section class="ops-block">
         <div class="ops-block-header">
           <h3>Exploitation</h3>
-          <span v-if="exploration.siteActif" class="ops-badge-scan" :class="qualiteScanClasse">
-            {{ qualiteScanLabel }}
-          </span>
+
+          <div v-if="exploration.siteActif" class="ops-header-badges">
+            <span class="ops-badge-scan" :class="qualiteScanClasse">
+              {{ qualiteScanLabel }}
+            </span>
+
+            <span class="ops-badge-risk" :class="risqueAmasClasse">
+              Risque {{ risqueAmasLabel }}
+            </span>
+          </div>
         </div>
 
         <div class="ops-system-list">
@@ -538,7 +560,7 @@ function decrireDrone(drone) {
       </template>
       <template v-else>
         Le scanner peut détecter des amas pauvres, simples, mixtes ou denses. La qualité du relevé
-        influence la réserve estimée et la composition du site.
+        influence la réserve estimée, la composition du site et son niveau de risque.
       </template>
     </p>
   </section>
