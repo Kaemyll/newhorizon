@@ -11,8 +11,9 @@ function recupererSecteurCourant() {
 
 function recupererModeleVaisseau() {
   const etat = recupererEtatJeu()
+  const identifiantModele = etat.vaisseau?.modeleId || etat.vaisseau?.id
 
-  return donneesVaisseaux.find((vaisseau) => vaisseau.id === etat.vaisseau.id) || null
+  return donneesVaisseaux.find((vaisseau) => vaisseau.id === identifiantModele) || null
 }
 
 export function recupererListeAmeliorationsDisponibles() {

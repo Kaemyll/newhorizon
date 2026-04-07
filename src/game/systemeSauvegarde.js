@@ -43,10 +43,12 @@ export function chargerJeu() {
   try {
     const sauvegardeParsee = JSON.parse(sauvegardeBrute)
     const etatFusionne = fusionnerObjets(creerEtatInitialJeu(), sauvegardeParsee)
+
     hydraterEtatVaisseauxApresChargement(etatFusionne)
     remplacerEtatJeu(etatFusionne)
   } catch (erreur) {
     console.error('Erreur de chargement de sauvegarde :', erreur)
+
     const etatInitial = creerEtatInitialJeu()
     hydraterEtatVaisseauxApresChargement(etatInitial)
     remplacerEtatJeu(etatInitial)
