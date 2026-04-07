@@ -22,6 +22,10 @@ function ajouterAuJournal(message, categorie = 'evenements') {
   }
 }
 
+function bornerValeur(valeur, minimum, maximum) {
+  return Math.min(Math.max(valeur, minimum), maximum)
+}
+
 export function creerInstanceVaisseauDepuisModele(modeleId, suffixe = '001') {
   const modele = donneesVaisseaux.find((vaisseau) => vaisseau.id === modeleId)
 
@@ -43,8 +47,47 @@ export function creerInstanceVaisseauDepuisModele(modeleId, suffixe = '001') {
     dronesMiniersMax: modele.dronesMiniersMax,
     carburant: modele.carburantMax,
     carburantMax: modele.carburantMax,
-    scanner: structuredClone(modele.scanner),
+    scanner: structuredClone(modele.scanner || {}),
     ameliorations: structuredClone(modele.ameliorations || []),
+    ameliorationsMax: structuredClone(modele.ameliorationsMax || {}),
+  }
+}
+
+export function normaliserVaisseauPossede(vaisseau) {
+  if (!vaisseau) {
+    return null
+  }
+
+  const modele = donneesVaisseaux.find(
+    (modeleVaisseau) =>
+      modeleVaisseau.id === vaisseau.modeleId || modeleVaisseau.id === vaisseau.id,
+  )
+
+  if (!modele) {
+    return structuredClone(vaisseau)
+  }
+
+  const coqueMax = Number(vaisseau.coqueMax ?? modele.coqueMax ?? 0)
+  const souteMax = Number(vaisseau.souteMax ?? modele.souteMax ?? 0)
+  const carburantMax = Number(vaisseau.carburantMax ?? modele.carburantMax ?? 0)
+
+  return {
+    id: vaisseau.id || `${modele.id}_001`,
+    modeleId: vaisseau.modeleId || modele.id,
+    nom: vaisseau.nom || modele.nom,
+    constructeur: vaisseau.constructeur || modele.constructeur,
+    role: vaisseau.role || modele.role,
+    coque: bornerValeur(Number(vaisseau.coque ?? coqueMax), 0, coqueMax),
+    coqueMax,
+    soute: bornerValeur(Number(vaisseau.soute ?? 0), 0, souteMax),
+    souteMax,
+    puissanceMiniere: Number(vaisseau.puissanceMiniere ?? modele.puissanceMiniere ?? 0),
+    dronesMiniersMax: Number(vaisseau.dronesMiniersMax ?? modele.dronesMiniersMax ?? 0),
+    carburant: bornerValeur(Number(vaisseau.carburant ?? carburantMax), 0, carburantMax),
+    carburantMax,
+    scanner: structuredClone(vaisseau.scanner || modele.scanner || {}),
+    ameliorations: structuredClone(vaisseau.ameliorations || modele.ameliorations || []),
+    ameliorationsMax: structuredClone(vaisseau.ameliorationsMax || modele.ameliorationsMax || {}),
   }
 }
 
@@ -82,17 +125,40 @@ export function synchroniserFlotteDepuisVaisseauActif(etat = recupererEtatJeu())
     return
   }
 
-  vaisseauActif.coque = etat.vaisseau.coque
-  vaisseauActif.coqueMax = etat.vaisseau.coqueMax
-  vaisseauActif.soute = etat.vaisseau.soute
-  vaisseauActif.souteMax = etat.vaisseau.souteMax
-  vaisseauActif.puissanceMiniere = etat.vaisseau.puissanceMiniere
-  vaisseauActif.dronesMiniersMax = etat.vaisseau.dronesMiniersMax
-  vaisseauActif.carburantMax = etat.vaisseau.carburantMax
-  vaisseauActif.carburant = etat.ressources.carburant
+  vaisseauActif.coqueMax = Number(etat.vaisseau.coqueMax ?? vaisseauActif.coqueMax)
+  vaisseauActif.coque = bornerValeur(
+    Number(etat.vaisseau.coque ?? vaisseauActif.coque),
+    0,
+    vaisseauActif.coqueMax,
+  )
+
+  vaisseauActif.souteMax = Number(etat.vaisseau.souteMax ?? vaisseauActif.souteMax)
+  vaisseauActif.soute = bornerValeur(
+    Number(etat.vaisseau.soute ?? vaisseauActif.soute),
+    0,
+    vaisseauActif.souteMax,
+  )
+
+  vaisseauActif.puissanceMiniere = Number(
+    etat.vaisseau.puissanceMiniere ?? vaisseauActif.puissanceMiniere,
+  )
+  vaisseauActif.dronesMiniersMax = Number(
+    etat.vaisseau.dronesMiniersMax ?? vaisseauActif.dronesMiniersMax,
+  )
+
+  vaisseauActif.carburantMax = Number(etat.vaisseau.carburantMax ?? vaisseauActif.carburantMax)
+  vaisseauActif.carburant = bornerValeur(
+    Number(etat.ressources.carburant ?? vaisseauActif.carburant),
+    0,
+    vaisseauActif.carburantMax,
+  )
+
   vaisseauActif.scanner = structuredClone(etat.vaisseau.scanner || vaisseauActif.scanner || {})
   vaisseauActif.ameliorations = structuredClone(
     etat.vaisseau.ameliorations || vaisseauActif.ameliorations || [],
+  )
+  vaisseauActif.ameliorationsMax = structuredClone(
+    etat.vaisseau.ameliorationsMax || vaisseauActif.ameliorationsMax || {},
   )
 }
 
@@ -118,6 +184,7 @@ export function synchroniserVaisseauActifDansEtat(etat = recupererEtatJeu()) {
     carburantMax: vaisseauActif.carburantMax,
     scanner: structuredClone(vaisseauActif.scanner || {}),
     ameliorations: structuredClone(vaisseauActif.ameliorations || []),
+    ameliorationsMax: structuredClone(vaisseauActif.ameliorationsMax || {}),
   }
 
   etat.ressources.carburant = vaisseauActif.carburant
@@ -141,12 +208,25 @@ export function hydraterEtatVaisseauxApresChargement(etat = recupererEtatJeu()) 
     vaisseauHydrate.ameliorations = structuredClone(
       etat.vaisseau?.ameliorations || vaisseauHydrate.ameliorations,
     )
+    vaisseauHydrate.ameliorationsMax = structuredClone(
+      etat.vaisseau?.ameliorationsMax || vaisseauHydrate.ameliorationsMax || {},
+    )
 
-    etat.vaisseauxPossedes = [vaisseauHydrate]
-    etat.vaisseauActifId = vaisseauHydrate.id
+    etat.vaisseauxPossedes = [normaliserVaisseauPossede(vaisseauHydrate)]
+    etat.vaisseauActifId = etat.vaisseauxPossedes[0].id
+  } else {
+    etat.vaisseauxPossedes = etat.vaisseauxPossedes
+      .map((vaisseau) => normaliserVaisseauPossede(vaisseau))
+      .filter(Boolean)
   }
 
   if (!etat.vaisseauActifId && etat.vaisseauxPossedes.length > 0) {
+    etat.vaisseauActifId = etat.vaisseauxPossedes[0].id
+  }
+
+  const vaisseauActif = recupererVaisseauActif(etat)
+
+  if (!vaisseauActif && etat.vaisseauxPossedes.length > 0) {
     etat.vaisseauActifId = etat.vaisseauxPossedes[0].id
   }
 
@@ -283,7 +363,7 @@ export function acheterVaisseau(modeleId) {
   const nouveauVaisseau = creerInstanceVaisseauDepuisModele(modeleId, suffixe)
 
   etat.ressources.credits -= modele.prix
-  etat.vaisseauxPossedes.push(nouveauVaisseau)
+  etat.vaisseauxPossedes.push(normaliserVaisseauPossede(nouveauVaisseau))
 
   ajouterAuJournal(
     `Acquisition confirmée : ${modele.nom} ajouté au hangar pour ${modele.prix} cr.`,
