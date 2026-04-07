@@ -241,8 +241,37 @@ function obtenirLibelleTypeAmas(typeAmas) {
   return 'amas'
 }
 
+function determinerNiveauRisqueAmas(secteur, typeAmas) {
+  if (typeAmas === 'sterile') {
+    return 0
+  }
+
+  let niveauRisque = 0
+
+  if (typeAmas === 'double') {
+    niveauRisque = 1
+  } else if (typeAmas === 'triple') {
+    niveauRisque = 2
+  }
+
+  const securite = Number(secteur?.securite ?? 1)
+
+  if (securite <= 0.3 && typeAmas !== 'sterile') {
+    niveauRisque += 1
+  }
+
+  return Math.min(3, niveauRisque)
+}
+
+function obtenirLibelleRisqueAmas(niveauRisque) {
+  if (niveauRisque <= 0) return 'négligeable'
+  if (niveauRisque === 1) return 'faible'
+  if (niveauRisque === 2) return 'modéré'
+  return 'élevé'
+}
+
 function construireMessageScan(siteActif, ancienSite) {
-  const { nom, qualiteScan, reserveTotale, composition, typeAmas } = siteActif
+  const { nom, qualiteScan, reserveTotale, composition, typeAmas, libelleRisque } = siteActif
   const compositionTexte = formaterComposition(composition)
   const libelleType = obtenirLibelleTypeAmas(typeAmas)
 
@@ -252,6 +281,7 @@ function construireMessageScan(siteActif, ancienSite) {
     message += ' Aucune signature minérale exploitable confirmée.'
   } else {
     message += ` Réserve estimée ${reserveTotale}. Composition : ${compositionTexte}.`
+    message += ` Risque coque : ${libelleRisque}.`
   }
 
   if (ancienSite) {
@@ -319,6 +349,8 @@ export function scannerAmasMinier() {
   }
 
   const { typeAmas, reserveTotale, composition } = genererCompositionLocale(secteur, resultatScan)
+  const niveauRisque = determinerNiveauRisqueAmas(secteur, typeAmas)
+  const libelleRisque = obtenirLibelleRisqueAmas(niveauRisque)
 
   etat.exploration.siteActif = {
     id: etat.exploration.prochainSiteId,
@@ -329,6 +361,8 @@ export function scannerAmasMinier() {
     reserveTotale,
     reserveRestante: reserveTotale,
     composition,
+    niveauRisque,
+    libelleRisque,
   }
 
   etat.exploration.prochainSiteId += 1

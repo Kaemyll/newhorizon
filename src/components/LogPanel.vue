@@ -95,7 +95,23 @@ function classeTagNiveau(niveau) {
       <section class="journal-column">
         <h3 class="journal-title">Combat</h3>
         <ul class="log-list">
-          <li class="log-placeholder">Aucun contact hostile détecté.</li>
+          <li
+            v-for="(entree, index) in entrees.filter(filtrerParCategorie('combat'))"
+            :key="`cmb-${index}`"
+            :class="classeNiveau(entree.niveau)"
+          >
+            <span class="log-timestamp">{{ entree.horodatage }}</span>
+            <span class="log-tag" :class="classeTagNiveau(entree.niveau)">
+              {{ libelleNiveau(entree.niveau) }}
+            </span>
+            <span class="log-message">{{ entree.message }}</span>
+          </li>
+          <li
+            v-if="entrees.filter(filtrerParCategorie('combat')).length === 0"
+            class="log-placeholder"
+          >
+            Aucun contact hostile détecté.
+          </li>
         </ul>
       </section>
     </div>

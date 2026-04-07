@@ -65,3 +65,35 @@ export function estCoqueCritique(coqueActuelle, coqueMax) {
 export function estCoqueHorsService(coqueActuelle, coqueMax) {
   return recupererEtatCoque(coqueActuelle, coqueMax).code === 'hors_service'
 }
+
+export function appliquerDegatsCoqueSurVaisseau(vaisseau, quantite) {
+  if (!vaisseau) {
+    return {
+      degatsAppliques: 0,
+      coqueAvant: 0,
+      coqueApres: 0,
+      etatAvant: recupererEtatCoque(0, 0),
+      etatApres: recupererEtatCoque(0, 0),
+    }
+  }
+
+  const coqueMax = Number(vaisseau.coqueMax) || 0
+  const coqueAvant = bornerValeur(Number(vaisseau.coque) || 0, 0, coqueMax)
+  const etatAvant = recupererEtatCoque(coqueAvant, coqueMax)
+
+  const degatsDemandes = Math.max(0, Math.floor(Number(quantite) || 0))
+  const coqueApres = bornerValeur(coqueAvant - degatsDemandes, 0, coqueMax)
+  const degatsAppliques = coqueAvant - coqueApres
+
+  vaisseau.coque = coqueApres
+
+  const etatApres = recupererEtatCoque(coqueApres, coqueMax)
+
+  return {
+    degatsAppliques,
+    coqueAvant,
+    coqueApres,
+    etatAvant,
+    etatApres,
+  }
+}

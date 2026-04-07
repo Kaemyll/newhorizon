@@ -4,6 +4,12 @@ import { donneesSecteurs } from './dataSecteurs'
 import { calculerPrixLigneBrut, calculerTauxTaxePourSecurite } from './systemeCommerce'
 import { avancerTemps, recupererTickCourant } from './systemeTemps'
 import { verifierPanneSecheEtDeclencher } from './systemeAssistance'
+import { appliquerDegatsCoqueSurVaisseau } from './systemeCoque'
+import {
+  recupererInformationsCoqueVaisseau,
+  recupererVaisseauActif,
+  synchroniserVaisseauActifDansEtat,
+} from './systemeVaisseaux'
 
 function obtenirHorodatageTick() {
   const tick = recupererTickCourant()
@@ -177,6 +183,86 @@ function formaterDetailsExtraction(detailsExtraction) {
   return lignes.map((ligne) => `+${ligne.quantite} ${ligne.nom}`).join(', ')
 }
 
+function determinerIncidentDegatsDepuisRisque(niveauRisque) {
+  if (niveauRisque <= 0) {
+    return { degats: 0 }
+  }
+
+  if (niveauRisque === 1) {
+    return { degats: Math.random() < 0.12 ? 1 : 0 }
+  }
+
+  if (niveauRisque === 2) {
+    return { degats: Math.random() < 0.22 ? 1 : 0 }
+  }
+
+  if (Math.random() < 0.35) {
+    return { degats: Math.random() < 0.35 ? 2 : 1 }
+  }
+
+  return { degats: 0 }
+}
+
+function resoudreNiveauJournalCoque(codeEtat) {
+  if (codeEtat === 'hors_service') return 'critique'
+  if (codeEtat === 'critique') return 'alerte'
+  return 'alerte'
+}
+
+function appliquerRisqueCoquePendantExploitation(source = 'manuelle') {
+  const etat = recupererEtatJeu()
+  const siteActif = etat.exploration?.siteActif
+
+  if (!siteActif) {
+    return
+  }
+
+  if (etat.navigation?.enVoyage || etat.positionLocale !== 'operations') {
+    return
+  }
+
+  const niveauRisque = Number(siteActif.niveauRisque || 0)
+
+  if (niveauRisque <= 0) {
+    return
+  }
+
+  const vaisseauActif = recupererVaisseauActif(etat)
+
+  if (!vaisseauActif) {
+    return
+  }
+
+  const incident = determinerIncidentDegatsDepuisRisque(niveauRisque)
+
+  if (incident.degats <= 0) {
+    return
+  }
+
+  const resultat = appliquerDegatsCoqueSurVaisseau(vaisseauActif, incident.degats)
+
+  if (resultat.degatsAppliques <= 0) {
+    return
+  }
+
+  synchroniserVaisseauActifDansEtat(etat)
+
+  const informationsCoque = recupererInformationsCoqueVaisseau(vaisseauActif)
+  const niveauJournal = resoudreNiveauJournalCoque(informationsCoque.code)
+  const prefixe =
+    source === 'drones'
+      ? `Exploitation drone risquée : la coque du ${vaisseauActif.nom}`
+      : `Exploitation risquée : la coque du ${vaisseauActif.nom}`
+
+  let message = `${prefixe} subit ${resultat.degatsAppliques} point(s) de dégâts sur ${siteActif.nom}.`
+
+  if (resultat.etatAvant.code !== resultat.etatApres.code) {
+    message += ` État coque : ${resultat.etatApres.label.toLowerCase()} (${informationsCoque.pourcentage}%).`
+  }
+
+  ajouterAuJournal(message, 'combat', niveauJournal)
+}
+
 export function minerMineraiManuellement() {
   const etat = recupererEtatJeu()
 
@@ -251,6 +337,7 @@ export function minerMineraiManuellement() {
 
   faireTournerDrones()
   verifierPanneSecheEtDeclencher()
+  appliquerRisqueCoquePendantExploitation('manuelle')
 
   ajouterAuJournal(`Extraction manuelle : ${resumeExtraction}.`, 'evenements', 'succes')
 }
@@ -485,6 +572,7 @@ export function faireTournerDrones() {
   let dronesRecharges = 0
   let dronesRetourRecharge = 0
   let extractionInterrompueSoute = false
+  let extractionDroneEffectuee = false
 
   for (const drone of etat.industrie.drones) {
     if (drone.etat === 'embarque' && drone.ticksRechargeRestants > 0) {
@@ -549,6 +637,7 @@ export function faireTournerDrones() {
     if (mineraiTire) {
       ajouterMineraiDansSoute(mineraiTire.id, 1)
       consommerReserveSite(1)
+      extractionDroneEffectuee = true
       ajouterAuJournal(`Drone #${drone.id} : +1 ${mineraiTire.nom}.`, 'evenements', 'info')
     }
 
@@ -574,6 +663,10 @@ export function faireTournerDrones() {
       drone.ticksRechargeRestants = 2
       dronesRetourRecharge += 1
     }
+  }
+
+  if (extractionDroneEffectuee) {
+    appliquerRisqueCoquePendantExploitation('drones')
   }
 
   if (dronesRecharges > 0) {
