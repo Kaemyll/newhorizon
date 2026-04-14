@@ -4,7 +4,10 @@ import { donneesSecteurs } from './dataSecteurs'
 import { calculerPrixLigneBrut, calculerTauxTaxePourSecurite } from './systemeCommerce'
 import { avancerTemps, recupererTickCourant } from './systemeTemps'
 import { verifierPanneSecheEtDeclencher } from './systemeAssistance'
-import { appliquerDegatsCoqueSurVaisseau } from './systemeCoque'
+import {
+  appliquerDegatsCoqueSurVaisseau,
+  construireJournalTransitionEtatCoque,
+} from './systemeCoque'
 import {
   recupererInformationsCoqueVaisseau,
   recupererInformationsCoqueVaisseauActif,
@@ -46,10 +49,6 @@ function recupererEtatCoqueActif() {
 function coqueCritiqueOuHS() {
   const infos = recupererEtatCoqueActif()
   return infos.code === 'critique' || infos.code === 'hors_service'
-}
-
-function coqueHorsService() {
-  return recupererEtatCoqueActif().code === 'hors_service'
 }
 
 function tirerMineraiDepuisComposition(composition) {
@@ -220,7 +219,7 @@ function determinerIncidentDegatsDepuisRisque(niveauRisque) {
 
 function resoudreNiveauJournalCoque(codeEtat) {
   if (codeEtat === 'hors_service') return 'critique'
-  if (codeEtat === 'critique') return 'alerte'
+  if (codeEtat === 'critique') return 'critique'
   return 'alerte'
 }
 
@@ -276,6 +275,17 @@ function appliquerRisqueCoquePendantExploitation(source = 'manuelle') {
   }
 
   ajouterAuJournal(message, 'combat', niveauJournal)
+
+  const transition = construireJournalTransitionEtatCoque(
+      vaisseauActif.nom,
+      resultat.etatAvant,
+      resultat.etatApres,
+      'degats',
+  )
+
+  if (transition) {
+    ajouterAuJournal(transition.message, 'combat', transition.niveau)
+  }
 }
 
 export function minerMineraiManuellement() {
