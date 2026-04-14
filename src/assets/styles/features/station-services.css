@@ -116,11 +116,25 @@
   margin-bottom: 8px;
 }
 
+.station-service-grid--atelier-devis {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px 8px;
+  margin-bottom: 6px;
+}
+
 .station-service-metric {
   padding: 8px 9px;
   border: 1px solid rgba(125, 184, 255, 0.08);
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.12);
+}
+
+.station-service-metric--compact {
+  padding: 6px 8px;
+}
+
+.station-service-metric--support {
+  min-width: 160px;
 }
 
 .station-service-metric--full {
@@ -140,6 +154,23 @@
   font-style: italic;
   line-height: 1.16;
   opacity: 0.88;
+}
+
+.station-service-description--compact {
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+  line-height: 1.12;
+}
+
+.action-group--atelier-main {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.action-group--atelier-support {
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
 }
 
 /* ===== Listes station ===== */
@@ -211,9 +242,9 @@
 .station-launch-button {
   border: 1px solid rgba(102, 181, 255, 0.55);
   background: linear-gradient(
-    180deg,
-    rgba(34, 89, 148, 0.55) 0%,
-    rgba(20, 51, 90, 0.72) 100%
+          180deg,
+          rgba(34, 89, 148, 0.55) 0%,
+          rgba(20, 51, 90, 0.72) 100%
   );
   color: #d9ecff;
   box-shadow: inset 0 0 0 1px rgba(180, 220, 255, 0.08);
@@ -222,9 +253,9 @@
 .station-launch-button:hover:not(:disabled) {
   border-color: rgba(130, 200, 255, 0.8);
   background: linear-gradient(
-    180deg,
-    rgba(44, 112, 185, 0.62) 0%,
-    rgba(24, 63, 110, 0.82) 100%
+          180deg,
+          rgba(44, 112, 185, 0.62) 0%,
+          rgba(24, 63, 110, 0.82) 100%
   );
 }
 

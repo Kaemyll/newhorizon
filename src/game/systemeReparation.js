@@ -3,7 +3,7 @@ import { donneesSecteurs } from './dataSecteurs'
 import { ajouterAuJournal } from './systemeMinage'
 import { recupererVaisseauActif, synchroniserVaisseauActifDansEtat } from './systemeVaisseaux'
 
-const COUT_REPARATION_PAR_POINT = 15
+export const COUT_REPARATION_PAR_POINT = 15
 
 function recupererSecteurCourant(etat) {
     return donneesSecteurs.find((secteur) => secteur.id === etat.secteurCourant?.id) || null

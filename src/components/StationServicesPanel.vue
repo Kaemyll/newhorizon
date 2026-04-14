@@ -10,6 +10,7 @@ import {
 import {
     calculerCoutReparationVaisseau,
     calculerPointsCoqueManquants,
+    COUT_REPARATION_PAR_POINT,
 } from '../game/systemeReparation'
 
 const props = defineProps({
@@ -100,6 +101,8 @@ const reparationNecessaire = computed(() => pointsCoqueManquants.value > 0)
 const reparationAbordable = computed(
     () => reparationNecessaire.value && (props.ressources?.credits || 0) >= coutReparation.value,
 )
+
+const tarifAtelier = computed(() => `${COUT_REPARATION_PAR_POINT} cr / pt`)
 
 function recupererQuantiteEnSoute(idMinerai) {
     return props.ressources?.minerais?.[idMinerai] || 0
@@ -422,35 +425,34 @@ function vendreMineraiMax(minerai) {
                     <span class="station-service-badge">Actif</span>
                 </div>
 
-                <div class="station-service-grid">
-                    <div class="station-service-metric">
-                        <span class="station-service-label">Service atelier</span>
-                        <strong>Disponible</strong>
-                    </div>
-
-                    <div class="station-service-metric">
-                        <span class="station-service-label">Capacité</span>
-                        <strong>Maintenance légère</strong>
-                    </div>
-
-                    <div class="station-service-metric">
-                        <span class="station-service-label">Coque actuelle</span>
+                <div class="station-service-grid station-service-grid--atelier-devis">
+                    <div class="station-service-metric station-service-metric--compact">
+                        <span class="station-service-label">Coque</span>
                         <strong>{{ vaisseau.coque }} / {{ vaisseau.coqueMax }}</strong>
                     </div>
 
-                    <div class="station-service-metric">
-                        <span class="station-service-label">Réparation complète</span>
-                        <strong v-if="reparationNecessaire">{{ coutReparation }} crédits</strong>
-                        <strong v-else>Aucune nécessaire</strong>
+                    <div class="station-service-metric station-service-metric--compact">
+                        <span class="station-service-label">À réparer</span>
+                        <strong>{{ pointsCoqueManquants }} pts</strong>
+                    </div>
+
+                    <div class="station-service-metric station-service-metric--compact">
+                        <span class="station-service-label">Tarif atelier</span>
+                        <strong>{{ tarifAtelier }}</strong>
+                    </div>
+
+                    <div class="station-service-metric station-service-metric--compact">
+                        <span class="station-service-label">Coût estimé</span>
+                        <strong v-if="reparationNecessaire">{{ coutReparation }} cr</strong>
+                        <strong v-else>—</strong>
                     </div>
                 </div>
 
-                <p class="station-service-description">
-                    Accès aux réparations de coque, aux améliorations du vaisseau et à l’acquisition de drones
-                    miniers.
+                <p class="station-service-description station-service-description--compact">
+                    Réparation, amélioration et support technique du vaisseau actif.
                 </p>
 
-                <div class="action-group">
+                <div class="action-group action-group--atelier-main">
                     <button
                         class="action-button-with-icon"
                         :disabled="!reparationNecessaire || !reparationAbordable"
@@ -462,18 +464,19 @@ function vendreMineraiMax(minerai) {
                 </div>
 
                 <p v-if="!reparationNecessaire" class="panel-note">
-                    La coque du vaisseau actif est déjà à son niveau maximal.
+                    Coque intacte.
                 </p>
 
                 <p v-else-if="!reparationAbordable" class="panel-note panel-note-warning">
-                    Crédits insuffisants pour financer une réparation complète de la coque.
+                    Crédits insuffisants pour la réparation complète.
                 </p>
 
-                <div class="action-group">
-                    <div class="station-service-metric">
+                <div class="action-group action-group--atelier-support">
+                    <div class="station-service-metric station-service-metric--compact station-service-metric--support">
                         <span class="station-service-label">Drone minier</span>
-                        <strong>{{ coutDroneMinier }} crédits / unité</strong>
+                        <strong>{{ coutDroneMinier }} cr / unité</strong>
                     </div>
+
                     <button class="action-button-with-icon" @click="emit('acheter-drone')">
                         <span class="button-icon" aria-hidden="true">⇪</span>
                         <span>Acheter un drone minier — {{ coutDroneMinier }} crédits</span>
