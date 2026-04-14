@@ -8,8 +8,10 @@ import {
     formaterPourcentageTaxe,
 } from '../game/systemeCommerce'
 import {
+    calculerCoutReparationPartielleVaisseau,
     calculerCoutReparationVaisseau,
     calculerPointsCoqueManquants,
+    calculerPointsReparationPartielle,
     COUT_REPARATION_PAR_POINT,
 } from '../game/systemeReparation'
 
@@ -48,6 +50,7 @@ const emit = defineEmits([
     'ravitailler',
     'acheter-drone',
     'reparer-vaisseau',
+    'reparer-partiellement-vaisseau',
     'aller-operations',
     'retour-station',
 ])
@@ -93,13 +96,24 @@ const profilMarcheLabel = computed(() => {
 const coutDroneMinier = computed(() => props.economie?.coutDroneMinier ?? 400)
 
 const pointsCoqueManquants = computed(() => calculerPointsCoqueManquants(props.vaisseau))
+const pointsReparationPartielle = computed(() => calculerPointsReparationPartielle(props.vaisseau))
 
 const coutReparation = computed(() => calculerCoutReparationVaisseau(props.vaisseau))
+const coutReparationPartielle = computed(() =>
+    calculerCoutReparationPartielleVaisseau(props.vaisseau),
+)
 
 const reparationNecessaire = computed(() => pointsCoqueManquants.value > 0)
 
 const reparationAbordable = computed(
     () => reparationNecessaire.value && (props.ressources?.credits || 0) >= coutReparation.value,
+)
+
+const reparationPartielleAbordable = computed(
+    () =>
+        reparationNecessaire.value &&
+        pointsReparationPartielle.value > 0 &&
+        (props.ressources?.credits || 0) >= coutReparationPartielle.value,
 )
 
 const tarifAtelier = computed(() => `${COUT_REPARATION_PAR_POINT} cr / pt`)
@@ -425,7 +439,7 @@ function vendreMineraiMax(minerai) {
                     <span class="station-service-badge">Actif</span>
                 </div>
 
-                <div class="station-service-grid station-service-grid--atelier-devis">
+                <div class="station-service-grid station-service-grid--atelier-devis station-service-grid--atelier-devis-5">
                     <div class="station-service-metric station-service-metric--compact">
                         <span class="station-service-label">Coque</span>
                         <strong>{{ vaisseau.coque }} / {{ vaisseau.coqueMax }}</strong>
@@ -442,7 +456,13 @@ function vendreMineraiMax(minerai) {
                     </div>
 
                     <div class="station-service-metric station-service-metric--compact">
-                        <span class="station-service-label">Coût estimé</span>
+                        <span class="station-service-label">Coût partiel</span>
+                        <strong v-if="reparationNecessaire">{{ coutReparationPartielle }} cr</strong>
+                        <strong v-else>—</strong>
+                    </div>
+
+                    <div class="station-service-metric station-service-metric--compact">
+                        <span class="station-service-label">Coût complet</span>
                         <strong v-if="reparationNecessaire">{{ coutReparation }} cr</strong>
                         <strong v-else>—</strong>
                     </div>
@@ -452,14 +472,23 @@ function vendreMineraiMax(minerai) {
                     Réparation, amélioration et support technique du vaisseau actif.
                 </p>
 
-                <div class="action-group action-group--atelier-main">
+                <div class="action-group action-group--atelier-main action-group--atelier-main-split">
+                    <button
+                        class="action-button-with-icon"
+                        :disabled="!reparationNecessaire || !reparationPartielleAbordable"
+                        @click="emit('reparer-partiellement-vaisseau')"
+                    >
+                        <span class="button-icon" aria-hidden="true">🛠</span>
+                        <span>Réparation partielle (+{{ pointsReparationPartielle }})</span>
+                    </button>
+
                     <button
                         class="action-button-with-icon"
                         :disabled="!reparationNecessaire || !reparationAbordable"
                         @click="emit('reparer-vaisseau')"
                     >
                         <span class="button-icon" aria-hidden="true">🛠</span>
-                        <span>Réparer complètement le vaisseau</span>
+                        <span>Réparation complète</span>
                     </button>
                 </div>
 
@@ -467,12 +496,24 @@ function vendreMineraiMax(minerai) {
                     Coque intacte.
                 </p>
 
-                <p v-else-if="!reparationAbordable" class="panel-note panel-note-warning">
-                    Crédits insuffisants pour la réparation complète.
+                <p
+                    v-else-if="!reparationPartielleAbordable && !reparationAbordable"
+                    class="panel-note panel-note-warning"
+                >
+                    Crédits insuffisants pour toute réparation.
+                </p>
+
+                <p
+                    v-else-if="reparationPartielleAbordable && !reparationAbordable"
+                    class="panel-note panel-note-warning"
+                >
+                    Réparation partielle possible. Crédits insuffisants pour une réparation complète.
                 </p>
 
                 <div class="action-group action-group--atelier-support">
-                    <div class="station-service-metric station-service-metric--compact station-service-metric--support">
+                    <div
+                        class="station-service-metric station-service-metric--compact station-service-metric--support"
+                    >
                         <span class="station-service-label">Drone minier</span>
                         <strong>{{ coutDroneMinier }} cr / unité</strong>
                     </div>
