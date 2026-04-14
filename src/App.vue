@@ -15,18 +15,19 @@ import HangarPanel from './components/HangarPanel.vue'
 import { recupererEtatJeu, reinitialiserEtatJeu } from './game/etatJeu'
 import { chargerJeu, sauvegarderJeu } from './game/systemeSauvegarde'
 import {
-  minerMineraiManuellement,
-  vendreTousLesMinerais,
-  acheterDroneMinier,
-  deployerDrones,
-  rappelerDrones,
+    minerMineraiManuellement,
+    vendreTousLesMinerais,
+    acheterDroneMinier,
+    deployerDrones,
+    rappelerDrones,
 } from './game/systemeMinage'
 import { acheterMineraiEnStation, vendreMineraiEnStation } from './game/systemeCommerce'
 import { ravitaillerCarburant } from './game/systemeRavitaillement'
 import { ameliorerVaisseau } from './game/systemeAmeliorations'
+import { reparerVaisseauActif } from './game/systemeReparation'
 import {
-  selectionnerDestination,
-  lancerVoyageVersDestinationSelectionnee,
+    selectionnerDestination,
+    lancerVoyageVersDestinationSelectionnee,
 } from './game/systemeNavigation'
 import { allerEnZoneOperations, retourALaStation } from './game/systemeLocalisation'
 import { scannerAmasMinier } from './game/systemeExploration'
@@ -37,205 +38,211 @@ import { acheterVaisseau, changerVaisseauActif } from './game/systemeVaisseaux'
 const etat = reactive({})
 
 function creerEtatUIInitial() {
-  return {
-    modeActif: 'station',
-    sousModeStation: 'commerce',
-  }
+    return {
+        modeActif: 'station',
+        sousModeStation: 'commerce',
+    }
 }
 
 const ui = reactive(creerEtatUIInitial())
 
 const secteurCourantComplet = computed(
-  () => donneesSecteurs.find((secteur) => secteur.id === etat.secteurCourant?.id) || null,
+    () => donneesSecteurs.find((secteur) => secteur.id === etat.secteurCourant?.id) || null,
 )
 
 const stationCourante = computed(() => secteurCourantComplet.value?.stationPrincipale ?? null)
 
 function normaliserSousModeStation() {
-  const services = stationCourante.value?.services
+    const services = stationCourante.value?.services
 
-  if (ui.sousModeStation === 'hangar') {
-    return
-  }
+    if (ui.sousModeStation === 'hangar') {
+        return
+    }
 
-  if (!services) {
+    if (!services) {
+        ui.sousModeStation = 'hangar'
+        return
+    }
+
+    if (ui.sousModeStation === 'commerce' && services.commerce) return
+    if (ui.sousModeStation === 'ravitaillement' && services.ravitaillement) return
+    if (ui.sousModeStation === 'atelier' && services.atelier) return
+
     ui.sousModeStation = 'hangar'
-    return
-  }
-
-  if (ui.sousModeStation === 'commerce' && services.commerce) return
-  if (ui.sousModeStation === 'ravitaillement' && services.ravitaillement) return
-  if (ui.sousModeStation === 'atelier' && services.atelier) return
-
-  ui.sousModeStation = 'hangar'
 }
 
 function synchroniserModeActifAvecPositionLocale() {
-  if (etat.positionLocale === 'station') {
-    ui.modeActif = 'station'
-    normaliserSousModeStation()
-    return
-  }
+    if (etat.positionLocale === 'station') {
+        ui.modeActif = 'station'
+        normaliserSousModeStation()
+        return
+    }
 
-  if (etat.positionLocale === 'operations') {
-    ui.modeActif = 'operations'
-  }
+    if (etat.positionLocale === 'operations') {
+        ui.modeActif = 'operations'
+    }
 }
 
 function synchroniserEtat() {
-  const etatCourant = structuredClone(recupererEtatJeu())
+    const etatCourant = structuredClone(recupererEtatJeu())
 
-  Object.keys(etat).forEach((cle) => {
-    delete etat[cle]
-  })
+    Object.keys(etat).forEach((cle) => {
+        delete etat[cle]
+    })
 
-  Object.assign(etat, etatCourant)
+    Object.assign(etat, etatCourant)
 
-  synchroniserModeActifAvecPositionLocale()
+    synchroniserModeActifAvecPositionLocale()
 }
 
 function gererMinageManuel() {
-  minerMineraiManuellement()
-  sauvegarderJeu()
-  synchroniserEtat()
+    minerMineraiManuellement()
+    sauvegarderJeu()
+    synchroniserEtat()
 }
 
 function gererScanner() {
-  scannerAmasMinier()
-  sauvegarderJeu()
-  synchroniserEtat()
+    scannerAmasMinier()
+    sauvegarderJeu()
+    synchroniserEtat()
 }
 
 function gererVenteMinerai() {
-  vendreTousLesMinerais()
-  sauvegarderJeu()
-  synchroniserEtat()
+    vendreTousLesMinerais()
+    sauvegarderJeu()
+    synchroniserEtat()
 }
 
 function gererVenteBien(idBien, quantite = 1) {
-  vendreMineraiEnStation(idBien, quantite)
-  sauvegarderJeu()
-  synchroniserEtat()
+    vendreMineraiEnStation(idBien, quantite)
+    sauvegarderJeu()
+    synchroniserEtat()
 }
 
 function gererAchatBien(idBien, quantite = 1) {
-  acheterMineraiEnStation(idBien, quantite)
-  sauvegarderJeu()
-  synchroniserEtat()
+    acheterMineraiEnStation(idBien, quantite)
+    sauvegarderJeu()
+    synchroniserEtat()
 }
 
 function gererAchatDrone() {
-  acheterDroneMinier()
-  sauvegarderJeu()
-  synchroniserEtat()
+    acheterDroneMinier()
+    sauvegarderJeu()
+    synchroniserEtat()
 }
 
 function gererDeploiementDrones() {
-  deployerDrones()
-  sauvegarderJeu()
-  synchroniserEtat()
+    deployerDrones()
+    sauvegarderJeu()
+    synchroniserEtat()
 }
 
 function gererRappelDrones() {
-  rappelerDrones()
-  sauvegarderJeu()
-  synchroniserEtat()
+    rappelerDrones()
+    sauvegarderJeu()
+    synchroniserEtat()
 }
 
 function gererRavitaillement() {
-  ravitaillerCarburant()
-  sauvegarderJeu()
-  synchroniserEtat()
+    ravitaillerCarburant()
+    sauvegarderJeu()
+    synchroniserEtat()
+}
+
+function gererReparationVaisseau() {
+    reparerVaisseauActif()
+    sauvegarderJeu()
+    synchroniserEtat()
 }
 
 function gererVoyage() {
-  lancerVoyageVersDestinationSelectionnee()
-  sauvegarderJeu()
-  synchroniserEtat()
+    lancerVoyageVersDestinationSelectionnee()
+    sauvegarderJeu()
+    synchroniserEtat()
 }
 
 function gererSelectionDestination(idDestination) {
-  selectionnerDestination(idDestination)
-  sauvegarderJeu()
-  synchroniserEtat()
+    selectionnerDestination(idDestination)
+    sauvegarderJeu()
+    synchroniserEtat()
 }
 
 function gererAmelioration(idAmelioration) {
-  ameliorerVaisseau(idAmelioration)
-  sauvegarderJeu()
-  synchroniserEtat()
+    ameliorerVaisseau(idAmelioration)
+    sauvegarderJeu()
+    synchroniserEtat()
 }
 
 function gererAllerOperations() {
-  const positionAvant = etat.positionLocale
+    const positionAvant = etat.positionLocale
 
-  allerEnZoneOperations()
-  sauvegarderJeu()
-  synchroniserEtat()
+    allerEnZoneOperations()
+    sauvegarderJeu()
+    synchroniserEtat()
 
-  if (positionAvant !== etat.positionLocale && etat.positionLocale === 'operations') {
-    ui.modeActif = 'operations'
-  }
+    if (positionAvant !== etat.positionLocale && etat.positionLocale === 'operations') {
+        ui.modeActif = 'operations'
+    }
 }
 
 function gererRetourStation() {
-  const positionAvant = etat.positionLocale
+    const positionAvant = etat.positionLocale
 
-  retourALaStation()
-  sauvegarderJeu()
-  synchroniserEtat()
+    retourALaStation()
+    sauvegarderJeu()
+    synchroniserEtat()
 
-  if (positionAvant !== etat.positionLocale && etat.positionLocale === 'station') {
-    ui.modeActif = 'station'
-    normaliserSousModeStation()
-  }
+    if (positionAvant !== etat.positionLocale && etat.positionLocale === 'station') {
+        ui.modeActif = 'station'
+        normaliserSousModeStation()
+    }
 }
 
 function gererChangerVaisseau(idVaisseau) {
-  changerVaisseauActif(idVaisseau)
-  sauvegarderJeu()
-  synchroniserEtat()
+    changerVaisseauActif(idVaisseau)
+    sauvegarderJeu()
+    synchroniserEtat()
 }
 
 function gererAcheterVaisseau(modeleId) {
-  acheterVaisseau(modeleId)
-  sauvegarderJeu()
-  synchroniserEtat()
+    acheterVaisseau(modeleId)
+    sauvegarderJeu()
+    synchroniserEtat()
 }
 
 function gererReinitialisation() {
-  reinitialiserEtatJeu()
-  Object.assign(ui, creerEtatUIInitial())
-  sauvegarderJeu()
-  synchroniserEtat()
+    reinitialiserEtatJeu()
+    Object.assign(ui, creerEtatUIInitial())
+    sauvegarderJeu()
+    synchroniserEtat()
 }
 
 function changerMode(mode) {
-  ui.modeActif = mode
-  if (mode === 'station') {
-    normaliserSousModeStation()
-  }
+    ui.modeActif = mode
+    if (mode === 'station') {
+        normaliserSousModeStation()
+    }
 }
 
 function changerSousModeStation(sousMode) {
-  ui.sousModeStation = sousMode
+    ui.sousModeStation = sousMode
 }
 
 onMounted(() => {
-  chargerJeu()
-  synchroniserEtat()
-  demarrerBoucleJeu(synchroniserEtat)
+    chargerJeu()
+    synchroniserEtat()
+    demarrerBoucleJeu(synchroniserEtat)
 })
 
 onUnmounted(() => {
-  arreterBoucleJeu()
+    arreterBoucleJeu()
 })
 </script>
 
 <template>
-  <main
-    class="app-shell"
-    v-if="
+    <main
+        class="app-shell"
+        v-if="
       etat.ressources &&
       etat.vaisseau &&
       etat.vaisseauxPossedes &&
@@ -248,126 +255,127 @@ onUnmounted(() => {
       etat.exploration &&
       etat.assistance
     "
-  >
-    <header class="app-header">
-      <div class="header-top">
-        <div class="header-brand">
-          <h1 class="title-line">
-            <span class="title-icon">✦</span>
-            <span>New Horizon</span>
-            <span class="title-icon">✦</span>
-          </h1>
+    >
+        <header class="app-header">
+            <div class="header-top">
+                <div class="header-brand">
+                    <h1 class="title-line">
+                        <span class="title-icon">✦</span>
+                        <span>New Horizon</span>
+                        <span class="title-icon">✦</span>
+                    </h1>
 
-          <p class="subtitle">
-            Simulation spatiale incrémentale de prospection minière et de commerce
-          </p>
+                    <p class="subtitle">
+                        Simulation spatiale incrémentale de prospection minière et de commerce
+                    </p>
 
-          <p class="meta-line">
-            v{{ etat.meta?.version }} — {{ etat.meta?.auteur }} — {{ etat.meta?.annee }}
-          </p>
+                    <p class="meta-line">
+                        v{{ etat.meta?.version }} — {{ etat.meta?.auteur }} — {{ etat.meta?.annee }}
+                    </p>
+                </div>
+
+                <HeaderActions
+                    :mode-actif="ui.modeActif"
+                    @changer-mode="changerMode"
+                    @reinitialiser="gererReinitialisation"
+                />
+            </div>
+        </header>
+
+        <div class="app-main">
+            <section class="main-column main-column-left">
+                <ResourcePanel
+                    :ressources="etat.ressources"
+                    :vaisseau="etat.vaisseau"
+                    :secteur-courant="etat.secteurCourant"
+                />
+                <ShipPanel :vaisseau="etat.vaisseau" :industrie="etat.industrie" />
+                <NavigationPanel
+                    :secteur-courant-id="etat.secteurCourant.id"
+                    :navigation="etat.navigation"
+                    :position-locale="etat.positionLocale"
+                    @selectionner-destination="gererSelectionDestination"
+                    @voyager="gererVoyage"
+                />
+            </section>
+
+            <section class="main-column main-column-center">
+                <div class="center-top">
+                    <OperationPanel
+                        v-if="ui.modeActif === 'operations'"
+                        :ressources="etat.ressources"
+                        :vaisseau="etat.vaisseau"
+                        :industrie="etat.industrie"
+                        :navigation="etat.navigation"
+                        :position-locale="etat.positionLocale"
+                        :exploration="etat.exploration"
+                        :assistance="etat.assistance"
+                        @miner="gererMinageManuel"
+                        @scanner="gererScanner"
+                        @aller-operations="gererAllerOperations"
+                        @retour-station="gererRetourStation"
+                        @deployer-drones="gererDeploiementDrones"
+                        @rappeler-drones="gererRappelDrones"
+                    />
+
+                    <StationServicesPanel
+                        v-else-if="ui.modeActif === 'station'"
+                        :secteur-courant="etat.secteurCourant"
+                        :vaisseau="etat.vaisseau"
+                        :ressources="etat.ressources"
+                        :sous-mode-station="ui.sousModeStation"
+                        :position-locale="etat.positionLocale"
+                        :economie="etat.economie"
+                        @changer-sous-mode-station="changerSousModeStation"
+                        @vendre="gererVenteMinerai"
+                        @vendre-bien="gererVenteBien"
+                        @acheter-bien="gererAchatBien"
+                        @ravitailler="gererRavitaillement"
+                        @acheter-drone="gererAchatDrone"
+                        @reparer-vaisseau="gererReparationVaisseau"
+                        @retour-station="gererRetourStation"
+                        @aller-operations="gererAllerOperations"
+                    >
+                        <template #hangar>
+                            <HangarPanel
+                                :secteur-courant="etat.secteurCourant"
+                                :vaisseau-actif-id="etat.vaisseauActifId"
+                                :vaisseaux-possedes="etat.vaisseauxPossedes"
+                                :vaisseau="etat.vaisseau"
+                                :ressources="etat.ressources"
+                                @changer-vaisseau="gererChangerVaisseau"
+                                @acheter-vaisseau="gererAcheterVaisseau"
+                            />
+                        </template>
+
+                        <template #atelier>
+                            <UpgradePanel
+                                :vaisseau="etat.vaisseau"
+                                :secteur-courant="etat.secteurCourant"
+                                @ameliorer="gererAmelioration"
+                            />
+                        </template>
+                    </StationServicesPanel>
+
+                    <NavigationPanel
+                        v-else-if="ui.modeActif === 'navigation'"
+                        :secteur-courant-id="etat.secteurCourant.id"
+                        :navigation="etat.navigation"
+                        :position-locale="etat.positionLocale"
+                        @selectionner-destination="gererSelectionDestination"
+                        @voyager="gererVoyage"
+                    />
+                </div>
+
+                <section class="journal-panel">
+                    <LogPanel :entrees="etat.journal" />
+                </section>
+            </section>
+
+            <aside class="right-aside">
+                <SectorPanel :secteur-courant="etat.secteurCourant" />
+                <StationPanel :secteur-courant="etat.secteurCourant" />
+            </aside>
         </div>
-
-        <HeaderActions
-          :mode-actif="ui.modeActif"
-          @changer-mode="changerMode"
-          @reinitialiser="gererReinitialisation"
-        />
-      </div>
-    </header>
-
-    <div class="app-main">
-      <section class="main-column main-column-left">
-        <ResourcePanel
-          :ressources="etat.ressources"
-          :vaisseau="etat.vaisseau"
-          :secteur-courant="etat.secteurCourant"
-        />
-        <ShipPanel :vaisseau="etat.vaisseau" :industrie="etat.industrie" />
-        <NavigationPanel
-          :secteur-courant-id="etat.secteurCourant.id"
-          :navigation="etat.navigation"
-          :position-locale="etat.positionLocale"
-          @selectionner-destination="gererSelectionDestination"
-          @voyager="gererVoyage"
-        />
-      </section>
-
-      <section class="main-column main-column-center">
-        <div class="center-top">
-          <OperationPanel
-            v-if="ui.modeActif === 'operations'"
-            :ressources="etat.ressources"
-            :vaisseau="etat.vaisseau"
-            :industrie="etat.industrie"
-            :navigation="etat.navigation"
-            :position-locale="etat.positionLocale"
-            :exploration="etat.exploration"
-            :assistance="etat.assistance"
-            @miner="gererMinageManuel"
-            @scanner="gererScanner"
-            @aller-operations="gererAllerOperations"
-            @retour-station="gererRetourStation"
-            @deployer-drones="gererDeploiementDrones"
-            @rappeler-drones="gererRappelDrones"
-          />
-
-          <StationServicesPanel
-            v-else-if="ui.modeActif === 'station'"
-            :secteur-courant="etat.secteurCourant"
-            :vaisseau="etat.vaisseau"
-            :ressources="etat.ressources"
-            :sous-mode-station="ui.sousModeStation"
-            :position-locale="etat.positionLocale"
-            :economie="etat.economie"
-            @changer-sous-mode-station="changerSousModeStation"
-            @vendre="gererVenteMinerai"
-            @vendre-bien="gererVenteBien"
-            @acheter-bien="gererAchatBien"
-            @ravitailler="gererRavitaillement"
-            @acheter-drone="gererAchatDrone"
-            @retour-station="gererRetourStation"
-            @aller-operations="gererAllerOperations"
-          >
-            <template #hangar>
-              <HangarPanel
-                :secteur-courant="etat.secteurCourant"
-                :vaisseau-actif-id="etat.vaisseauActifId"
-                :vaisseaux-possedes="etat.vaisseauxPossedes"
-                :vaisseau="etat.vaisseau"
-                :ressources="etat.ressources"
-                @changer-vaisseau="gererChangerVaisseau"
-                @acheter-vaisseau="gererAcheterVaisseau"
-              />
-            </template>
-
-            <template #atelier>
-              <UpgradePanel
-                :vaisseau="etat.vaisseau"
-                :secteur-courant="etat.secteurCourant"
-                @ameliorer="gererAmelioration"
-              />
-            </template>
-          </StationServicesPanel>
-
-          <NavigationPanel
-            v-else-if="ui.modeActif === 'navigation'"
-            :secteur-courant-id="etat.secteurCourant.id"
-            :navigation="etat.navigation"
-            :position-locale="etat.positionLocale"
-            @selectionner-destination="gererSelectionDestination"
-            @voyager="gererVoyage"
-          />
-        </div>
-
-        <section class="journal-panel">
-          <LogPanel :entrees="etat.journal" />
-        </section>
-      </section>
-
-      <aside class="right-aside">
-        <SectorPanel :secteur-courant="etat.secteurCourant" />
-        <StationPanel :secteur-courant="etat.secteurCourant" />
-      </aside>
-    </div>
-  </main>
+    </main>
 </template>
