@@ -2,6 +2,12 @@
 import { computed } from 'vue'
 import { donneesMinerais } from '../game/dataMinerais'
 import { recupererEtatCoque } from '../game/systemeCoque'
+import {
+    recupererEtatVisuelBandeau,
+    recupererEtatVisuelCoque,
+    recupererEtatVisuelRisque,
+    recupererEtatVisuelScan,
+} from '../game/systemeEtatsVisuels'
 
 const props = defineProps({
     ressources: {
@@ -46,6 +52,8 @@ const emit = defineEmits([
 const infosCoque = computed(() =>
     recupererEtatCoque(props.vaisseau?.coque ?? 0, props.vaisseau?.coqueMax ?? 0),
 )
+
+const etatVisuelCoque = computed(() => recupererEtatVisuelCoque(infosCoque.value.code))
 
 const coqueCritique = computed(() => infosCoque.value.code === 'critique')
 const coqueHorsService = computed(() => infosCoque.value.code === 'hors_service')
@@ -143,36 +151,19 @@ const typeScannerLabel = computed(() => {
     return 'Module de base'
 })
 
-const qualiteScanLabel = computed(() => {
-    const qualite = props.exploration?.siteActif?.qualiteScan
-    if (qualite === 'bonne') return 'Bonne'
-    if (qualite === 'moyenne') return 'Moyenne'
-    if (qualite === 'faible') return 'Faible'
-    return '—'
-})
+const etatVisuelScan = computed(() =>
+    recupererEtatVisuelScan(props.exploration?.siteActif?.qualiteScan),
+)
 
-const qualiteScanClasse = computed(() => {
-    const qualite = props.exploration?.siteActif?.qualiteScan
-    if (qualite === 'bonne') return 'ops-badge-scan-bonne'
-    if (qualite === 'moyenne') return 'ops-badge-scan-moyenne'
-    if (qualite === 'faible') return 'ops-badge-scan-faible'
-    return 'ops-badge-scan-neutre'
-})
-
-const risqueAmasLabel = computed(() => {
-    const risque = props.exploration?.siteActif?.libelleRisque
-    if (!risque) return '—'
-    return risque.charAt(0).toUpperCase() + risque.slice(1)
-})
-
-const risqueAmasClasse = computed(() => {
-    const niveauRisque = Number(props.exploration?.siteActif?.niveauRisque || 0)
-
-    if (niveauRisque <= 0) return 'ops-badge-risk-negligeable'
-    if (niveauRisque === 1) return 'ops-badge-risk-faible'
-    if (niveauRisque === 2) return 'ops-badge-risk-modere'
-    return 'ops-badge-risk-eleve'
-})
+const etatVisuelRisque = computed(() =>
+    recupererEtatVisuelRisque(
+        props.exploration?.siteActif?.niveauRisque,
+        props.exploration?.siteActif?.libelleRisque
+            ? props.exploration.siteActif.libelleRisque.charAt(0).toUpperCase() +
+            props.exploration.siteActif.libelleRisque.slice(1)
+            : null,
+    ),
+)
 
 const reserveSiteLabel = computed(() => {
     const site = props.exploration?.siteActif
@@ -286,14 +277,9 @@ const statutOperationnel = computed(() => {
     }
 })
 
-const statutOperationnelClasse = computed(() => {
-    const niveau = statutOperationnel.value.niveau
-    if (niveau === 'critique') return 'ops-status-critical'
-    if (niveau === 'alerte') return 'ops-status-warning'
-    if (niveau === 'succes') return 'ops-status-success'
-    if (niveau === 'info') return 'ops-status-info'
-    return 'ops-status-standard'
-})
+const etatVisuelBandeau = computed(() =>
+    recupererEtatVisuelBandeau(statutOperationnel.value.niveau),
+)
 
 const scannerDisponible = computed(
     () =>
@@ -383,7 +369,7 @@ function decrireDrone(drone) {
             </div>
         </div>
 
-        <section class="ops-status-banner" :class="statutOperationnelClasse">
+        <section class="ops-status-banner" :class="etatVisuelBandeau.classeBandeau">
             <div class="ops-status-banner-head">
                 <span class="ops-status-dot"></span>
                 <strong>{{ statutOperationnel.titre }}</strong>
@@ -458,6 +444,11 @@ function decrireDrone(drone) {
               {{ industrie.drones.length }} / {{ vaisseau.dronesMiniersMax }}
             </span>
                     </div>
+
+                    <div class="ops-system-item">
+                        <span class="ops-system-name">État coque</span>
+                        <span class="ops-system-value">{{ etatVisuelCoque.label }}</span>
+                    </div>
                 </div>
             </section>
         </div>
@@ -468,12 +459,12 @@ function decrireDrone(drone) {
                     <h3>Exploitation</h3>
 
                     <div v-if="exploration.siteActif" class="ops-header-badges">
-            <span class="ops-badge-scan" :class="qualiteScanClasse">
-              {{ qualiteScanLabel }}
+            <span class="ops-badge-scan" :class="etatVisuelScan.classeBadge">
+              {{ etatVisuelScan.label }}
             </span>
 
-                        <span class="ops-badge-risk" :class="risqueAmasClasse">
-              Risque {{ risqueAmasLabel }}
+                        <span class="ops-badge-risk" :class="etatVisuelRisque.classeBadge">
+              Risque {{ etatVisuelRisque.label }}
             </span>
                     </div>
                 </div>
