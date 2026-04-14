@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { recupererEtatCoque } from '../game/systemeCoque'
+import { recupererEtatVisuelCoque } from '../game/systemeEtatsVisuels'
 
 const props = defineProps({
     vaisseau: {
@@ -57,21 +58,7 @@ const infosCoque = computed(() =>
     recupererEtatCoque(props.vaisseau?.coque ?? 0, props.vaisseau?.coqueMax ?? 0),
 )
 
-const badgeCoqueClasse = computed(() => {
-    if (infosCoque.value.code === 'hors_service') {
-        return 'ship-hull-badge ship-hull-badge--hors-service'
-    }
-
-    if (infosCoque.value.code === 'critique') {
-        return 'ship-hull-badge ship-hull-badge--critique'
-    }
-
-    if (infosCoque.value.code === 'degradee') {
-        return 'ship-hull-badge ship-hull-badge--degradee'
-    }
-
-    return 'ship-hull-badge ship-hull-badge--nominale'
-})
+const etatVisuelCoque = computed(() => recupererEtatVisuelCoque(infosCoque.value.code))
 
 const largeurBarreCoque = computed(() => `${infosCoque.value.pourcentage}%`)
 </script>
@@ -102,13 +89,13 @@ const largeurBarreCoque = computed(() => `${infosCoque.value.pourcentage}%`)
         <div class="ship-panel-hull-status ship-panel-hull-status--compact">
             <div class="ship-panel-hull-status-head">
                 <span class="ship-panel-hull-title">Intégrité de coque</span>
-                <span :class="badgeCoqueClasse">{{ infosCoque.label }}</span>
+                <span :class="etatVisuelCoque.classeBadge">{{ etatVisuelCoque.label }}</span>
             </div>
 
             <div class="ship-panel-hull-bar">
                 <div
                     class="ship-panel-hull-bar-fill"
-                    :class="badgeCoqueClasse"
+                    :class="etatVisuelCoque.classeBarre"
                     :style="{ width: largeurBarreCoque }"
                 ></div>
             </div>
