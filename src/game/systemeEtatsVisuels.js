@@ -5,6 +5,7 @@ export function recupererEtatVisuelCoque(codeEtat = 'nominale') {
             label: 'Hors service',
             classeBadge: 'ship-hull-badge ship-hull-badge--hors-service',
             classeBarre: 'ship-hull-badge--hors-service',
+            classePanneau: 'ops-panel--hull-hors-service',
             niveauAlerte: 'critique',
         }
     }
@@ -15,6 +16,7 @@ export function recupererEtatVisuelCoque(codeEtat = 'nominale') {
             label: 'Critique',
             classeBadge: 'ship-hull-badge ship-hull-badge--critique',
             classeBarre: 'ship-hull-badge--critique',
+            classePanneau: 'ops-panel--hull-critique',
             niveauAlerte: 'alerte',
         }
     }
@@ -25,6 +27,7 @@ export function recupererEtatVisuelCoque(codeEtat = 'nominale') {
             label: 'Dégradée',
             classeBadge: 'ship-hull-badge ship-hull-badge--degradee',
             classeBarre: 'ship-hull-badge--degradee',
+            classePanneau: 'ops-panel--hull-degradee',
             niveauAlerte: 'alerte',
         }
     }
@@ -34,6 +37,7 @@ export function recupererEtatVisuelCoque(codeEtat = 'nominale') {
         label: 'Nominale',
         classeBadge: 'ship-hull-badge ship-hull-badge--nominale',
         classeBarre: 'ship-hull-badge--nominale',
+        classePanneau: 'ops-panel--hull-nominale',
         niveauAlerte: 'succes',
     }
 }

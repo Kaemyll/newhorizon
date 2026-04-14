@@ -9,6 +9,11 @@
 
 .ops-panel {
   min-height: 0;
+  position: relative;
+  transition:
+          border-color 0.18s ease,
+          box-shadow 0.18s ease,
+          background 0.18s ease;
 }
 
 .ops-panel--scrollable {
@@ -23,6 +28,42 @@
   content: '';
   display: block;
   height: 8px;
+}
+
+/* ===== Renforcement visuel selon la coque ===== */
+
+.ops-panel--hull-nominale {
+  box-shadow: inset 0 0 0 1px rgba(86, 196, 124, 0.03);
+}
+
+.ops-panel--hull-degradee {
+  border-color: rgba(214, 146, 58, 0.24);
+  box-shadow:
+          inset 0 0 0 1px rgba(214, 146, 58, 0.08),
+          0 0 0 1px rgba(214, 146, 58, 0.03);
+  background:
+          linear-gradient(180deg, rgba(168, 104, 32, 0.04) 0%, rgba(255, 255, 255, 0) 100%),
+          rgba(125, 184, 255, 0.03);
+}
+
+.ops-panel--hull-critique {
+  border-color: rgba(224, 90, 90, 0.3);
+  box-shadow:
+          inset 0 0 0 1px rgba(224, 90, 90, 0.09),
+          0 0 18px rgba(160, 48, 48, 0.08);
+  background:
+          linear-gradient(180deg, rgba(150, 44, 44, 0.06) 0%, rgba(255, 255, 255, 0) 100%),
+          rgba(125, 184, 255, 0.03);
+}
+
+.ops-panel--hull-hors-service {
+  border-color: rgba(224, 90, 90, 0.38);
+  box-shadow:
+          inset 0 0 0 1px rgba(224, 90, 90, 0.12),
+          0 0 22px rgba(150, 44, 44, 0.1);
+  background:
+          linear-gradient(180deg, rgba(115, 18, 18, 0.1) 0%, rgba(255, 255, 255, 0) 100%),
+          rgba(125, 184, 255, 0.03);
 }
 
 /* ===== Header ===== */
@@ -59,6 +100,85 @@
   min-height: 36px;
   padding: 6px 12px;
   white-space: nowrap;
+}
+
+.ops-flight-chip {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  min-width: 86px;
+  min-height: 46px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(125, 184, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.ops-flight-chip-label {
+  font-size: 0.68rem;
+  opacity: 0.72;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ops-flight-chip strong {
+  font-size: 0.84rem;
+  line-height: 1.08;
+}
+
+/* ===== Bandeau de commandes immédiates ===== */
+
+.ops-quick-actions {
+  position: sticky;
+  top: -1px;
+  z-index: 3;
+  margin-bottom: 10px;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid rgba(125, 184, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(10, 22, 40, 0.88);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
+}
+
+.ops-quick-actions-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.45rem;
+}
+
+.ops-quick-actions-head strong {
+  font-size: 0.86rem;
+  line-height: 1.1;
+}
+
+.ops-quick-actions-head span {
+  font-size: 0.74rem;
+  opacity: 0.72;
+}
+
+.ops-quick-actions-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.ops-quick-actions-grid--four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ops-quick-button {
+  min-height: 36px;
+  width: 100%;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.84rem;
+}
+
+.ops-quick-button .button-icon {
+  margin-right: 0.3rem;
 }
 
 /* ===== Badges de header de bloc ===== */
@@ -160,7 +280,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  min-width: 185px;
+  min-width: 172px;
   padding: 8px 10px;
   border: 1px solid rgba(125, 184, 255, 0.18);
   border-radius: 10px;
@@ -274,6 +394,10 @@
   align-items: start;
 }
 
+.ops-grid--main-priority {
+  margin-top: 2px;
+}
+
 .ops-block {
   padding-top: 6px;
   border-top: 1px solid rgba(125, 184, 255, 0.12);
@@ -284,12 +408,8 @@
   border-top: none;
 }
 
-.ops-block-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.6rem;
+.ops-block--drones {
+  margin-bottom: 8px;
 }
 
 /* ===== Cartes de métriques ===== */
