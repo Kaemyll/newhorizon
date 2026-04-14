@@ -1,0 +1,119 @@
+/* =========================================================
+   COMPONENTS — RESSOURCES ET LISTES MÉTIER
+   ---------------------------------------------------------
+   Rôle :
+   - listes génériques de ressources
+   - liste compacte de soute
+   - ressources locales du secteur
+   - description de secteur / station
+   ========================================================= */
+
+/* ===== Listes génériques ===== */
+
+.resource-list {
+  margin: 0;
+  padding-left: 16px;
+}
+
+.resource-list li {
+  margin-bottom: 5px;
+  line-height: 1.18;
+  font-size: 0.89rem;
+}
+
+/* ===== Liste compacte des minerais en soute ===== */
+
+.resource-list-compact {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  list-style: none;
+  gap: 3px 10px;
+  margin-top: 2px;
+  padding-left: 0;
+}
+
+.resource-list-compact li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 0;
+  padding-bottom: 1px;
+  border-bottom: 1px dotted rgba(125, 184, 255, 0.08);
+}
+
+.resource-list-mineraux {
+  font-size: 0.82rem;
+}
+
+.resource-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.resource-icon {
+  display: inline-block;
+  width: 13px;
+  text-align: center;
+  opacity: 0.9;
+  font-size: 0.84rem;
+}
+
+.resource-name {
+  min-width: 0;
+}
+
+.resource-list-mineraux .resource-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resource-value {
+  font-weight: 600;
+  opacity: 0.92;
+  font-size: 0.82rem;
+}
+
+/* ===== Ressources locales du secteur ===== */
+
+.resource-list-sector {
+  font-size: 0.86rem;
+}
+
+.resource-list-sector li {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.resource-list-sector .resource-name {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: initial;
+  line-height: 1.14;
+}
+
+.resource-weight {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  opacity: 0.72;
+}
+
+/* ===== Description du secteur / station ===== */
+
+.sector-description {
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px solid rgba(125, 184, 255, 0.12);
+  font-style: italic;
+  line-height: 1.22;
+  font-size: 0.86rem;
+  opacity: 0.88;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}

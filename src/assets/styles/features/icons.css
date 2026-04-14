@@ -1,0 +1,42 @@
+/* =========================================================
+   FEATURE — ICÔNES DE BOUTONS
+   ---------------------------------------------------------
+   Rôle :
+   - alignement texte / icône dans les boutons
+   - variantes d’icônes dans le header, les opérations
+     et les services de station
+   ========================================================= */
+
+.action-button-with-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.button-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.header-actions .action-button-with-icon {
+  gap: 0.42rem;
+}
+
+.header-actions .button-icon {
+  font-size: 0.92rem;
+}
+
+.ops-panel .action-button-with-icon,
+.station-services-panel .action-button-with-icon {
+  gap: 0.46rem;
+}
+
+.ops-panel .button-icon,
+.station-services-panel .button-icon {
+  font-size: 0.9rem;
+}

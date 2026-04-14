@@ -20,8 +20,9 @@ function creerInstanceVaisseauDepuisModele(modele) {
     dronesMiniersMax: modele.dronesMiniersMax,
     carburant: modele.carburantMax,
     carburantMax: modele.carburantMax,
-    scanner: structuredClone(modele.scanner),
+    scanner: structuredClone(modele.scanner || {}),
     ameliorations: structuredClone(modele.ameliorations || []),
+    ameliorationsMax: structuredClone(modele.ameliorationsMax || {}),
   }
 }
 
@@ -31,7 +32,7 @@ export function creerEtatInitialJeu() {
 
   return {
     meta: {
-      version: '0.3.13/release_finale',
+      version: '0.3.14',
       auteur: 'Kaemyll',
       annee: 2026,
     },
@@ -59,8 +60,9 @@ export function creerEtatInitialJeu() {
       puissanceMiniere: vaisseauDepart.puissanceMiniere,
       dronesMiniersMax: vaisseauDepart.dronesMiniersMax,
       carburantMax: vaisseauDepart.carburantMax,
-      scanner: structuredClone(vaisseauDepart.scanner),
-      ameliorations: structuredClone(vaisseauDepart.ameliorations),
+      scanner: structuredClone(vaisseauDepart.scanner || {}),
+      ameliorations: structuredClone(vaisseauDepart.ameliorations || []),
+      ameliorationsMax: structuredClone(vaisseauDepart.ameliorationsMax || {}),
     },
 
     industrie: {

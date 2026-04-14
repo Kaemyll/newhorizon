@@ -4,6 +4,7 @@ import { donneesMinerais } from './dataMinerais'
 import { ajouterAuJournal, faireTournerDrones } from './systemeMinage'
 import { avancerTemps } from './systemeTemps'
 import { verifierPanneSecheEtDeclencher } from './systemeAssistance'
+import { recupererInformationsCoqueVaisseauActif } from './systemeVaisseaux'
 
 function tirerResultatScan(typeScanner = 'base') {
   const tirage = Math.random()
@@ -30,14 +31,14 @@ function tirerResultatScan(typeScanner = 'base') {
 
 function tirerReserveDepuisQualite(qualite) {
   if (qualite === 'faible') {
-    return 8 + Math.floor(Math.random() * 6) // 8-13
+    return 8 + Math.floor(Math.random() * 6)
   }
 
   if (qualite === 'moyenne') {
-    return 14 + Math.floor(Math.random() * 9) // 14-22
+    return 14 + Math.floor(Math.random() * 9)
   }
 
-  return 24 + Math.floor(Math.random() * 13) // 24-36
+  return 24 + Math.floor(Math.random() * 13)
 }
 
 function tirerNomAmas(qualite, typeAmas = 'mono') {
@@ -75,18 +76,18 @@ function formaterComposition(composition) {
   }
 
   return composition
-    .map((c) => donneesMinerais.find((m) => m.id === c.idMinerai)?.abreviation || c.idMinerai)
-    .join(', ')
+      .map((c) => donneesMinerais.find((m) => m.id === c.idMinerai)?.abreviation || c.idMinerai)
+      .join(', ')
 }
 
 function obtenirProfilMinier(secteur) {
   return (
-    secteur?.profilMinier || {
-      amasSterile: 15,
-      amas1: 45,
-      amas2: 30,
-      amas3: 10,
-    }
+      secteur?.profilMinier || {
+        amasSterile: 15,
+        amas1: 45,
+        amas2: 30,
+        amas3: 10,
+      }
   )
 }
 
@@ -241,8 +242,37 @@ function obtenirLibelleTypeAmas(typeAmas) {
   return 'amas'
 }
 
+function determinerNiveauRisqueAmas(secteur, typeAmas) {
+  if (typeAmas === 'sterile') {
+    return 0
+  }
+
+  let niveauRisque = 0
+
+  if (typeAmas === 'double') {
+    niveauRisque = 1
+  } else if (typeAmas === 'triple') {
+    niveauRisque = 2
+  }
+
+  const securite = Number(secteur?.securite ?? 1)
+
+  if (securite <= 0.3 && typeAmas !== 'sterile') {
+    niveauRisque += 1
+  }
+
+  return Math.min(3, niveauRisque)
+}
+
+function obtenirLibelleRisqueAmas(niveauRisque) {
+  if (niveauRisque <= 0) return 'négligeable'
+  if (niveauRisque === 1) return 'faible'
+  if (niveauRisque === 2) return 'modéré'
+  return 'élevé'
+}
+
 function construireMessageScan(siteActif, ancienSite) {
-  const { nom, qualiteScan, reserveTotale, composition, typeAmas } = siteActif
+  const { nom, qualiteScan, reserveTotale, composition, typeAmas, libelleRisque } = siteActif
   const compositionTexte = formaterComposition(composition)
   const libelleType = obtenirLibelleTypeAmas(typeAmas)
 
@@ -252,6 +282,7 @@ function construireMessageScan(siteActif, ancienSite) {
     message += ' Aucune signature minérale exploitable confirmée.'
   } else {
     message += ` Réserve estimée ${reserveTotale}. Composition : ${compositionTexte}.`
+    message += ` Risque coque : ${libelleRisque}.`
   }
 
   if (ancienSite) {
@@ -263,12 +294,22 @@ function construireMessageScan(siteActif, ancienSite) {
 
 export function scannerAmasMinier() {
   const etat = recupererEtatJeu()
+  const infosCoque = recupererInformationsCoqueVaisseauActif(etat)
+
+  if (infosCoque.code === 'critique' || infosCoque.code === 'hors_service') {
+    ajouterAuJournal(
+        `Coque ${infosCoque.label.toLowerCase()} : scanner verrouillé jusqu’à réparation.`,
+        'evenements',
+        infosCoque.code === 'hors_service' ? 'critique' : 'alerte',
+    )
+    return
+  }
 
   if (etat.navigation?.enVoyage) {
     ajouterAuJournal(
-      'Impossible d’utiliser le scanner pendant un trajet inter-sectoriel.',
-      'evenements',
-      'alerte',
+        'Impossible d’utiliser le scanner pendant un trajet inter-sectoriel.',
+        'evenements',
+        'alerte',
     )
     return
   }
@@ -280,9 +321,9 @@ export function scannerAmasMinier() {
 
   if (etat.positionLocale !== 'operations') {
     ajouterAuJournal(
-      'Le scanner ne peut être utilisé qu’en zone d’opérations.',
-      'evenements',
-      'alerte',
+        'Le scanner ne peut être utilisé qu’en zone d’opérations.',
+        'evenements',
+        'alerte',
     )
     return
   }
@@ -303,22 +344,24 @@ export function scannerAmasMinier() {
 
     if (ancienSite) {
       ajouterAuJournal(
-        `Scan terminé : aucun amas exploitable détecté. Le relevé précédent (${ancienSite.nom}) est abandonné.`,
-        'evenements',
-        'alerte',
+          `Scan terminé : aucun amas exploitable détecté. Le relevé précédent (${ancienSite.nom}) est abandonné.`,
+          'evenements',
+          'alerte',
       )
       return
     }
 
     ajouterAuJournal(
-      'Scan terminé : aucun amas exploitable détecté dans la zone.',
-      'evenements',
-      'alerte',
+        'Scan terminé : aucun amas exploitable détecté dans la zone.',
+        'evenements',
+        'alerte',
     )
     return
   }
 
   const { typeAmas, reserveTotale, composition } = genererCompositionLocale(secteur, resultatScan)
+  const niveauRisque = determinerNiveauRisqueAmas(secteur, typeAmas)
+  const libelleRisque = obtenirLibelleRisqueAmas(niveauRisque)
 
   etat.exploration.siteActif = {
     id: etat.exploration.prochainSiteId,
@@ -329,6 +372,8 @@ export function scannerAmasMinier() {
     reserveTotale,
     reserveRestante: reserveTotale,
     composition,
+    niveauRisque,
+    libelleRisque,
   }
 
   etat.exploration.prochainSiteId += 1
@@ -337,8 +382,8 @@ export function scannerAmasMinier() {
   verifierPanneSecheEtDeclencher()
 
   ajouterAuJournal(
-    construireMessageScan(etat.exploration.siteActif, ancienSite),
-    'evenements',
-    'info',
+      construireMessageScan(etat.exploration.siteActif, ancienSite),
+      'evenements',
+      'info',
   )
 }

@@ -1,0 +1,62 @@
+/* =========================================================
+   LAYOUT — HEADER
+   ---------------------------------------------------------
+   Rôle :
+   - identité visuelle du header
+   - bloc titre / sous-titre / méta
+   - zone d’actions du header
+   ========================================================= */
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.header-brand {
+  min-width: 300px;
+}
+
+.title-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 4px 0;
+  font-size: 2.5rem;
+  line-height: 1.02;
+}
+
+.title-icon {
+  color: #7db8ff;
+  font-size: 1.55rem;
+  opacity: 0.95;
+}
+
+.subtitle {
+  margin: 0 0 4px 0;
+  font-size: 0.98rem;
+  opacity: 0.95;
+}
+
+.meta-line {
+  margin: 0;
+  font-size: 0.87rem;
+  opacity: 0.75;
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: flex-start;
+  max-width: 860px;
+  gap: 6px;
+  padding-top: 4px;
+}
+
+.header-actions button {
+  padding: 0.52rem 0.78rem;
+  font-size: 0.92rem;
+}

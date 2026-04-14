@@ -1,0 +1,23 @@
+/* =========================================================
+   BASE — TOKENS / FONDATIONS GLOBALES
+   ---------------------------------------------------------
+   Rôle :
+   - variables racines
+   - thème global
+   - fond et couleur par défaut de l’application
+   ========================================================= */
+
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #e8edf2;
+  background: #0b1118;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  height: 100%;
+  background: #0b1118;
+  color: #e8edf2;
+}

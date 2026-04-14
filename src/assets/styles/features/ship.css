@@ -1,0 +1,225 @@
+/* =========================================================
+   FEATURE — SHIP PANEL
+   ---------------------------------------------------------
+   Rôle :
+   - en-tête du panneau vaisseau
+   - sous-titre constructeur / nom
+   - badges de rôle
+   - état de coque
+   - métriques du vaisseau
+   ========================================================= */
+
+.ship-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.ship-panel-title-block {
+  min-width: 0;
+}
+
+.ship-panel-subtitle {
+  margin: 0.18rem 0 0;
+  font-size: 0.78rem;
+  color: rgba(210, 225, 245, 0.8);
+  line-height: 1.25;
+  word-break: keep-all;
+}
+
+.ship-panel-ship-name {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.ship-panel-separator {
+  margin: 0 0.25rem;
+  color: rgba(210, 225, 245, 0.55);
+}
+
+.ship-panel-builder {
+  color: rgba(210, 225, 245, 0.72);
+}
+
+.ship-role-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.14rem 0.42rem;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
+
+.ship-role-badge--light {
+  background: rgba(120, 170, 255, 0.12);
+  color: #bcd3ff;
+}
+
+.ship-role-badge--heavy {
+  background: rgba(255, 196, 90, 0.12);
+  color: #ffd27a;
+}
+
+.ship-role-badge--reinforced {
+  background: rgba(255, 140, 140, 0.12);
+  color: #ffb0b0;
+}
+
+.ship-role-badge--trade {
+  background: rgba(110, 220, 170, 0.12);
+  color: #92f0c2;
+}
+
+.ship-panel-role-line {
+  margin: 0 0 0.65rem;
+  font-size: 0.8rem;
+  color: rgba(210, 225, 245, 0.74);
+  line-height: 1.3;
+}
+
+/* ===== État de coque ===== */
+
+.ship-panel-hull-status {
+  margin: 0 0 0.6rem;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid rgba(125, 184, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.ship-panel-hull-status--compact {
+  padding: 0.45rem 0.55rem;
+  margin-bottom: 0.6rem;
+}
+
+.ship-panel-hull-status-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  margin-bottom: 0.25rem;
+}
+
+.ship-panel-hull-title {
+  font-size: 0.66rem;
+  color: rgba(210, 225, 245, 0.64);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ship-hull-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.14rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  white-space: nowrap;
+  line-height: 1;
+  border: 1px solid transparent;
+}
+
+.ship-hull-badge--nominale {
+  color: #b9f0c9;
+  background: rgba(39, 122, 73, 0.18);
+  border-color: rgba(86, 196, 124, 0.28);
+}
+
+.ship-hull-badge--degradee {
+  color: #f5d7a1;
+  background: rgba(168, 104, 32, 0.18);
+  border-color: rgba(214, 146, 58, 0.28);
+}
+
+.ship-hull-badge--critique {
+  color: #ffb8b8;
+  background: rgba(150, 44, 44, 0.2);
+  border-color: rgba(224, 90, 90, 0.32);
+}
+
+.ship-hull-badge--hors-service {
+  color: #ffd5d5;
+  background: rgba(115, 18, 18, 0.28);
+  border-color: rgba(224, 90, 90, 0.42);
+}
+
+.ship-panel-hull-bar {
+  width: 100%;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ship-panel-hull-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.ship-panel-hull-bar-fill.ship-hull-badge--nominale {
+  background: linear-gradient(90deg, rgba(86, 196, 124, 0.75) 0%, rgba(110, 220, 170, 0.95) 100%);
+}
+
+.ship-panel-hull-bar-fill.ship-hull-badge--degradee {
+  background: linear-gradient(90deg, rgba(214, 146, 58, 0.7) 0%, rgba(245, 215, 161, 0.95) 100%);
+}
+
+.ship-panel-hull-bar-fill.ship-hull-badge--critique {
+  background: linear-gradient(90deg, rgba(170, 60, 60, 0.7) 0%, rgba(255, 184, 184, 0.95) 100%);
+}
+
+.ship-panel-hull-bar-fill.ship-hull-badge--hors-service {
+  background: linear-gradient(90deg, rgba(90, 18, 18, 0.8) 0%, rgba(180, 70, 70, 0.95) 100%);
+}
+
+.ship-panel-hull-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0.22rem 0 0;
+  font-size: 0.7rem;
+  color: rgba(210, 225, 245, 0.76);
+}
+
+/* ===== Métriques ===== */
+
+.ship-panel-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem 0.9rem;
+}
+
+.ship-panel-metrics--three-cols {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem 0.7rem;
+}
+
+.ship-panel-metrics p {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+  font-size: 0.74rem;
+  line-height: 1.15;
+}
+
+.ship-panel-metrics p span {
+  color: rgba(210, 225, 245, 0.62);
+}
+
+.ship-panel-metrics p strong {
+  color: #f3f7ff;
+  font-size: 0.82rem;
+  font-weight: 600;
+}

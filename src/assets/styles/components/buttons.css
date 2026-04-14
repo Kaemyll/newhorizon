@@ -1,0 +1,56 @@
+/* =========================================================
+   COMPONENTS — BOUTONS ET GROUPES D’ACTIONS
+   ---------------------------------------------------------
+   Rôle :
+   - styles génériques des boutons
+   - états interactifs
+   - groupes d’actions réutilisables
+   ========================================================= */
+
+button {
+  cursor: pointer;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #7697ba;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #284059 0%, #1d3042 100%);
+  color: #f3f8fc;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.05s ease,
+    box-shadow 0.15s ease;
+}
+
+button:hover {
+  background: linear-gradient(180deg, #314d69 0%, #23384c 100%);
+  border-color: #9ab8d7;
+  box-shadow: 0 0 0 1px rgba(154, 184, 215, 0.1);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+button.is-active {
+  border-color: #b7d4f2;
+  box-shadow: 0 0 0 1px rgba(183, 212, 242, 0.2);
+  background: linear-gradient(180deg, #35506e 0%, #274057 100%);
+}
+
+.action-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.action-group button {
+  padding: 0.48rem 0.72rem;
+  font-size: 0.86rem;
+}
