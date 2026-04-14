@@ -2,6 +2,7 @@ import { recupererEtatJeu } from './etatJeu'
 import { donneesSecteurs } from './dataSecteurs'
 import { donneesTrajets } from './dataTrajets'
 import { ajouterAuJournal, rappelerDrones } from './systemeMinage'
+import { recupererInformationsCoqueVaisseauActif } from './systemeVaisseaux'
 
 export function recupererSecteurParId(idSecteur) {
   return donneesSecteurs.find((secteur) => secteur.id === idSecteur) || null
@@ -14,9 +15,9 @@ export function recupererSecteurCourant() {
 
 export function recupererTrajet(idOrigine, idDestination) {
   return (
-    donneesTrajets.find(
-      (trajet) => trajet.origine === idOrigine && trajet.destination === idDestination,
-    ) || null
+      donneesTrajets.find(
+          (trajet) => trajet.origine === idOrigine && trajet.destination === idDestination,
+      ) || null
   )
 }
 
@@ -27,6 +28,16 @@ export function selectionnerDestination(idDestination) {
 
 export function lancerVoyageVersDestinationSelectionnee() {
   const etat = recupererEtatJeu()
+  const infosCoque = recupererInformationsCoqueVaisseauActif(etat)
+
+  if (infosCoque.code === 'hors_service') {
+    ajouterAuJournal(
+        'Coque hors service : déplacement inter-sectoriel impossible.',
+        'evenements',
+        'critique',
+    )
+    return
+  }
 
   if (etat.assistance?.remorquageEnCours) {
     ajouterAuJournal('Voyage impossible pendant un remorquage.', 'evenements', 'alerte')
@@ -40,9 +51,9 @@ export function lancerVoyageVersDestinationSelectionnee() {
 
   if (etat.positionLocale !== 'station') {
     ajouterAuJournal(
-      'Le voyage inter-sectoriel ne peut être lancé que depuis la station.',
-      'evenements',
-      'alerte',
+        'Le voyage inter-sectoriel ne peut être lancé que depuis la station.',
+        'evenements',
+        'alerte',
     )
     return
   }
@@ -82,9 +93,9 @@ export function lancerVoyageVersDestinationSelectionnee() {
   etat.exploration.siteActif = null
 
   ajouterAuJournal(
-    `Départ vers ${secteurDestination.nom} — coût ${trajet.coutCarburant} carburant, durée ${trajet.tempsTrajet} ticks.`,
-    'evenements',
-    'info',
+      `Départ vers ${secteurDestination.nom} — coût ${trajet.coutCarburant} carburant, durée ${trajet.tempsTrajet} ticks.`,
+      'evenements',
+      'info',
   )
 }
 
@@ -112,9 +123,9 @@ export function faireAvancerVoyage() {
 
   if (secteurDestination) {
     ajouterAuJournal(
-      `Arrivée dans le secteur ${secteurDestination.nom}. Amarrage local disponible.`,
-      'evenements',
-      'info',
+        `Arrivée dans le secteur ${secteurDestination.nom}. Amarrage local disponible.`,
+        'evenements',
+        'info',
     )
   } else {
     ajouterAuJournal('Arrivée dans le secteur de destination.', 'evenements', 'info')

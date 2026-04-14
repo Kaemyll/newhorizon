@@ -44,7 +44,8 @@ export function recupererEtatCoqueDepuisPourcentage(pourcentage) {
   const valeur = bornerValeur(Number(pourcentage) || 0, 0, 100)
 
   return (
-    ETATS_COQUE.find((etat) => valeur >= etat.seuilMin && valeur <= etat.seuilMax) || ETATS_COQUE[0]
+      ETATS_COQUE.find((etat) => valeur >= etat.seuilMin && valeur <= etat.seuilMax) ||
+      ETATS_COQUE[0]
   )
 }
 
@@ -74,6 +75,7 @@ export function appliquerDegatsCoqueSurVaisseau(vaisseau, quantite) {
       coqueApres: 0,
       etatAvant: recupererEtatCoque(0, 0),
       etatApres: recupererEtatCoque(0, 0),
+      transitionEtat: false,
     }
   }
 
@@ -95,5 +97,67 @@ export function appliquerDegatsCoqueSurVaisseau(vaisseau, quantite) {
     coqueApres,
     etatAvant,
     etatApres,
+    transitionEtat: etatAvant.code !== etatApres.code,
   }
+}
+
+export function construireJournalTransitionEtatCoque(
+    nomVaisseau,
+    etatAvant,
+    etatApres,
+    contexte = 'degats',
+) {
+  if (!etatAvant || !etatApres || etatAvant.code === etatApres.code) {
+    return null
+  }
+
+  if (contexte === 'degats') {
+    if (etatApres.code === 'degradee') {
+      return {
+        message: `Alerte coque : ${nomVaisseau} passe en état dégradé.`,
+        niveau: 'alerte',
+      }
+    }
+
+    if (etatApres.code === 'critique') {
+      return {
+        message: `Alerte critique : ${nomVaisseau} entre en état critique.`,
+        niveau: 'critique',
+      }
+    }
+
+    if (etatApres.code === 'hors_service') {
+      return {
+        message: `Rupture structurelle : ${nomVaisseau} est désormais hors service.`,
+        niveau: 'critique',
+      }
+    }
+
+    return null
+  }
+
+  if (contexte === 'reparation') {
+    if (etatApres.code === 'nominale') {
+      return {
+        message: `Maintenance : ${nomVaisseau} retrouve un état nominal.`,
+        niveau: 'succes',
+      }
+    }
+
+    if (etatApres.code === 'degradee') {
+      return {
+        message: `Maintenance : ${nomVaisseau} remonte en état dégradé.`,
+        niveau: 'succes',
+      }
+    }
+
+    if (etatApres.code === 'critique') {
+      return {
+        message: `Maintenance d'urgence : ${nomVaisseau} n’est plus hors service, mais reste critique.`,
+        niveau: 'succes',
+      }
+    }
+  }
+
+  return null
 }

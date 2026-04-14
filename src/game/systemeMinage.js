@@ -4,9 +4,13 @@ import { donneesSecteurs } from './dataSecteurs'
 import { calculerPrixLigneBrut, calculerTauxTaxePourSecurite } from './systemeCommerce'
 import { avancerTemps, recupererTickCourant } from './systemeTemps'
 import { verifierPanneSecheEtDeclencher } from './systemeAssistance'
-import { appliquerDegatsCoqueSurVaisseau } from './systemeCoque'
+import {
+  appliquerDegatsCoqueSurVaisseau,
+  construireJournalTransitionEtatCoque,
+} from './systemeCoque'
 import {
   recupererInformationsCoqueVaisseau,
+  recupererInformationsCoqueVaisseauActif,
   recupererVaisseauActif,
   synchroniserVaisseauActifDansEtat,
 } from './systemeVaisseaux'
@@ -35,6 +39,16 @@ function recupererSecteurCourantDepuisEtat() {
   const etat = recupererEtatJeu()
 
   return donneesSecteurs.find((secteur) => secteur.id === etat.secteurCourant.id) || null
+}
+
+function recupererEtatCoqueActif() {
+  const etat = recupererEtatJeu()
+  return recupererInformationsCoqueVaisseauActif(etat)
+}
+
+function coqueCritiqueOuHS() {
+  const infos = recupererEtatCoqueActif()
+  return infos.code === 'critique' || infos.code === 'hors_service'
 }
 
 function tirerMineraiDepuisComposition(composition) {
@@ -75,18 +89,18 @@ function verifierSiteActifExploitable() {
 
   if (!site) {
     ajouterAuJournal(
-      'Aucun amas minier actif. Lancez un nouveau scan pour reprendre l’extraction.',
-      'evenements',
-      'alerte',
+        'Aucun amas minier actif. Lancez un nouveau scan pour reprendre l’extraction.',
+        'evenements',
+        'alerte',
     )
     return false
   }
 
   if (site.reserveRestante <= 0) {
     ajouterAuJournal(
-      'L’amas minier actif est épuisé. Un nouveau scan est requis.',
-      'evenements',
-      'alerte',
+        'L’amas minier actif est épuisé. Un nouveau scan est requis.',
+        'evenements',
+        'alerte',
     )
     etat.exploration.siteActif = null
     return false
@@ -107,9 +121,9 @@ function consommerReserveSite(quantite = 1) {
 
   if (site.reserveRestante === 0) {
     ajouterAuJournal(
-      `${site.nom} est épuisé. Nouveau scan requis pour détecter un autre amas.`,
-      'evenements',
-      'alerte',
+        `${site.nom} est épuisé. Nouveau scan requis pour détecter un autre amas.`,
+        'evenements',
+        'alerte',
     )
     etat.exploration.siteActif = null
   }
@@ -205,7 +219,7 @@ function determinerIncidentDegatsDepuisRisque(niveauRisque) {
 
 function resoudreNiveauJournalCoque(codeEtat) {
   if (codeEtat === 'hors_service') return 'critique'
-  if (codeEtat === 'critique') return 'alerte'
+  if (codeEtat === 'critique') return 'critique'
   return 'alerte'
 }
 
@@ -250,9 +264,9 @@ function appliquerRisqueCoquePendantExploitation(source = 'manuelle') {
   const informationsCoque = recupererInformationsCoqueVaisseau(vaisseauActif)
   const niveauJournal = resoudreNiveauJournalCoque(informationsCoque.code)
   const prefixe =
-    source === 'drones'
-      ? `Exploitation drone risquée : la coque du ${vaisseauActif.nom}`
-      : `Exploitation risquée : la coque du ${vaisseauActif.nom}`
+      source === 'drones'
+          ? `Exploitation drone risquée : la coque du ${vaisseauActif.nom}`
+          : `Exploitation risquée : la coque du ${vaisseauActif.nom}`
 
   let message = `${prefixe} subit ${resultat.degatsAppliques} point(s) de dégâts sur ${siteActif.nom}.`
 
@@ -261,10 +275,31 @@ function appliquerRisqueCoquePendantExploitation(source = 'manuelle') {
   }
 
   ajouterAuJournal(message, 'combat', niveauJournal)
+
+  const transition = construireJournalTransitionEtatCoque(
+      vaisseauActif.nom,
+      resultat.etatAvant,
+      resultat.etatApres,
+      'degats',
+  )
+
+  if (transition) {
+    ajouterAuJournal(transition.message, 'combat', transition.niveau)
+  }
 }
 
 export function minerMineraiManuellement() {
   const etat = recupererEtatJeu()
+
+  if (coqueCritiqueOuHS()) {
+    const infosCoque = recupererEtatCoqueActif()
+    ajouterAuJournal(
+        `Coque ${infosCoque.label.toLowerCase()} : extraction manuelle verrouillée jusqu’à réparation.`,
+        'evenements',
+        infosCoque.code === 'hors_service' ? 'critique' : 'alerte',
+    )
+    return
+  }
 
   if (etat.navigation?.enVoyage) {
     ajouterAuJournal('Impossible de miner pendant un trajet.', 'evenements', 'alerte')
@@ -278,9 +313,9 @@ export function minerMineraiManuellement() {
 
   if (etat.positionLocale !== 'operations') {
     ajouterAuJournal(
-      'Le minage manuel n’est possible qu’en zone d’opérations.',
-      'evenements',
-      'alerte',
+        'Le minage manuel n’est possible qu’en zone d’opérations.',
+        'evenements',
+        'alerte',
     )
     return
   }
@@ -291,9 +326,9 @@ export function minerMineraiManuellement() {
 
   if (etat.vaisseau.soute >= etat.vaisseau.souteMax) {
     ajouterAuJournal(
-      'Soute pleine : extraction impossible. Retour à la station ou vente requis.',
-      'evenements',
-      'alerte',
+        'Soute pleine : extraction impossible. Retour à la station ou vente requis.',
+        'evenements',
+        'alerte',
     )
     return
   }
@@ -302,9 +337,9 @@ export function minerMineraiManuellement() {
 
   if (puissanceMiniere <= 0) {
     ajouterAuJournal(
-      'Ce vaisseau ne dispose pas de canon de minage opérationnel.',
-      'evenements',
-      'alerte',
+        'Ce vaisseau ne dispose pas de canon de minage opérationnel.',
+        'evenements',
+        'alerte',
     )
     return
   }
@@ -315,9 +350,9 @@ export function minerMineraiManuellement() {
   const espaceDisponible = etat.vaisseau.souteMax - etat.vaisseau.soute
 
   const quantiteExtraite = determinerQuantiteExtractionManuelle(
-    puissanceMiniere,
-    reserveRestante,
-    espaceDisponible,
+      puissanceMiniere,
+      reserveRestante,
+      espaceDisponible,
   )
 
   if (quantiteExtraite <= 0) {
@@ -325,9 +360,9 @@ export function minerMineraiManuellement() {
     verifierPanneSecheEtDeclencher()
 
     ajouterAuJournal(
-      'Extraction manuelle impossible dans les conditions actuelles.',
-      'evenements',
-      'alerte',
+        'Extraction manuelle impossible dans les conditions actuelles.',
+        'evenements',
+        'alerte',
     )
     return
   }
@@ -359,9 +394,9 @@ export function vendreTousLesMinerais() {
 
   if (!station?.services?.commerce) {
     ajouterAuJournal(
-      'Aucun service commercial disponible dans cette station.',
-      'commerce',
-      'alerte',
+        'Aucun service commercial disponible dans cette station.',
+        'commerce',
+        'alerte',
     )
     return
   }
@@ -398,9 +433,9 @@ export function vendreTousLesMinerais() {
   etat.vaisseau.soute = 0
 
   ajouterAuJournal(
-    `${details.join(' + ')} : transaction brute ${valeurBrute} cr, taxe ${montantTaxe} cr, montant net ${valeurNette} cr.`,
-    'commerce',
-    'succes',
+      `${details.join(' + ')} : transaction brute ${valeurBrute} cr, taxe ${montantTaxe} cr, montant net ${valeurNette} cr.`,
+      'commerce',
+      'succes',
   )
 }
 
@@ -446,6 +481,16 @@ export function acheterDroneMinier() {
 export function deployerDrones() {
   const etat = recupererEtatJeu()
 
+  if (coqueCritiqueOuHS()) {
+    const infosCoque = recupererEtatCoqueActif()
+    ajouterAuJournal(
+        `Coque ${infosCoque.label.toLowerCase()} : déploiement des drones interdit jusqu’à réparation.`,
+        'evenements',
+        infosCoque.code === 'hors_service' ? 'critique' : 'alerte',
+    )
+    return
+  }
+
   if (etat.navigation?.enVoyage) {
     ajouterAuJournal('Impossible de déployer les drones pendant un trajet.', 'evenements', 'alerte')
     return
@@ -453,18 +498,18 @@ export function deployerDrones() {
 
   if (etat.assistance?.remorquageEnCours) {
     ajouterAuJournal(
-      'Impossible de déployer les drones pendant un remorquage.',
-      'evenements',
-      'alerte',
+        'Impossible de déployer les drones pendant un remorquage.',
+        'evenements',
+        'alerte',
     )
     return
   }
 
   if (etat.positionLocale !== 'operations') {
     ajouterAuJournal(
-      'Les drones ne peuvent être déployés qu’en zone d’opérations.',
-      'evenements',
-      'alerte',
+        'Les drones ne peuvent être déployés qu’en zone d’opérations.',
+        'evenements',
+        'alerte',
     )
     return
   }
@@ -479,19 +524,19 @@ export function deployerDrones() {
   }
 
   const dronesPrets = etat.industrie.drones.filter(
-    (drone) => drone.etat === 'embarque' && drone.ticksRechargeRestants === 0,
+      (drone) => drone.etat === 'embarque' && drone.ticksRechargeRestants === 0,
   )
 
   if (dronesPrets.length === 0) {
     const dronesEnRecharge = etat.industrie.drones.filter(
-      (drone) => drone.etat === 'embarque' && drone.ticksRechargeRestants > 0,
+        (drone) => drone.etat === 'embarque' && drone.ticksRechargeRestants > 0,
     ).length
 
     if (dronesEnRecharge > 0) {
       ajouterAuJournal(
-        `Aucun drone prêt à être déployé. ${dronesEnRecharge} drone(s) encore en recharge.`,
-        'evenements',
-        'info',
+          `Aucun drone prêt à être déployé. ${dronesEnRecharge} drone(s) encore en recharge.`,
+          'evenements',
+          'info',
       )
       return
     }
@@ -505,9 +550,9 @@ export function deployerDrones() {
   }
 
   ajouterAuJournal(
-    `${dronesPrets.length} drone(s) déployé(s) en zone d’opérations.`,
-    'evenements',
-    'succes',
+      `${dronesPrets.length} drone(s) déployé(s) en zone d’opérations.`,
+      'evenements',
+      'succes',
   )
 }
 
@@ -535,11 +580,11 @@ export function rappelerDrones(estAutomatique = false) {
   }
 
   ajouterAuJournal(
-    estAutomatique
-      ? `${dronesDeployes.length} drone(s) rappelé(s) automatiquement.`
-      : `${dronesDeployes.length} drone(s) rappelé(s) au vaisseau.`,
-    'evenements',
-    'info',
+      estAutomatique
+          ? `${dronesDeployes.length} drone(s) rappelé(s) automatiquement.`
+          : `${dronesDeployes.length} drone(s) rappelé(s) au vaisseau.`,
+      'evenements',
+      'info',
   )
 }
 
@@ -554,6 +599,25 @@ export function faireTournerDrones() {
     return
   }
 
+  if (coqueCritiqueOuHS()) {
+    const dronesDeployes = etat.industrie.drones.filter((drone) => drone.etat === 'deploie')
+
+    if (dronesDeployes.length > 0) {
+      for (const drone of dronesDeployes) {
+        drone.etat = 'embarque'
+      }
+
+      const infosCoque = recupererEtatCoqueActif()
+      ajouterAuJournal(
+          `Coque ${infosCoque.label.toLowerCase()} : ${dronesDeployes.length} drone(s) rappelé(s), exploitation suspendue.`,
+          'evenements',
+          infosCoque.code === 'hors_service' ? 'critique' : 'alerte',
+      )
+    }
+
+    return
+  }
+
   const dronesDeployes = etat.industrie.drones.filter((drone) => drone.etat === 'deploie')
 
   if (dronesDeployes.length > 0 && !etat.exploration?.siteActif) {
@@ -562,9 +626,9 @@ export function faireTournerDrones() {
     }
 
     ajouterAuJournal(
-      `Aucun amas actif. ${dronesDeployes.length} drone(s) rappelé(s) automatiquement.`,
-      'evenements',
-      'alerte',
+        `Aucun amas actif. ${dronesDeployes.length} drone(s) rappelé(s) automatiquement.`,
+        'evenements',
+        'alerte',
     )
     return
   }
@@ -623,9 +687,9 @@ export function faireTournerDrones() {
       }
 
       ajouterAuJournal(
-        `L’amas minier actif est épuisé. ${nbRappeles} drone(s) rappelé(s) automatiquement. Nouveau scan requis.`,
-        'evenements',
-        'alerte',
+          `L’amas minier actif est épuisé. ${nbRappeles} drone(s) rappelé(s) automatiquement. Nouveau scan requis.`,
+          'evenements',
+          'alerte',
       )
       return
     }
@@ -651,9 +715,9 @@ export function faireTournerDrones() {
       }
 
       ajouterAuJournal(
-        `Amas épuisé. ${nbRappeles} drone(s) rappelé(s) automatiquement. Nouveau scan requis.`,
-        'evenements',
-        'alerte',
+          `Amas épuisé. ${nbRappeles} drone(s) rappelé(s) automatiquement. Nouveau scan requis.`,
+          'evenements',
+          'alerte',
       )
       return
     }
@@ -671,17 +735,17 @@ export function faireTournerDrones() {
 
   if (dronesRecharges > 0) {
     ajouterAuJournal(
-      `${dronesRecharges} drone(s) rechargé(s) et prêts à être redéployés.`,
-      'evenements',
-      'info',
+        `${dronesRecharges} drone(s) rechargé(s) et prêts à être redéployés.`,
+        'evenements',
+        'info',
     )
   }
 
   if (dronesRetourRecharge > 0) {
     ajouterAuJournal(
-      `${dronesRetourRecharge} drone(s) reviennent en recharge automatique (2 ticks).`,
-      'evenements',
-      'info',
+        `${dronesRetourRecharge} drone(s) reviennent en recharge automatique (2 ticks).`,
+        'evenements',
+        'info',
     )
   }
 
