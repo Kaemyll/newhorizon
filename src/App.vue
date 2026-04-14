@@ -24,7 +24,10 @@ import {
 import { acheterMineraiEnStation, vendreMineraiEnStation } from './game/systemeCommerce'
 import { ravitaillerCarburant } from './game/systemeRavitaillement'
 import { ameliorerVaisseau } from './game/systemeAmeliorations'
-import { reparerVaisseauActif } from './game/systemeReparation'
+import {
+    reparerPartiellementVaisseauActif,
+    reparerVaisseauActif,
+} from './game/systemeReparation'
 import {
     selectionnerDestination,
     lancerVoyageVersDestinationSelectionnee,
@@ -151,6 +154,12 @@ function gererRavitaillement() {
 
 function gererReparationVaisseau() {
     reparerVaisseauActif()
+    sauvegarderJeu()
+    synchroniserEtat()
+}
+
+function gererReparationPartielleVaisseau() {
+    reparerPartiellementVaisseauActif()
     sauvegarderJeu()
     synchroniserEtat()
 }
@@ -333,6 +342,7 @@ onUnmounted(() => {
                         @ravitailler="gererRavitaillement"
                         @acheter-drone="gererAchatDrone"
                         @reparer-vaisseau="gererReparationVaisseau"
+                        @reparer-partiellement-vaisseau="gererReparationPartielleVaisseau"
                         @retour-station="gererRetourStation"
                         @aller-operations="gererAllerOperations"
                     >
