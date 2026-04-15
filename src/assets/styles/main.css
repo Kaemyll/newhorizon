@@ -31,6 +31,8 @@
    ========================================================= */
 @import './components/buttons.css';
 @import './components/panels.css';
+@import './components/states.css';
+@import './components/animations.css';
 
 /* =========================================================
    4. ZONE LATÉRALE GAUCHE

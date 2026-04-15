@@ -1,0 +1,129 @@
+/* =========================================================
+   COMPONENTS — ANIMATIONS ET TRANSITIONS UTILITAIRES
+   ---------------------------------------------------------
+   Rôle :
+   - centraliser les transitions réutilisables
+   - préparer les futurs micro-feedbacks visuels
+   - éviter la duplication de timings et keyframes
+
+   Politique :
+   - animations courtes
+   - usage parcimonieux
+   - respect du reduced motion
+   ========================================================= */
+
+/* ===== Transitions utilitaires ===== */
+
+.ui-transition-color {
+    transition:
+            color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+            background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+            border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+            box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+.ui-transition-transform {
+    transition:
+            transform var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+            box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+.ui-transition-opacity {
+    transition: opacity var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+.ui-transition-all {
+    transition:
+            color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+            background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+            border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+            box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+            transform var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+            opacity var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+/* ===== Keyframes réutilisables ===== */
+
+@keyframes nhPulseSoft {
+    0% {
+        box-shadow: 0 0 0 0 rgba(125, 184, 255, 0);
+    }
+
+    50% {
+        box-shadow: 0 0 0 4px rgba(125, 184, 255, 0.08);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(125, 184, 255, 0);
+    }
+}
+
+@keyframes nhGlowWarning {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(214, 146, 58, 0.06);
+    }
+
+    50% {
+        box-shadow: 0 0 14px 0 rgba(214, 146, 58, 0.12);
+    }
+}
+
+@keyframes nhGlowDanger {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(224, 90, 90, 0.08);
+    }
+
+    50% {
+        box-shadow: 0 0 16px 0 rgba(224, 90, 90, 0.16);
+    }
+}
+
+@keyframes nhRaiseIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== Classes utilitaires ===== */
+
+.ui-anim-pulse-soft {
+    animation: nhPulseSoft 1.8s ease-in-out infinite;
+}
+
+.ui-anim-warning {
+    animation: nhGlowWarning 1.9s ease-in-out infinite;
+}
+
+.ui-anim-danger {
+    animation: nhGlowDanger 1.7s ease-in-out infinite;
+}
+
+.ui-anim-raise-in {
+    animation: nhRaiseIn 0.22s ease-out;
+}
+
+/* ===== Accessibilité ===== */
+
+@media (prefers-reduced-motion: reduce) {
+    .ui-transition-color,
+    .ui-transition-transform,
+    .ui-transition-opacity,
+    .ui-transition-all {
+        transition: none !important;
+    }
+
+    .ui-anim-pulse-soft,
+    .ui-anim-warning,
+    .ui-anim-danger,
+    .ui-anim-raise-in {
+        animation: none !important;
+    }
+}

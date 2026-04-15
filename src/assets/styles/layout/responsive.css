@@ -6,6 +6,8 @@
    - conserver un point de recherche unique pour les
      comportements selon largeur d’écran
    - éviter la dispersion des media queries dans les modules
+   - couper les animations utilitaires sur petits écrans
+     quand cela devient inutile visuellement
    ========================================================= */
 
 /* =========================================================
@@ -121,6 +123,12 @@
     max-height: none;
     overflow-y: visible;
     padding-right: 0;
+  }
+
+  .ui-anim-pulse-soft,
+  .ui-anim-warning,
+  .ui-anim-danger {
+    animation: none;
   }
 }
 

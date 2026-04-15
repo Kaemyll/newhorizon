@@ -1,0 +1,142 @@
+/* =========================================================
+   COMPONENTS — ÉTATS VISUELS TRANSVERSES
+   ---------------------------------------------------------
+   Rôle :
+   - fournir des classes réutilisables pour les futurs états
+   - centraliser les variantes neutre / info / succès /
+     alerte / critique
+   - éviter de recoder les mêmes intensités visuelles dans
+     chaque feature métier
+
+   Usage :
+   - badges
+   - panneaux
+   - cartes
+   - boutons contextuels
+   - futurs overlays d’état
+   ========================================================= */
+
+/* ===== États sémantiques génériques ===== */
+
+.ui-state-neutral {
+    color: var(--nh-color-text-soft);
+    border-color: var(--nh-border-neutral);
+    background: var(--nh-surface-state-neutral);
+}
+
+.ui-state-info {
+    color: var(--nh-color-info-text);
+    border-color: var(--nh-border-info);
+    background: var(--nh-surface-state-info);
+}
+
+.ui-state-success {
+    color: var(--nh-color-success-text);
+    border-color: var(--nh-border-success);
+    background: var(--nh-surface-state-success);
+}
+
+.ui-state-warning {
+    color: var(--nh-color-warning-text);
+    border-color: var(--nh-border-warning);
+    background: var(--nh-surface-state-warning);
+}
+
+.ui-state-danger {
+    color: var(--nh-color-danger-text);
+    border-color: var(--nh-border-danger);
+    background: var(--nh-surface-state-danger);
+}
+
+/* ===== Variantes de panneaux / cartes ===== */
+
+.ui-state-panel {
+    border: 1px solid transparent;
+    background-clip: padding-box;
+    transition:
+            border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+            box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+            background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+.ui-state-panel.ui-state-neutral {
+    box-shadow: inset 0 0 0 1px rgba(160, 172, 186, 0.04);
+}
+
+.ui-state-panel.ui-state-info {
+    box-shadow: inset 0 0 0 1px rgba(92, 150, 220, 0.05);
+}
+
+.ui-state-panel.ui-state-success {
+    box-shadow: inset 0 0 0 1px rgba(86, 196, 124, 0.05);
+}
+
+.ui-state-panel.ui-state-warning {
+    box-shadow: inset 0 0 0 1px rgba(214, 146, 58, 0.06);
+}
+
+.ui-state-panel.ui-state-danger {
+    box-shadow: inset 0 0 0 1px rgba(224, 90, 90, 0.08);
+}
+
+/* ===== Variantes de badges / pills ===== */
+
+.ui-state-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 26px;
+    padding: 0.18rem 0.62rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    transition:
+            border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+            background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+            color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+            box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+/* ===== Accent latéral futur pour cartes / logs / alertes ===== */
+
+.ui-state-accent-left {
+    border-left: 2px solid transparent;
+}
+
+.ui-state-accent-left.ui-state-neutral {
+    border-left-color: rgba(160, 172, 186, 0.28);
+}
+
+.ui-state-accent-left.ui-state-info {
+    border-left-color: rgba(92, 150, 220, 0.45);
+}
+
+.ui-state-accent-left.ui-state-success {
+    border-left-color: rgba(86, 196, 124, 0.5);
+}
+
+.ui-state-accent-left.ui-state-warning {
+    border-left-color: rgba(214, 146, 58, 0.55);
+}
+
+.ui-state-accent-left.ui-state-danger {
+    border-left-color: rgba(224, 90, 90, 0.75);
+}
+
+/* ===== Utilitaires d’intensité visuelle ===== */
+
+.ui-emphasis-soft {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.ui-emphasis-medium {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.ui-emphasis-strong {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
