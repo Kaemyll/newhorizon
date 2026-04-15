@@ -3,8 +3,13 @@
    ---------------------------------------------------------
    Rôle :
    - conteneur principal de l’application
-   - grille générale header + contenu
-   - grille principale en 3 colonnes
+   - articulation header + contenu
+   - grille maître des trois grandes zones de jeu
+
+   Zones visées :
+   - colonne gauche : navigation / ressources
+   - colonne centrale : pilotage / opérations / journal
+   - colonne droite : contexte / support / station
    ========================================================= */
 
 .app-shell {
