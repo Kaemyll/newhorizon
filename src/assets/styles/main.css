@@ -41,6 +41,7 @@
    ========================================================= */
 @import './components/navigation.css';
 @import './components/resources.css';
+@import './features/player.css';
 
 /* =========================================================
    5. ZONE CENTRALE DE PILOTAGE

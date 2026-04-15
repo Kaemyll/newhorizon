@@ -1,10 +1,7 @@
 <script setup>
-import { computed } from 'vue'
 import { donneesMinerais } from '../game/dataMinerais'
-import { donneesSecteurs } from '../game/dataSecteurs'
-import { calculerValeurCargaisonPourStation } from '../game/systemeCommerce'
 
-const props = defineProps({
+defineProps({
   ressources: {
     type: Object,
     required: true,
@@ -18,38 +15,12 @@ const props = defineProps({
     required: true,
   },
 })
-
-const secteur = computed(() =>
-  donneesSecteurs.find((entree) => entree.id === props.secteurCourant.id),
-)
-
-const stationCourante = computed(() => secteur.value?.stationPrincipale ?? null)
-
-const estimationCargaison = computed(() => {
-  if (!stationCourante.value || !secteur.value) {
-    return {
-      valeurBrute: 0,
-      montantTaxe: 0,
-      valeurNette: 0,
-    }
-  }
-
-  return calculerValeurCargaisonPourStation(
-    props.ressources.minerais,
-    stationCourante.value,
-    secteur.value.securite,
-  )
-})
 </script>
 
 <template>
   <section class="panel">
     <h2>◈ Ressources</h2>
-    <p>Crédits : {{ ressources.credits }}</p>
     <p>Carburant : {{ ressources.carburant }} / {{ vaisseau.carburantMax }}</p>
-    <p>Soute : {{ vaisseau.soute }} / {{ vaisseau.souteMax }}</p>
-    <p>Valeur brute estimée : {{ estimationCargaison.valeurBrute }} crédits</p>
-    <p>Valeur nette estimée : {{ estimationCargaison.valeurNette }} crédits</p>
 
     <h3>Contenu minéral de la soute</h3>
     <ul class="resource-list resource-list-compact resource-list-mineraux">
