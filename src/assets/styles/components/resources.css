@@ -3,9 +3,13 @@
    ---------------------------------------------------------
    Rôle :
    - listes génériques de ressources
-   - liste compacte de soute
-   - ressources locales du secteur
-   - description de secteur / station
+   - inventaires compacts
+   - ressources sectorielles
+   - descriptions courtes de contexte
+
+   Zone principale :
+   - colonne gauche
+   - panneaux d’information synthétique
    ========================================================= */
 
 /* ===== Listes génériques ===== */
@@ -104,7 +108,7 @@
   opacity: 0.72;
 }
 
-/* ===== Description du secteur / station ===== */
+/* ===== Description de secteur / station ===== */
 
 .sector-description {
   margin-top: 8px;

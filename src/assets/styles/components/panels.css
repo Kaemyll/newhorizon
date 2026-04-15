@@ -2,8 +2,10 @@
    COMPONENTS — PANNEAUX GÉNÉRIQUES
    ---------------------------------------------------------
    Rôle :
-   - apparence commune des panneaux
+   - socle visuel commun des panneaux
    - titres, paragraphes et notes partagées
+   - apparence neutre avant spécialisations métier
+   - préparation aux futurs états visuels renforcés
    ========================================================= */
 
 .panel {
@@ -14,6 +16,11 @@
   background: #101923;
   box-shadow: inset 0 0 0 1px rgba(125, 184, 255, 0.03);
   overflow: hidden;
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          opacity var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
 }
 
 .panel h2 {

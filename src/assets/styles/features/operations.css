@@ -5,10 +5,19 @@
    - structure du panneau opérations
    - badges, statuts et métriques
    - systèmes, drones et groupes d’actions
+
+   Zone principale :
+   - coeur de pilotage
+   - colonne centrale
    ========================================================= */
 
 .ops-panel {
   min-height: 0;
+  position: relative;
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
 }
 
 .ops-panel--scrollable {
@@ -23,6 +32,42 @@
   content: '';
   display: block;
   height: 8px;
+}
+
+/* ===== Renforcement visuel selon la coque ===== */
+
+.ops-panel--hull-nominale {
+  box-shadow: inset 0 0 0 1px rgba(86, 196, 124, 0.03);
+}
+
+.ops-panel--hull-degradee {
+  border-color: rgba(214, 146, 58, 0.24);
+  box-shadow:
+          inset 0 0 0 1px rgba(214, 146, 58, 0.08),
+          0 0 0 1px rgba(214, 146, 58, 0.03);
+  background:
+          linear-gradient(180deg, rgba(168, 104, 32, 0.04) 0%, rgba(255, 255, 255, 0) 100%),
+          rgba(125, 184, 255, 0.03);
+}
+
+.ops-panel--hull-critique {
+  border-color: rgba(224, 90, 90, 0.3);
+  box-shadow:
+          inset 0 0 0 1px rgba(224, 90, 90, 0.09),
+          0 0 18px rgba(160, 48, 48, 0.08);
+  background:
+          linear-gradient(180deg, rgba(150, 44, 44, 0.06) 0%, rgba(255, 255, 255, 0) 100%),
+          rgba(125, 184, 255, 0.03);
+}
+
+.ops-panel--hull-hors-service {
+  border-color: rgba(224, 90, 90, 0.38);
+  box-shadow:
+          inset 0 0 0 1px rgba(224, 90, 90, 0.12),
+          0 0 22px rgba(150, 44, 44, 0.1);
+  background:
+          linear-gradient(180deg, rgba(115, 18, 18, 0.1) 0%, rgba(255, 255, 255, 0) 100%),
+          rgba(125, 184, 255, 0.03);
 }
 
 /* ===== Header ===== */
@@ -61,6 +106,232 @@
   white-space: nowrap;
 }
 
+.ops-flight-chip {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  min-width: 86px;
+  min-height: 46px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(125, 184, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+.ops-flight-chip-label {
+  font-size: 0.68rem;
+  opacity: 0.72;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ops-flight-chip strong {
+  font-size: 0.84rem;
+  line-height: 1.08;
+}
+
+/* ===== Bandeau de statut ===== */
+
+.ops-status-banner {
+  margin-bottom: 10px;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.045);
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+.ops-status-banner-head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.3rem;
+}
+
+.ops-status-banner p {
+  margin: 0;
+  line-height: 1.35;
+  opacity: 0.92;
+}
+
+.ops-status-dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 10px currentColor;
+  transition:
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+.ops-status-standard {
+  color: #d6dde6;
+  background: rgba(120, 132, 146, 0.14);
+  border-color: rgba(160, 172, 186, 0.2);
+}
+
+.ops-status-info {
+  color: #b8d7ff;
+  background: rgba(46, 95, 160, 0.18);
+  border-color: rgba(92, 150, 220, 0.26);
+}
+
+.ops-status-success {
+  color: #b9f0c9;
+  background: rgba(39, 122, 73, 0.18);
+  border-color: rgba(86, 196, 124, 0.26);
+}
+
+.ops-status-warning {
+  color: #f5d7a1;
+  background: rgba(168, 104, 32, 0.18);
+  border-color: rgba(214, 146, 58, 0.26);
+}
+
+.ops-status-critical {
+  color: #ffb8b8;
+  background: rgba(150, 44, 44, 0.2);
+  border-color: rgba(224, 90, 90, 0.28);
+}
+
+/* ===== Ruban de phases ===== */
+
+.ops-phase-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin: -2px 0 10px 0;
+}
+
+.ops-phase-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0.3rem 0.72rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          transform var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+.ops-phase-badge--standard {
+  color: #c8d0da;
+  background: rgba(120, 132, 146, 0.16);
+  border-color: rgba(160, 172, 186, 0.24);
+}
+
+.ops-phase-badge--info {
+  color: #b8d7ff;
+  background: rgba(46, 95, 160, 0.22);
+  border-color: rgba(92, 150, 220, 0.4);
+}
+
+.ops-phase-badge--success {
+  color: #b9f0c9;
+  background: rgba(39, 122, 73, 0.22);
+  border-color: rgba(86, 196, 124, 0.4);
+}
+
+.ops-phase-badge--warning {
+  color: #f5d7a1;
+  background: rgba(168, 104, 32, 0.22);
+  border-color: rgba(214, 146, 58, 0.4);
+}
+
+.ops-phase-badge--danger {
+  color: #ffb8b8;
+  background: rgba(150, 44, 44, 0.22);
+  border-color: rgba(224, 90, 90, 0.38);
+}
+
+/* ===== Bandeau de commandes immédiates ===== */
+
+.ops-quick-actions {
+  position: sticky;
+  top: -1px;
+  z-index: 3;
+  margin-bottom: 10px;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid rgba(125, 184, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(10, 22, 40, 0.88);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+.ops-quick-actions-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.45rem;
+}
+
+.ops-quick-actions-head strong {
+  font-size: 0.86rem;
+  line-height: 1.1;
+}
+
+.ops-quick-actions-head span {
+  font-size: 0.74rem;
+  opacity: 0.72;
+}
+
+.ops-quick-actions-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.ops-quick-actions-grid--four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ops-quick-button {
+  min-height: 36px;
+  width: 100%;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.84rem;
+}
+
+.ops-quick-button .button-icon {
+  margin-right: 0.3rem;
+}
+
+/* ===== Header de blocs ===== */
+
+.ops-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.55rem;
+}
+
 /* ===== Badges de header de bloc ===== */
 
 .ops-header-badges {
@@ -86,6 +357,11 @@
   letter-spacing: 0.02em;
   border: 1px solid transparent;
   transform: translateY(-1px);
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
 }
 
 .ops-badge-scan-faible {
@@ -128,6 +404,11 @@
   letter-spacing: 0.02em;
   border: 1px solid transparent;
   transform: translateY(-1px);
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
 }
 
 .ops-badge-risk-negligeable {
@@ -160,11 +441,15 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  min-width: 185px;
+  min-width: 172px;
   padding: 8px 10px;
   border: 1px solid rgba(125, 184, 255, 0.18);
   border-radius: 10px;
   background: rgba(125, 184, 255, 0.06);
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
 }
 
 .ops-local-badge-station {
@@ -199,67 +484,6 @@
   line-height: 1.08;
 }
 
-/* ===== Bandeau de statut ===== */
-
-.ops-status-banner {
-  margin-bottom: 10px;
-  padding: 0.9rem 1rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.045);
-}
-
-.ops-status-banner-head {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  margin-bottom: 0.3rem;
-}
-
-.ops-status-banner p {
-  margin: 0;
-  line-height: 1.35;
-  opacity: 0.92;
-}
-
-.ops-status-dot {
-  width: 0.65rem;
-  height: 0.65rem;
-  border-radius: 999px;
-  background: currentColor;
-  box-shadow: 0 0 10px currentColor;
-}
-
-.ops-status-standard {
-  color: #d6dde6;
-  background: rgba(120, 132, 146, 0.14);
-  border-color: rgba(160, 172, 186, 0.2);
-}
-
-.ops-status-info {
-  color: #b8d7ff;
-  background: rgba(46, 95, 160, 0.18);
-  border-color: rgba(92, 150, 220, 0.26);
-}
-
-.ops-status-success {
-  color: #b9f0c9;
-  background: rgba(39, 122, 73, 0.18);
-  border-color: rgba(86, 196, 124, 0.26);
-}
-
-.ops-status-warning {
-  color: #f5d7a1;
-  background: rgba(168, 104, 32, 0.18);
-  border-color: rgba(214, 146, 58, 0.26);
-}
-
-.ops-status-critical {
-  color: #ffb8b8;
-  background: rgba(150, 44, 44, 0.2);
-  border-color: rgba(224, 90, 90, 0.28);
-}
-
 /* ===== Grilles et blocs ===== */
 
 .ops-grid {
@@ -274,6 +498,10 @@
   align-items: start;
 }
 
+.ops-grid--main-priority {
+  margin-top: 2px;
+}
+
 .ops-block {
   padding-top: 6px;
   border-top: 1px solid rgba(125, 184, 255, 0.12);
@@ -284,12 +512,8 @@
   border-top: none;
 }
 
-.ops-block-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.6rem;
+.ops-block--drones {
+  margin-bottom: 8px;
 }
 
 /* ===== Cartes de métriques ===== */
@@ -305,6 +529,10 @@
   border: 1px solid rgba(125, 184, 255, 0.12);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.035);
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
 }
 
 .ops-metric-label {
@@ -331,6 +559,10 @@
   border: 1px solid rgba(125, 184, 255, 0.12);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.035);
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
 }
 
 .ops-system-item--multiline {
@@ -373,6 +605,10 @@
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.055);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
 }
 
 .ops-mini-counter-label {
@@ -408,6 +644,10 @@
   background: rgba(255, 255, 255, 0.035);
   font-size: 0.84rem;
   line-height: 1.14;
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
 }
 
 .drone-status-name {
@@ -419,7 +659,7 @@
   opacity: 0.86;
 }
 
-/* ===== Groupes d’actions ===== */
+/* ===== Groupes d’actions hérités ===== */
 
 .ops-panel .action-group {
   display: flex;

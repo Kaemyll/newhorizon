@@ -7,6 +7,10 @@
    - badges de rôle
    - état de coque
    - métriques du vaisseau
+
+   Zone principale :
+   - coeur de pilotage
+   - colonne centrale
    ========================================================= */
 
 .ship-panel-header {
@@ -57,6 +61,11 @@
   line-height: 1;
   border: 1px solid rgba(255, 255, 255, 0.12);
   flex-shrink: 0;
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
 }
 
 .ship-role-badge--light {
@@ -94,6 +103,10 @@
   border: 1px solid rgba(125, 184, 255, 0.08);
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.03);
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
 }
 
 .ship-panel-hull-status--compact {
@@ -127,6 +140,11 @@
   white-space: nowrap;
   line-height: 1;
   border: 1px solid transparent;
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
 }
 
 .ship-hull-badge--nominale {
@@ -164,7 +182,7 @@
 .ship-panel-hull-bar-fill {
   height: 100%;
   border-radius: 999px;
-  transition: width 0.2s ease;
+  transition: width var(--nh-motion-duration-medium) var(--nh-motion-ease-standard);
 }
 
 .ship-panel-hull-bar-fill.ship-hull-badge--nominale {

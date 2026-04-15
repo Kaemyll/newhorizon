@@ -1,6 +1,7 @@
 import { recupererEtatJeu } from './etatJeu'
 import { donneesSecteurs } from './dataSecteurs'
 import { ajouterAuJournal } from './systemeMinage'
+import { construireJournalTransitionEtatCoque, recupererEtatCoque } from './systemeCoque'
 import { recupererVaisseauActif, synchroniserVaisseauActifDansEtat } from './systemeVaisseaux'
 
 export const COUT_REPARATION_PAR_POINT = 15
@@ -174,17 +175,31 @@ export function reparerVaisseauActif() {
     }
 
     const { vaisseauActif, coutReparation, pointsManquants } = validation
+    const etatAvant = recupererEtatCoque(vaisseauActif.coque, vaisseauActif.coqueMax)
 
     etat.ressources.credits -= coutReparation
     vaisseauActif.coque = vaisseauActif.coqueMax
 
     synchroniserVaisseauActifDansEtat(etat)
 
+    const etatApres = recupererEtatCoque(vaisseauActif.coque, vaisseauActif.coqueMax)
+
     ajouterAuJournal(
         `Réparation complète effectuée sur ${vaisseauActif.nom} : +${pointsManquants} coque pour ${coutReparation} crédits.`,
         'commerce',
         'succes',
     )
+
+    const transition = construireJournalTransitionEtatCoque(
+        vaisseauActif.nom,
+        etatAvant,
+        etatApres,
+        'reparation',
+    )
+
+    if (transition) {
+        ajouterAuJournal(transition.message, 'commerce', transition.niveau)
+    }
 
     return true
 }
@@ -199,17 +214,31 @@ export function reparerPartiellementVaisseauActif() {
     }
 
     const { vaisseauActif, coutReparation, pointsRepares } = validation
+    const etatAvant = recupererEtatCoque(vaisseauActif.coque, vaisseauActif.coqueMax)
 
     etat.ressources.credits -= coutReparation
     vaisseauActif.coque = Math.min(vaisseauActif.coque + pointsRepares, vaisseauActif.coqueMax)
 
     synchroniserVaisseauActifDansEtat(etat)
 
+    const etatApres = recupererEtatCoque(vaisseauActif.coque, vaisseauActif.coqueMax)
+
     ajouterAuJournal(
         `Réparation partielle effectuée sur ${vaisseauActif.nom} : +${pointsRepares} coque pour ${coutReparation} crédits.`,
         'commerce',
         'succes',
     )
+
+    const transition = construireJournalTransitionEtatCoque(
+        vaisseauActif.nom,
+        etatAvant,
+        etatApres,
+        'reparation',
+    )
+
+    if (transition) {
+        ajouterAuJournal(transition.message, 'commerce', transition.niveau)
+    }
 
     return true
 }
