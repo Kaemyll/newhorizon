@@ -32,9 +32,16 @@ export function creerEtatInitialJeu() {
 
   return {
     meta: {
-      version: '0.3.14',
+      version: '0.3.15',
       auteur: 'Kaemyll',
       annee: 2026,
+    },
+
+    joueur: {
+      identite: 'À renseigner',
+      statut: 'Indépendant',
+      reputation: 'Inconnue',
+      fortune: 'En attente',
     },
 
     ressources: {

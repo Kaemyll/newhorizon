@@ -20,11 +20,25 @@ select {
   color: #eef5fb;
 }
 
+.navigation-destination-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
 .navigation-label {
   display: block;
   margin-bottom: 5px;
   font-size: 0.88rem;
   opacity: 0.9;
+}
+
+.navigation-label--inline {
+  margin-bottom: 0;
+  font-size: 0.82rem;
+  white-space: nowrap;
 }
 
 .navigation-select {
@@ -35,6 +49,20 @@ select {
   border-radius: 6px;
   background: #0f1822;
   color: #eef5fb;
+}
+
+.navigation-select--compact {
+  margin-bottom: 0;
+  padding: 0.38rem 0.55rem;
+  font-size: 0.9rem;
+  line-height: 1.1;
+}
+
+.navigation-route-meta {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  line-height: 1.1;
+  opacity: 0.88;
 }
 
 .navigation-status {
