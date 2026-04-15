@@ -1,45 +1,74 @@
 /* =========================================================
    NEW HORIZON — POINT D’ENTRÉE UNIQUE DES STYLES
    ---------------------------------------------------------
-   Ce fichier centralise tous les imports CSS de l’application.
-   Il ne doit pas contenir de styles métier, uniquement les
-   imports des modules thématiques.
+   Ce fichier ne contient aucun style métier.
+   Il orchestre uniquement les imports CSS selon les zones
+   fonctionnelles principales de l’interface.
    ========================================================= */
 
 /* =========================================================
-   1. BASE
+   1. SOCLE GLOBAL
+   ---------------------------------------------------------
+   Variables, reset, typographie commune
    ========================================================= */
 @import './base/tokens.css';
 @import './base/reset.css';
 @import './base/typography.css';
 
 /* =========================================================
-   2. LAYOUT GLOBAL
+   2. SHELL D’APPLICATION
+   ---------------------------------------------------------
+   Grille principale, header, colonnes, responsive global
    ========================================================= */
 @import './layout/app-shell.css';
 @import './layout/header.css';
 @import './layout/columns.css';
 
 /* =========================================================
-   3. COMPOSANTS PARTAGÉS
+   3. COMPOSANTS TRANSVERSES
+   ---------------------------------------------------------
+   Éléments partagés entre plusieurs zones fonctionnelles
    ========================================================= */
 @import './components/buttons.css';
-@import './components/navigation.css';
 @import './components/panels.css';
+
+/* =========================================================
+   4. ZONE LATÉRALE GAUCHE
+   ---------------------------------------------------------
+   Navigation, ressources, listes métier compactes
+   ========================================================= */
+@import './components/navigation.css';
 @import './components/resources.css';
 
 /* =========================================================
-   4. FEATURES / PANNEAUX MÉTIER
+   5. ZONE CENTRALE DE PILOTAGE
+   ---------------------------------------------------------
+   Vaisseau actif, opérations, services de station,
+   améliorations liées au gameplay central
    ========================================================= */
+@import './features/ship.css';
+@import './features/operations.css';
 @import './features/station-services.css';
 @import './features/upgrades.css';
-@import './features/journal.css';
-@import './features/operations.css';
-@import './features/ship.css';
+
+/* =========================================================
+   6. ZONE LATÉRALE DROITE / SUPPORT
+   ---------------------------------------------------------
+   Hangar et éléments visuels associés
+   ========================================================= */
 @import './features/hangar.css';
 @import './features/icons.css';
 
 /* =========================================================
-   5. RESPONSIVE GLOBAL
+   7. FOOTER / JOURNAL DE BORD
+   ---------------------------------------------------------
+   Journal persistant en pied de zone centrale
+   ========================================================= */
+@import './features/journal.css';
+
+/* =========================================================
+   8. RESPONSIVE GLOBAL
+   ---------------------------------------------------------
+   Ajustements finaux dépendant des zones précédentes
    ========================================================= */
 @import './layout/responsive.css';

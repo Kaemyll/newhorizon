@@ -5,6 +5,10 @@
    - structure du panneau opérations
    - badges, statuts et métriques
    - systèmes, drones et groupes d’actions
+
+   Zone principale :
+   - coeur de pilotage
+   - colonne centrale
    ========================================================= */
 
 .ops-panel {
@@ -604,7 +608,7 @@
   opacity: 0.86;
 }
 
-/* ===== Groupes d’actions ===== */
+/* ===== Groupes d’actions hérités ===== */
 
 .ops-panel .action-group {
   display: flex;

@@ -2,10 +2,17 @@
    LAYOUT — COLONNES PRINCIPALES
    ---------------------------------------------------------
    Rôle :
-   - colonnes gauche / centre / droite
-   - comportements de scroll
-   - protection anti-débordement dans les panneaux
+   - comportement des colonnes gauche / centre / droite
+   - gestion des scrolls fonctionnels
+   - sécurité anti-débordement dans les panneaux
+
+   Convention de lecture :
+   - gauche  : navigation / ressources
+   - centre  : coeur de jeu + journal
+   - droite  : panneaux d’appoint / station / hangar
    ========================================================= */
+
+/* ===== Colonnes latérales ===== */
 
 .main-column,
 .right-aside {
@@ -32,6 +39,8 @@
   min-width: 0;
 }
 
+/* ===== Colonne centrale ===== */
+
 .main-column-center {
   display: grid;
   grid-template-rows: minmax(0, 1fr) 220px;
@@ -54,7 +63,8 @@
   overflow: hidden;
 }
 
-/* Sécurité anti-débordement */
+/* ===== Sécurité anti-débordement textuel ===== */
+
 .right-aside .panel p,
 .right-aside .panel li,
 .right-aside .panel span,

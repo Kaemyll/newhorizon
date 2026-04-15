@@ -2,8 +2,12 @@
    COMPONENTS — NAVIGATION
    ---------------------------------------------------------
    Rôle :
-   - sélecteur de navigation
-   - libellés et statut de navigation
+   - contrôles de navigation
+   - sélecteur de trajet / destination
+   - statuts textuels associés
+
+   Zone principale :
+   - colonne gauche
    ========================================================= */
 
 select {

@@ -2,8 +2,14 @@
    COMPONENTS — PANNEAUX GÉNÉRIQUES
    ---------------------------------------------------------
    Rôle :
-   - apparence commune des panneaux
+   - socle visuel commun des panneaux
    - titres, paragraphes et notes partagées
+   - apparence neutre avant spécialisations métier
+
+   Ce fichier ne doit contenir que :
+   - le chrome commun
+   - la typographie de base des panneaux
+   - les notes transverses
    ========================================================= */
 
 .panel {
