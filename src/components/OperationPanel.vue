@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { donneesMinerais } from '../game/dataMinerais'
 import { recupererEtatCoque } from '../game/systemeCoque'
 import {
+    recupererBadgesOperationnels,
     recupererEtatVisuelBandeau,
     recupererEtatVisuelCoque,
     recupererEtatVisuelRisque,
@@ -123,9 +124,7 @@ const doctrineOperationnelle = computed(() => {
     return 'Prospection et exploitation locale'
 })
 
-const statutVolLabel = computed(() =>
-    props.navigation.enVoyage ? 'Transit' : 'Local',
-)
+const statutVolLabel = computed(() => (props.navigation.enVoyage ? 'Transit' : 'Local'))
 
 const statutCanon = computed(() => {
     if ((props.vaisseau?.puissanceMiniere || 0) <= 0) return 'Aucun canon'
@@ -151,6 +150,14 @@ const typeScannerLabel = computed(() => {
     return 'Module de base'
 })
 
+const libelleRisqueCapitalise = computed(() => {
+    const libelle = props.exploration?.siteActif?.libelleRisque
+
+    if (!libelle) return null
+
+    return libelle.charAt(0).toUpperCase() + libelle.slice(1)
+})
+
 const etatVisuelScan = computed(() =>
     recupererEtatVisuelScan(props.exploration?.siteActif?.qualiteScan),
 )
@@ -158,11 +165,22 @@ const etatVisuelScan = computed(() =>
 const etatVisuelRisque = computed(() =>
     recupererEtatVisuelRisque(
         props.exploration?.siteActif?.niveauRisque,
-        props.exploration?.siteActif?.libelleRisque
-            ? props.exploration.siteActif.libelleRisque.charAt(0).toUpperCase() +
-            props.exploration.siteActif.libelleRisque.slice(1)
-            : null,
+        libelleRisqueCapitalise.value,
     ),
+)
+
+const badgesOperationnels = computed(() =>
+    recupererBadgesOperationnels({
+        positionLocale: props.positionLocale,
+        enVoyage: props.navigation.enVoyage,
+        remorquageEnCours: props.assistance.remorquageEnCours,
+        siteActif: props.exploration?.siteActif,
+        niveauRisque: props.exploration?.siteActif?.niveauRisque,
+        libelleRisque: libelleRisqueCapitalise.value,
+        nbDeployes: nbDeployes.value,
+        coqueCode: infosCoque.value.code,
+        estTransporteurMarchand: estTransporteurMarchand.value,
+    }),
 )
 
 const reserveSiteLabel = computed(() => {
@@ -382,6 +400,16 @@ function decrireDrone(drone) {
             <p>{{ statutOperationnel.texte }}</p>
         </section>
 
+        <section v-if="badgesOperationnels.length > 0" class="ops-phase-strip">
+            <span
+                v-for="badge in badgesOperationnels"
+                :key="badge.id"
+                :class="badge.classe"
+            >
+                {{ badge.label }}
+            </span>
+        </section>
+
         <section v-if="afficherActionsRapides" class="ops-quick-actions">
             <div class="ops-quick-actions-head">
                 <strong>Commandes immédiates</strong>
@@ -437,13 +465,13 @@ function decrireDrone(drone) {
                     <h3>Exploitation</h3>
 
                     <div v-if="exploration.siteActif" class="ops-header-badges">
-            <span class="ops-badge-scan" :class="etatVisuelScan.classeBadge">
-              {{ etatVisuelScan.label }}
-            </span>
+                        <span class="ops-badge-scan" :class="etatVisuelScan.classeBadge">
+                            {{ etatVisuelScan.label }}
+                        </span>
 
                         <span class="ops-badge-risk" :class="etatVisuelRisque.classeBadge">
-              Risque {{ etatVisuelRisque.label }}
-            </span>
+                            Risque {{ etatVisuelRisque.label }}
+                        </span>
                     </div>
                 </div>
 
@@ -507,8 +535,8 @@ function decrireDrone(drone) {
                     <div class="ops-system-item">
                         <span class="ops-system-name">Baie à drones</span>
                         <span class="ops-system-value">
-              {{ industrie.drones.length }} / {{ vaisseau.dronesMiniersMax }}
-            </span>
+                            {{ industrie.drones.length }} / {{ vaisseau.dronesMiniersMax }}
+                        </span>
                     </div>
 
                     <div class="ops-system-item">
@@ -523,8 +551,8 @@ function decrireDrone(drone) {
             <div class="ops-block-header">
                 <h3>Drones</h3>
                 <span class="ops-drone-summary">
-          {{ nbDeployes }} déployé(s) · {{ nbPrets }} prêt(s) · {{ nbEnRecharge }} en recharge
-        </span>
+                    {{ nbDeployes }} déployé(s) · {{ nbPrets }} prêt(s) · {{ nbEnRecharge }} en recharge
+                </span>
             </div>
 
             <div class="ops-drone-counters">

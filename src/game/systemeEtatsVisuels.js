@@ -51,6 +51,7 @@ export function recupererEtatVisuelRisque(niveauRisque = 0, libelleRisque = null
             label: libelleRisque || 'Négligeable',
             classeBadge: 'ops-badge-risk-negligeable',
             niveauAlerte: 'standard',
+            variante: 'standard',
         }
     }
 
@@ -60,6 +61,7 @@ export function recupererEtatVisuelRisque(niveauRisque = 0, libelleRisque = null
             label: libelleRisque || 'Faible',
             classeBadge: 'ops-badge-risk-faible',
             niveauAlerte: 'info',
+            variante: 'info',
         }
     }
 
@@ -69,6 +71,7 @@ export function recupererEtatVisuelRisque(niveauRisque = 0, libelleRisque = null
             label: libelleRisque || 'Modéré',
             classeBadge: 'ops-badge-risk-modere',
             niveauAlerte: 'alerte',
+            variante: 'warning',
         }
     }
 
@@ -77,6 +80,7 @@ export function recupererEtatVisuelRisque(niveauRisque = 0, libelleRisque = null
         label: libelleRisque || 'Élevé',
         classeBadge: 'ops-badge-risk-eleve',
         niveauAlerte: 'critique',
+        variante: 'danger',
     }
 }
 
@@ -86,6 +90,7 @@ export function recupererEtatVisuelScan(qualiteScan = null) {
             label: 'Bonne',
             classeBadge: 'ops-badge-scan-bonne',
             niveauAlerte: 'succes',
+            variante: 'success',
         }
     }
 
@@ -94,6 +99,7 @@ export function recupererEtatVisuelScan(qualiteScan = null) {
             label: 'Moyenne',
             classeBadge: 'ops-badge-scan-moyenne',
             niveauAlerte: 'info',
+            variante: 'info',
         }
     }
 
@@ -102,6 +108,7 @@ export function recupererEtatVisuelScan(qualiteScan = null) {
             label: 'Faible',
             classeBadge: 'ops-badge-scan-faible',
             niveauAlerte: 'alerte',
+            variante: 'warning',
         }
     }
 
@@ -109,6 +116,7 @@ export function recupererEtatVisuelScan(qualiteScan = null) {
         label: '—',
         classeBadge: 'ops-badge-scan-neutre',
         niveauAlerte: 'standard',
+        variante: 'standard',
     }
 }
 
@@ -145,4 +153,73 @@ export function recupererEtatVisuelBandeau(niveau = 'standard') {
         niveau: 'standard',
         classeBandeau: 'ops-status-standard',
     }
+}
+
+function creerBadgeOperation(id, label, variante = 'standard') {
+    return {
+        id,
+        label,
+        classe: `ops-phase-badge ops-phase-badge--${variante}`,
+    }
+}
+
+export function recupererBadgesOperationnels({
+                                                 positionLocale = 'station',
+                                                 enVoyage = false,
+                                                 remorquageEnCours = false,
+                                                 siteActif = null,
+                                                 niveauRisque = 0,
+                                                 libelleRisque = null,
+                                                 nbDeployes = 0,
+                                                 coqueCode = 'nominale',
+                                                 estTransporteurMarchand = false,
+                                             } = {}) {
+    const badges = []
+
+    if (remorquageEnCours) {
+        badges.push(creerBadgeOperation('phase-remorquage', 'Remorquage', 'danger'))
+    } else if (enVoyage) {
+        badges.push(creerBadgeOperation('phase-transit', 'Transit', 'info'))
+    } else if (positionLocale === 'station') {
+        badges.push(creerBadgeOperation('phase-station', 'En station', 'standard'))
+    } else {
+        badges.push(creerBadgeOperation('phase-operations', 'Zone d’opérations', 'warning'))
+    }
+
+    if (coqueCode === 'hors_service') {
+        badges.push(creerBadgeOperation('etat-coque', 'Coque hors service', 'danger'))
+    } else if (coqueCode === 'critique') {
+        badges.push(creerBadgeOperation('etat-coque', 'Maintenance requise', 'warning'))
+    } else if (positionLocale === 'operations' && !enVoyage && !remorquageEnCours) {
+        if (estTransporteurMarchand) {
+            badges.push(creerBadgeOperation('phase-role', 'Fret local', 'info'))
+        } else if (siteActif) {
+            badges.push(creerBadgeOperation('phase-action', 'Extraction prête', 'success'))
+        } else {
+            badges.push(creerBadgeOperation('phase-action', 'Prospection', 'info'))
+        }
+    }
+
+    if (positionLocale === 'operations' && siteActif) {
+        const risque = recupererEtatVisuelRisque(niveauRisque, libelleRisque)
+        badges.push(
+            creerBadgeOperation(
+                'niveau-risque',
+                `Risque ${risque.label}`,
+                risque.variante || 'standard',
+            ),
+        )
+    }
+
+    if (nbDeployes > 0) {
+        badges.push(
+            creerBadgeOperation(
+                'drones',
+                nbDeployes > 1 ? `${nbDeployes} drones déployés` : 'Drone déployé',
+                'info',
+            ),
+        )
+    }
+
+    return badges.slice(0, 4)
 }
