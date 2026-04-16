@@ -346,7 +346,11 @@ onUnmounted(() => {
                     :secteur-courant="etat.secteurCourant"
                 />
 
-                <ShipPanel :vaisseau="etat.vaisseau" :industrie="etat.industrie" />
+                <ShipPanel
+                    :vaisseau="etat.vaisseau"
+                    :industrie="etat.industrie"
+                    :ressources="etat.ressources"
+                />
 
                 <NavigationPanel
                     :secteur-courant-id="etat.secteurCourant.id"
