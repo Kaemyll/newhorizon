@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { donneesSecteurs } from '../game/dataSecteurs'
+import { donneesVaisseaux } from '../game/dataVaisseaux'
 import {
     calculerCoursLocauxPourStation,
     calculerTauxTaxePourSecurite,
@@ -51,6 +52,7 @@ const emit = defineEmits([
     'acheter-drone',
     'reparer-vaisseau',
     'reparer-partiellement-vaisseau',
+    'souscrire-assurance',
     'aller-operations',
     'retour-station',
 ])
@@ -117,6 +119,73 @@ const reparationPartielleAbordable = computed(
 )
 
 const tarifAtelier = computed(() => `${COUT_REPARATION_PAR_POINT} cr / pt`)
+
+const modeleVaisseau = computed(() =>
+    donneesVaisseaux.find((modele) => modele.id === props.vaisseau.modeleId) || null,
+)
+
+const valeurMarchandeVaisseau = computed(() => Number(modeleVaisseau.value?.prix || 0))
+
+const assuranceActuelle = computed(() => props.vaisseau.assuranceNiveau || 'aucune')
+
+const offresAssurance = computed(() => {
+    const base = valeurMarchandeVaisseau.value
+
+    const arrondir = (valeur) => Math.max(0, Math.round(valeur))
+
+    return [
+        {
+            id: 'aucune',
+            code: 'Auc',
+            nom: 'Aucune couverture',
+            remboursement: '0%',
+            cout: 0,
+            description: 'Aucun contrat actif. Aucun remboursement en cas de perte.',
+            badgeClass: 'station-assurance-badge--none',
+        },
+        {
+            id: 'tiers',
+            code: 'Trs',
+            nom: 'Contrat au tiers',
+            remboursement: '33%',
+            cout: arrondir(base * 0.04),
+            description: 'Couverture minimale, adaptée aux opérations à faible coût.',
+            badgeClass: 'station-assurance-badge--tiers',
+        },
+        {
+            id: 'standard',
+            code: 'Std',
+            nom: 'Contrat standard',
+            remboursement: '66%',
+            cout: arrondir(base * 0.07),
+            description: 'Couverture intermédiaire pour un usage régulier en secteur civil.',
+            badgeClass: 'station-assurance-badge--standard',
+        },
+        {
+            id: 'premium',
+            code: 'Prm',
+            nom: 'Contrat premium',
+            remboursement: '100%',
+            cout: arrondir(base * 0.11),
+            description: 'Couverture intégrale. Les restrictions de réputation seront appliquées plus tard.',
+            badgeClass: 'station-assurance-badge--premium',
+        },
+        {
+            id: 'elite',
+            code: 'Elt',
+            nom: 'Contrat élite',
+            remboursement: '125%',
+            cout: arrondir(base * 0.16),
+            description:
+                'Couverture renforcée. Les conditions avancées de réputation seront appliquées ultérieurement.',
+            badgeClass: 'station-assurance-badge--elite',
+        },
+    ]
+})
+
+const offreAssuranceActuelle = computed(
+    () => offresAssurance.value.find((offre) => offre.id === assuranceActuelle.value) || offresAssurance.value[0],
+)
 
 function recupererQuantiteEnSoute(idMinerai) {
     return props.ressources?.minerais?.[idMinerai] || 0
@@ -205,6 +274,15 @@ function vendreMineraiMax(minerai) {
             </button>
 
             <button
+                :class="{ 'is-active': sousModeStation === 'assurance' }"
+                class="action-button-with-icon"
+                @click="emit('changer-sous-mode-station', 'assurance')"
+            >
+                <span class="button-icon" aria-hidden="true">★</span>
+                <span>Assurance</span>
+            </button>
+
+            <button
                 v-if="station.services.atelier"
                 :class="{ 'is-active': sousModeStation === 'atelier' }"
                 class="action-button-with-icon"
@@ -223,8 +301,7 @@ function vendreMineraiMax(minerai) {
                 </div>
 
                 <p class="station-service-description">
-                    Les services de station ne sont accessibles qu’une fois revenu et amarré à la station
-                    locale.
+                    Les services de station ne sont accessibles qu’une fois revenu et amarré à la station locale.
                 </p>
 
                 <div class="action-group">
@@ -334,9 +411,7 @@ function vendreMineraiMax(minerai) {
                         </div>
 
                         <div class="market-rate-row market-rate-row--bottom">
-              <span class="market-rate-average">
-                En soute : {{ recupererQuantiteEnSoute(minerai.id) }}
-              </span>
+                            <span class="market-rate-average">En soute : {{ recupererQuantiteEnSoute(minerai.id) }}</span>
                         </div>
 
                         <div class="action-group-market">
@@ -431,6 +506,98 @@ function vendreMineraiMax(minerai) {
             </div>
 
             <div
+                v-else-if="sousModeStation === 'assurance'"
+                class="station-service-card station-service-card-insurance station-service-card--scrollable"
+            >
+                <div class="station-service-card-header">
+                    <h3>★ Service d’assurance</h3>
+                    <span class="station-service-badge">Actif</span>
+                </div>
+
+                <div class="station-service-grid">
+                    <div class="station-service-metric">
+                        <span class="station-service-label">Contrat actuel</span>
+                        <strong>{{ offreAssuranceActuelle.nom }}</strong>
+                    </div>
+
+                    <div class="station-service-metric">
+                        <span class="station-service-label">Remboursement</span>
+                        <strong>{{ offreAssuranceActuelle.remboursement }}</strong>
+                    </div>
+
+                    <div class="station-service-metric">
+                        <span class="station-service-label">Vaisseau couvert</span>
+                        <strong>{{ vaisseau.nom }}</strong>
+                    </div>
+
+                    <div class="station-service-metric">
+                        <span class="station-service-label">Valeur marchande</span>
+                        <strong>{{ valeurMarchandeVaisseau }} cr</strong>
+                    </div>
+                </div>
+
+                <p class="station-service-description">
+                    Souscription ou mise à niveau du contrat d’assurance du vaisseau actif. Les règles de
+                    durée, de renouvellement et les restrictions de réputation seront étendues dans des tickets dédiés.
+                </p>
+
+                <div class="station-insurance-grid">
+                    <article
+                        v-for="offre in offresAssurance"
+                        :key="offre.id"
+                        class="station-insurance-card"
+                        :class="{
+              'station-insurance-card--active': assuranceActuelle === offre.id,
+            }"
+                    >
+                        <div class="station-insurance-card-head">
+              <span class="station-insurance-badge" :class="offre.badgeClass">
+                <span aria-hidden="true">★</span>
+                <span>{{ offre.code }}</span>
+              </span>
+
+                            <span v-if="assuranceActuelle === offre.id" class="station-insurance-current">
+                En cours
+              </span>
+                        </div>
+
+                        <h4>{{ offre.nom }}</h4>
+
+                        <div class="station-service-grid station-service-grid--insurance">
+                            <div class="station-service-metric station-service-metric--compact">
+                                <span class="station-service-label">Remboursement</span>
+                                <strong>{{ offre.remboursement }}</strong>
+                            </div>
+
+                            <div class="station-service-metric station-service-metric--compact">
+                                <span class="station-service-label">Coût</span>
+                                <strong>{{ offre.cout }} cr</strong>
+                            </div>
+                        </div>
+
+                        <p class="station-service-description station-service-description--compact">
+                            {{ offre.description }}
+                        </p>
+
+                        <button
+                            class="action-button-with-icon"
+                            :disabled="assuranceActuelle === offre.id || ressources.credits < offre.cout"
+                            @click="emit('souscrire-assurance', offre.id)"
+                        >
+                            <span class="button-icon" aria-hidden="true">★</span>
+                            <span>
+                {{ assuranceActuelle === offre.id ? 'Contrat actif' : 'Souscrire' }}
+              </span>
+                        </button>
+                    </article>
+                </div>
+
+                <p class="panel-note">
+                    Les niveaux premium et élite seront plus tard soumis à des conditions de réputation.
+                </p>
+            </div>
+
+            <div
                 v-else-if="sousModeStation === 'atelier'"
                 class="station-service-card station-service-card-workshop"
             >
@@ -439,7 +606,9 @@ function vendreMineraiMax(minerai) {
                     <span class="station-service-badge">Actif</span>
                 </div>
 
-                <div class="station-service-grid station-service-grid--atelier-devis station-service-grid--atelier-devis-5">
+                <div
+                    class="station-service-grid station-service-grid--atelier-devis station-service-grid--atelier-devis-5"
+                >
                     <div class="station-service-metric station-service-metric--compact">
                         <span class="station-service-label">Coque</span>
                         <strong>{{ vaisseau.coque }} / {{ vaisseau.coqueMax }}</strong>
@@ -511,20 +680,18 @@ function vendreMineraiMax(minerai) {
                 </p>
 
                 <div class="action-group action-group--atelier-support">
-                    <div
-                        class="station-service-metric station-service-metric--compact station-service-metric--support"
-                    >
+                    <div class="station-service-metric station-service-metric--compact station-service-metric--support">
                         <span class="station-service-label">Drone minier</span>
                         <strong>{{ coutDroneMinier }} cr / unité</strong>
                     </div>
 
                     <button class="action-button-with-icon" @click="emit('acheter-drone')">
-                        <span class="button-icon" aria-hidden="true">⇪</span>
-                        <span>Acheter un drone minier — {{ coutDroneMinier }} crédits</span>
+                        <span class="button-icon" aria-hidden="true">⛏</span>
+                        <span>Acheter un drone</span>
                     </button>
                 </div>
 
-                <div class="station-upgrade-shell">
+                <div class="station-service-mode station-service-mode--fill">
                     <slot name="atelier" />
                 </div>
             </div>

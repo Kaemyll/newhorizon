@@ -34,7 +34,11 @@ import { allerEnZoneOperations, retourALaStation } from './game/systemeLocalisat
 import { scannerAmasMinier } from './game/systemeExploration'
 import { donneesSecteurs } from './game/dataSecteurs'
 import { demarrerBoucleJeu, arreterBoucleJeu } from './game/systemeTick'
-import { acheterVaisseau, changerVaisseauActif } from './game/systemeVaisseaux'
+import {
+    acheterVaisseau,
+    changerVaisseauActif,
+    souscrireAssuranceVaisseauActif,
+} from './game/systemeVaisseaux'
 
 const etat = reactive({})
 
@@ -90,6 +94,7 @@ function normaliserSousModeStation() {
     if (ui.sousModeStation === 'commerce' && services.commerce) return
     if (ui.sousModeStation === 'ravitaillement' && services.ravitaillement) return
     if (ui.sousModeStation === 'atelier' && services.atelier) return
+    if (ui.sousModeStation === 'assurance') return
 
     ui.sousModeStation = 'hangar'
 }
@@ -192,6 +197,12 @@ function gererReparationVaisseau() {
 
 function gererReparationPartielleVaisseau() {
     reparerPartiellementVaisseauActif()
+    sauvegarderJeu()
+    synchroniserEtat()
+}
+
+function gererSouscriptionAssurance(niveauAssurance) {
+    souscrireAssuranceVaisseauActif(niveauAssurance)
     sauvegarderJeu()
     synchroniserEtat()
 }
@@ -396,6 +407,7 @@ onUnmounted(() => {
                         @acheter-drone="gererAchatDrone"
                         @reparer-vaisseau="gererReparationVaisseau"
                         @reparer-partiellement-vaisseau="gererReparationPartielleVaisseau"
+                        @souscrire-assurance="gererSouscriptionAssurance"
                         @retour-station="gererRetourStation"
                         @aller-operations="gererAllerOperations"
                     >
