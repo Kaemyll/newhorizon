@@ -38,10 +38,8 @@ export function creerEtatInitialJeu() {
     },
 
     joueur: {
-      identite: 'À renseigner',
-      statut: 'Indépendant',
-      reputation: 'Inconnue',
-      fortune: 'En attente',
+      identite: 'Sans indicatif',
+      reputation: 'I — Neutre',
     },
 
     ressources: {
