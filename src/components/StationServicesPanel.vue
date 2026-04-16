@@ -41,6 +41,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    currentTick: {
+        type: Number,
+        default: 0,
+    },
 })
 
 const emit = defineEmits([
@@ -56,6 +60,8 @@ const emit = defineEmits([
     'aller-operations',
     'retour-station',
 ])
+
+const TICKS_PAR_JOUR = 24
 
 const secteur = computed(() =>
     donneesSecteurs.find((entree) => entree.id === props.secteurCourant.id),
@@ -126,66 +132,114 @@ const modeleVaisseau = computed(() =>
 
 const valeurMarchandeVaisseau = computed(() => Number(modeleVaisseau.value?.prix || 0))
 
-const assuranceActuelle = computed(() => props.vaisseau.assuranceNiveau || 'aucune')
+const assuranceNiveauBrut = computed(() => props.vaisseau.assuranceNiveau || 'aucune')
+const assuranceExpirationTick = computed(() => Number(props.vaisseau.assuranceExpirationTick || 0))
+const assuranceSouscriptionTick = computed(() => Number(props.vaisseau.assuranceSouscriptionTick || 0))
+
+const assuranceActive = computed(() => {
+    if (assuranceNiveauBrut.value === 'aucune') {
+        return false
+    }
+
+    return assuranceExpirationTick.value > props.currentTick
+})
+
+const assuranceTicksRestants = computed(() => {
+    if (!assuranceActive.value) {
+        return 0
+    }
+
+    return Math.max(0, assuranceExpirationTick.value - props.currentTick)
+})
+
+const assuranceTempsRestantLabel = computed(() => {
+    const restants = assuranceTicksRestants.value
+    const jours = Math.floor(restants / TICKS_PAR_JOUR)
+    const heures = restants % TICKS_PAR_JOUR
+    return `${jours} j · ${heures} h`
+})
+
+const assuranceEtatLabel = computed(() => {
+    if (assuranceNiveauBrut.value === 'aucune') {
+        return 'Aucun contrat'
+    }
+
+    if (assuranceActive.value) {
+        return 'Contrat actif'
+    }
+
+    return 'Contrat expiré'
+})
+
+function construireOffreAssurance(niveau, code, nom, remboursement, cout, description, badgeClass) {
+    return {
+        id: niveau,
+        code,
+        nom,
+        remboursement,
+        cout,
+        description,
+        badgeClass,
+    }
+}
 
 const offresAssurance = computed(() => {
     const base = valeurMarchandeVaisseau.value
-
     const arrondir = (valeur) => Math.max(0, Math.round(valeur))
 
     return [
-        {
-            id: 'aucune',
-            code: 'Auc',
-            nom: 'Aucune couverture',
-            remboursement: '0%',
-            cout: 0,
-            description: 'Aucun contrat actif. Aucun remboursement en cas de perte.',
-            badgeClass: 'station-assurance-badge--none',
-        },
-        {
-            id: 'tiers',
-            code: 'Trs',
-            nom: 'Contrat au tiers',
-            remboursement: '33%',
-            cout: arrondir(base * 0.04),
-            description: 'Couverture minimale, adaptée aux opérations à faible coût.',
-            badgeClass: 'station-assurance-badge--tiers',
-        },
-        {
-            id: 'standard',
-            code: 'Std',
-            nom: 'Contrat standard',
-            remboursement: '66%',
-            cout: arrondir(base * 0.07),
-            description: 'Couverture intermédiaire pour un usage régulier en secteur civil.',
-            badgeClass: 'station-assurance-badge--standard',
-        },
-        {
-            id: 'premium',
-            code: 'Prm',
-            nom: 'Contrat premium',
-            remboursement: '100%',
-            cout: arrondir(base * 0.11),
-            description: 'Couverture intégrale. Les restrictions de réputation seront appliquées plus tard.',
-            badgeClass: 'station-assurance-badge--premium',
-        },
-        {
-            id: 'elite',
-            code: 'Elt',
-            nom: 'Contrat élite',
-            remboursement: '125%',
-            cout: arrondir(base * 0.16),
-            description:
-                'Couverture renforcée. Les conditions avancées de réputation seront appliquées ultérieurement.',
-            badgeClass: 'station-assurance-badge--elite',
-        },
+        construireOffreAssurance(
+            'aucune',
+            'Auc',
+            'Aucune couverture',
+            '0%',
+            0,
+            'Aucun contrat actif. Aucun remboursement en cas de perte.',
+            'station-insurance-badge--none',
+        ),
+        construireOffreAssurance(
+            'tiers',
+            'Trs',
+            'Contrat au tiers',
+            '33%',
+            arrondir(base * 0.04),
+            'Couverture minimale, adaptée aux opérations à faible coût.',
+            'station-insurance-badge--tiers',
+        ),
+        construireOffreAssurance(
+            'standard',
+            'Std',
+            'Contrat standard',
+            '66%',
+            arrondir(base * 0.07),
+            'Couverture intermédiaire pour un usage régulier en secteur civil.',
+            'station-insurance-badge--standard',
+        ),
+        construireOffreAssurance(
+            'premium',
+            'Prm',
+            'Contrat premium',
+            '100%',
+            arrondir(base * 0.11),
+            'Couverture intégrale. Les restrictions de réputation seront appliquées plus tard.',
+            'station-insurance-badge--premium',
+        ),
+        construireOffreAssurance(
+            'elite',
+            'Elt',
+            'Contrat élite',
+            '125%',
+            arrondir(base * 0.16),
+            'Couverture renforcée. Les conditions avancées de réputation seront appliquées ultérieurement.',
+            'station-insurance-badge--elite',
+        ),
     ]
 })
 
-const offreAssuranceActuelle = computed(
-    () => offresAssurance.value.find((offre) => offre.id === assuranceActuelle.value) || offresAssurance.value[0],
-)
+const offreAssuranceCourante = computed(() => {
+    const offre = offresAssurance.value.find((entry) => entry.id === assuranceNiveauBrut.value)
+    return offre || offresAssurance.value[0]
+})
 
 function recupererQuantiteEnSoute(idMinerai) {
     return props.ressources?.minerais?.[idMinerai] || 0
@@ -224,6 +278,38 @@ function vendreMineraiMax(minerai) {
     if (quantiteMax > 0) {
         emit('vendre-bien', minerai.id, quantiteMax)
     }
+}
+
+function labelBoutonAssurance(offre) {
+    if (offre.id === 'aucune' && assuranceNiveauBrut.value === 'aucune') {
+        return 'Aucun contrat'
+    }
+
+    if (offre.id === assuranceNiveauBrut.value && assuranceActive.value) {
+        return 'Contrat actif'
+    }
+
+    if (offre.id === assuranceNiveauBrut.value && !assuranceActive.value && offre.id !== 'aucune') {
+        return 'Renouveler'
+    }
+
+    if (offre.id === 'aucune') {
+        return assuranceNiveauBrut.value === 'aucune' ? 'Aucun contrat' : 'Résilier'
+    }
+
+    return 'Souscrire'
+}
+
+function boutonAssuranceDesactive(offre) {
+    if (offre.id === 'aucune' && assuranceNiveauBrut.value === 'aucune') {
+        return true
+    }
+
+    if (offre.id === assuranceNiveauBrut.value && assuranceActive.value) {
+        return true
+    }
+
+    return (props.ressources.credits || 0) < offre.cout
 }
 </script>
 
@@ -517,12 +603,22 @@ function vendreMineraiMax(minerai) {
                 <div class="station-service-grid">
                     <div class="station-service-metric">
                         <span class="station-service-label">Contrat actuel</span>
-                        <strong>{{ offreAssuranceActuelle.nom }}</strong>
+                        <strong>{{ assuranceEtatLabel }}</strong>
+                    </div>
+
+                    <div class="station-service-metric">
+                        <span class="station-service-label">Formule</span>
+                        <strong>{{ offreAssuranceCourante.nom }}</strong>
                     </div>
 
                     <div class="station-service-metric">
                         <span class="station-service-label">Remboursement</span>
-                        <strong>{{ offreAssuranceActuelle.remboursement }}</strong>
+                        <strong>{{ assuranceActive ? offreAssuranceCourante.remboursement : '0%' }}</strong>
+                    </div>
+
+                    <div class="station-service-metric">
+                        <span class="station-service-label">Durée standard</span>
+                        <strong>30 j · 0 h</strong>
                     </div>
 
                     <div class="station-service-metric">
@@ -534,11 +630,28 @@ function vendreMineraiMax(minerai) {
                         <span class="station-service-label">Valeur marchande</span>
                         <strong>{{ valeurMarchandeVaisseau }} cr</strong>
                     </div>
+
+                    <div class="station-service-metric">
+                        <span class="station-service-label">Souscription</span>
+                        <strong v-if="assuranceSouscriptionTick > 0">T{{ assuranceSouscriptionTick }}</strong>
+                        <strong v-else>—</strong>
+                    </div>
+
+                    <div class="station-service-metric">
+                        <span class="station-service-label">Échéance</span>
+                        <strong v-if="assuranceExpirationTick > 0">T{{ assuranceExpirationTick }}</strong>
+                        <strong v-else>—</strong>
+                    </div>
+
+                    <div class="station-service-metric station-service-metric--full">
+                        <span class="station-service-label">Temps restant</span>
+                        <strong>{{ assuranceActive ? assuranceTempsRestantLabel : 'Contrat inactif' }}</strong>
+                    </div>
                 </div>
 
                 <p class="station-service-description">
-                    Souscription ou mise à niveau du contrat d’assurance du vaisseau actif. Les règles de
-                    durée, de renouvellement et les restrictions de réputation seront étendues dans des tickets dédiés.
+                    Souscription ou renouvellement manuel du contrat d’assurance du vaisseau actif. Un contrat reste valable
+                    pendant 720 ticks, soit 30 jours standards de jeu.
                 </p>
 
                 <div class="station-insurance-grid">
@@ -547,7 +660,8 @@ function vendreMineraiMax(minerai) {
                         :key="offre.id"
                         class="station-insurance-card"
                         :class="{
-              'station-insurance-card--active': assuranceActuelle === offre.id,
+              'station-insurance-card--active': offre.id === assuranceNiveauBrut && assuranceActive,
+              'station-insurance-card--expired': offre.id === assuranceNiveauBrut && !assuranceActive && offre.id !== 'aucune',
             }"
                     >
                         <div class="station-insurance-card-head">
@@ -556,8 +670,15 @@ function vendreMineraiMax(minerai) {
                 <span>{{ offre.code }}</span>
               </span>
 
-                            <span v-if="assuranceActuelle === offre.id" class="station-insurance-current">
+                            <span v-if="offre.id === assuranceNiveauBrut && assuranceActive" class="station-insurance-current">
                 En cours
+              </span>
+
+                            <span
+                                v-else-if="offre.id === assuranceNiveauBrut && !assuranceActive && offre.id !== 'aucune'"
+                                class="station-insurance-current station-insurance-current--expired"
+                            >
+                Expiré
               </span>
                         </div>
 
@@ -566,7 +687,7 @@ function vendreMineraiMax(minerai) {
                         <div class="station-service-grid station-service-grid--insurance">
                             <div class="station-service-metric station-service-metric--compact">
                                 <span class="station-service-label">Remboursement</span>
-                                <strong>{{ offre.remboursement }}</strong>
+                                <strong>{{ offre.id === 'aucune' ? '0%' : offre.remboursement }}</strong>
                             </div>
 
                             <div class="station-service-metric station-service-metric--compact">
@@ -581,25 +702,24 @@ function vendreMineraiMax(minerai) {
 
                         <button
                             class="action-button-with-icon"
-                            :disabled="assuranceActuelle === offre.id || ressources.credits < offre.cout"
+                            :disabled="boutonAssuranceDesactive(offre)"
                             @click="emit('souscrire-assurance', offre.id)"
                         >
                             <span class="button-icon" aria-hidden="true">★</span>
-                            <span>
-                {{ assuranceActuelle === offre.id ? 'Contrat actif' : 'Souscrire' }}
-              </span>
+                            <span>{{ labelBoutonAssurance(offre) }}</span>
                         </button>
                     </article>
                 </div>
 
                 <p class="panel-note">
-                    Les niveaux premium et élite seront plus tard soumis à des conditions de réputation.
+                    Les niveaux premium et élite restent soumis plus tard à des conditions de réputation. Le renouvellement est
+                    manuel pour cette version.
                 </p>
             </div>
 
             <div
                 v-else-if="sousModeStation === 'atelier'"
-                class="station-service-card station-service-card-workshop"
+                class="station-service-card station-service-card-workshop station-service-card--scrollable"
             >
                 <div class="station-service-card-header">
                     <h3>⚙ Atelier technique</h3>
@@ -691,7 +811,7 @@ function vendreMineraiMax(minerai) {
                     </button>
                 </div>
 
-                <div class="station-service-mode station-service-mode--fill">
+                <div class="station-atelier-slot">
                     <slot name="atelier" />
                 </div>
             </div>

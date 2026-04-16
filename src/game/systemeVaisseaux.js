@@ -3,6 +3,8 @@ import { recupererEtatJeu } from './etatJeu'
 import { recupererTickCourant } from './systemeTemps'
 import { recupererEtatCoque } from './systemeCoque'
 
+export const DUREE_CONTRAT_ASSURANCE_TICKS = 720
+
 function obtenirHorodatageTick() {
   const tick = recupererTickCourant()
   return `[T${String(tick).padStart(4, '0')}]`
@@ -41,6 +43,32 @@ function recupererLibelleAssurance(niveau) {
   }
 }
 
+function estContratAssuranceActif(vaisseau, tickCourant = recupererTickCourant()) {
+  const niveau = vaisseau?.assuranceNiveau || 'aucune'
+  const expiration = Number(vaisseau?.assuranceExpirationTick || 0)
+
+  if (niveau === 'aucune') {
+    return false
+  }
+
+  return expiration > tickCourant
+}
+
+function calculerCoutAssurance(modeleId, niveau) {
+  const modele = donneesVaisseaux.find((entree) => entree.id === modeleId)
+  const valeurMarchande = Number(modele?.prix || 0)
+
+  const multiplicateurs = {
+    aucune: 0,
+    tiers: 0.04,
+    standard: 0.07,
+    premium: 0.11,
+    elite: 0.16,
+  }
+
+  return Math.max(0, Math.round(valeurMarchande * (multiplicateurs[niveau] || 0)))
+}
+
 export function creerInstanceVaisseauDepuisModele(modeleId, suffixe = '001') {
   const modele = donneesVaisseaux.find((vaisseau) => vaisseau.id === modeleId)
 
@@ -63,6 +91,8 @@ export function creerInstanceVaisseauDepuisModele(modeleId, suffixe = '001') {
     carburant: modele.carburantMax,
     carburantMax: modele.carburantMax,
     assuranceNiveau: 'aucune',
+    assuranceSouscriptionTick: 0,
+    assuranceExpirationTick: 0,
     scanner: structuredClone(modele.scanner || {}),
     ameliorations: structuredClone(modele.ameliorations || []),
     ameliorationsMax: structuredClone(modele.ameliorationsMax || {}),
@@ -102,6 +132,8 @@ export function normaliserVaisseauPossede(vaisseau) {
     carburant: bornerValeur(Number(vaisseau.carburant ?? carburantMax), 0, carburantMax),
     carburantMax,
     assuranceNiveau: vaisseau.assuranceNiveau || 'aucune',
+    assuranceSouscriptionTick: Number(vaisseau.assuranceSouscriptionTick || 0),
+    assuranceExpirationTick: Number(vaisseau.assuranceExpirationTick || 0),
     scanner: structuredClone(vaisseau.scanner || modele.scanner || {}),
     ameliorations: structuredClone(vaisseau.ameliorations || modele.ameliorations || []),
     ameliorationsMax: structuredClone(vaisseau.ameliorationsMax || modele.ameliorationsMax || {}),
@@ -171,6 +203,12 @@ export function synchroniserFlotteDepuisVaisseauActif(etat = recupererEtatJeu())
   )
 
   vaisseauActif.assuranceNiveau = etat.vaisseau.assuranceNiveau || vaisseauActif.assuranceNiveau || 'aucune'
+  vaisseauActif.assuranceSouscriptionTick = Number(
+      etat.vaisseau.assuranceSouscriptionTick ?? vaisseauActif.assuranceSouscriptionTick ?? 0,
+  )
+  vaisseauActif.assuranceExpirationTick = Number(
+      etat.vaisseau.assuranceExpirationTick ?? vaisseauActif.assuranceExpirationTick ?? 0,
+  )
 
   vaisseauActif.scanner = structuredClone(etat.vaisseau.scanner || vaisseauActif.scanner || {})
   vaisseauActif.ameliorations = structuredClone(
@@ -202,6 +240,8 @@ export function synchroniserVaisseauActifDansEtat(etat = recupererEtatJeu()) {
     dronesMiniersMax: vaisseauActif.dronesMiniersMax,
     carburantMax: vaisseauActif.carburantMax,
     assuranceNiveau: vaisseauActif.assuranceNiveau || 'aucune',
+    assuranceSouscriptionTick: Number(vaisseauActif.assuranceSouscriptionTick || 0),
+    assuranceExpirationTick: Number(vaisseauActif.assuranceExpirationTick || 0),
     scanner: structuredClone(vaisseauActif.scanner || {}),
     ameliorations: structuredClone(vaisseauActif.ameliorations || []),
     ameliorationsMax: structuredClone(vaisseauActif.ameliorationsMax || {}),
@@ -226,6 +266,10 @@ export function hydraterEtatVaisseauxApresChargement(etat = recupererEtatJeu()) 
     vaisseauHydrate.carburantMax = etat.vaisseau?.carburantMax ?? vaisseauHydrate.carburantMax
     vaisseauHydrate.assuranceNiveau =
         etat.vaisseau?.assuranceNiveau ?? vaisseauHydrate.assuranceNiveau
+    vaisseauHydrate.assuranceSouscriptionTick =
+        etat.vaisseau?.assuranceSouscriptionTick ?? vaisseauHydrate.assuranceSouscriptionTick
+    vaisseauHydrate.assuranceExpirationTick =
+        etat.vaisseau?.assuranceExpirationTick ?? vaisseauHydrate.assuranceExpirationTick
     vaisseauHydrate.scanner = structuredClone(etat.vaisseau?.scanner || vaisseauHydrate.scanner)
     vaisseauHydrate.ameliorations = structuredClone(
         etat.vaisseau?.ameliorations || vaisseauHydrate.ameliorations,
@@ -416,22 +460,17 @@ export function peutSouscrireAssuranceVaisseauActif(niveau, etat = recupererEtat
     return { ok: false, raison: 'Niveau d’assurance invalide.' }
   }
 
-  if ((vaisseauActif.assuranceNiveau || 'aucune') === niveau) {
+  const contratActif = estContratAssuranceActif(vaisseauActif)
+
+  if (niveau === 'aucune' && vaisseauActif.assuranceNiveau === 'aucune') {
+    return { ok: false, raison: 'Aucun contrat actif à résilier.' }
+  }
+
+  if (niveau !== 'aucune' && vaisseauActif.assuranceNiveau === niveau && contratActif) {
     return { ok: false, raison: 'Ce contrat est déjà actif sur le vaisseau.' }
   }
 
-  const modele = donneesVaisseaux.find((entree) => entree.id === vaisseauActif.modeleId)
-  const valeurMarchande = Number(modele?.prix || 0)
-
-  const multiplicateurs = {
-    aucune: 0,
-    tiers: 0.04,
-    standard: 0.07,
-    premium: 0.11,
-    elite: 0.16,
-  }
-
-  const cout = Math.max(0, Math.round(valeurMarchande * (multiplicateurs[niveau] || 0)))
+  const cout = calculerCoutAssurance(vaisseauActif.modeleId, niveau)
 
   if ((etat.ressources?.credits || 0) < cout) {
     return { ok: false, raison: 'Crédits insuffisants pour cette formule d’assurance.' }
@@ -451,14 +490,33 @@ export function souscrireAssuranceVaisseauActif(niveau) {
 
   synchroniserFlotteDepuisVaisseauActif(etat)
 
+  const tickCourant = recupererTickCourant()
   const vaisseauActif = recupererVaisseauActif(etat)
+
+  if (niveau === 'aucune') {
+    vaisseauActif.assuranceNiveau = 'aucune'
+    vaisseauActif.assuranceSouscriptionTick = 0
+    vaisseauActif.assuranceExpirationTick = 0
+
+    synchroniserVaisseauActifDansEtat(etat)
+
+    ajouterAuJournal(
+        `Résiliation du contrat d’assurance pour ${vaisseauActif.nom}.`,
+        'commerce',
+    )
+
+    return true
+  }
+
   vaisseauActif.assuranceNiveau = niveau
+  vaisseauActif.assuranceSouscriptionTick = tickCourant
+  vaisseauActif.assuranceExpirationTick = tickCourant + DUREE_CONTRAT_ASSURANCE_TICKS
   etat.ressources.credits -= validation.cout
 
   synchroniserVaisseauActifDansEtat(etat)
 
   ajouterAuJournal(
-      `Contrat d’assurance ${recupererLibelleAssurance(niveau)} souscrit pour ${vaisseauActif.nom} (${validation.cout} cr).`,
+      `Contrat d’assurance ${recupererLibelleAssurance(niveau)} souscrit pour ${vaisseauActif.nom} (${validation.cout} cr, validité 720 ticks).`,
       'commerce',
   )
 

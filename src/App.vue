@@ -361,6 +361,7 @@ onUnmounted(() => {
                     :vaisseau="etat.vaisseau"
                     :industrie="etat.industrie"
                     :ressources="etat.ressources"
+                    :current-tick="temporaliteCourante.ticksGlobaux"
                 />
 
                 <NavigationPanel
@@ -399,6 +400,7 @@ onUnmounted(() => {
                         :sous-mode-station="ui.sousModeStation"
                         :position-locale="etat.positionLocale"
                         :economie="etat.economie"
+                        :current-tick="temporaliteCourante.ticksGlobaux"
                         @changer-sous-mode-station="changerSousModeStation"
                         @vendre="gererVenteMinerai"
                         @vendre-bien="gererVenteBien"

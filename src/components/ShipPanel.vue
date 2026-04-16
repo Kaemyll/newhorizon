@@ -14,6 +14,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    currentTick: {
+        type: Number,
+        default: 0,
+    },
 })
 
 const roleLabel = computed(() => {
@@ -48,8 +52,38 @@ const roleClass = computed(() => {
 
 const descriptionVaisseau = computed(() => props.vaisseau.description || 'Vaisseau opérationnel.')
 
+const assuranceActive = computed(() => {
+    const niveau = props.vaisseau.assuranceNiveau || 'aucune'
+    const expiration = Number(props.vaisseau.assuranceExpirationTick || 0)
+
+    if (niveau === 'aucune') {
+        return false
+    }
+
+    return expiration > props.currentTick
+})
+
 const assuranceInfo = computed(() => {
     const niveau = props.vaisseau.assuranceNiveau || 'aucune'
+    const expiration = Number(props.vaisseau.assuranceExpirationTick || 0)
+
+    if (!assuranceActive.value) {
+        if (niveau !== 'aucune' && expiration > 0) {
+            return {
+                libelle: 'Contrat expiré',
+                remboursement: '0%',
+                code: 'Exp',
+                classeCss: 'ship-insurance-badge--expired',
+            }
+        }
+
+        return {
+            libelle: 'Aucune assurance',
+            remboursement: '0%',
+            code: 'Auc',
+            classeCss: 'ship-insurance-badge--none',
+        }
+    }
 
     switch (niveau) {
         case 'tiers':

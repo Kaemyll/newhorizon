@@ -129,6 +129,12 @@
   border-color: rgba(160, 172, 186, 0.2);
 }
 
+.ship-insurance-badge--expired {
+  background: rgba(168, 124, 32, 0.14);
+  color: #ffd97b;
+  border-color: rgba(214, 146, 58, 0.24);
+}
+
 .ship-insurance-badge--tiers {
   background: rgba(170, 52, 52, 0.14);
   color: #ff9c9c;
