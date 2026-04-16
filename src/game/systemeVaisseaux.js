@@ -26,6 +26,21 @@ function bornerValeur(valeur, minimum, maximum) {
   return Math.min(Math.max(valeur, minimum), maximum)
 }
 
+function recupererLibelleAssurance(niveau) {
+  switch (niveau) {
+    case 'tiers':
+      return 'au tiers'
+    case 'standard':
+      return 'standard'
+    case 'premium':
+      return 'premium'
+    case 'elite':
+      return 'élite'
+    default:
+      return 'aucune'
+  }
+}
+
 export function creerInstanceVaisseauDepuisModele(modeleId, suffixe = '001') {
   const modele = donneesVaisseaux.find((vaisseau) => vaisseau.id === modeleId)
 
@@ -47,6 +62,7 @@ export function creerInstanceVaisseauDepuisModele(modeleId, suffixe = '001') {
     dronesMiniersMax: modele.dronesMiniersMax,
     carburant: modele.carburantMax,
     carburantMax: modele.carburantMax,
+    assuranceNiveau: 'aucune',
     scanner: structuredClone(modele.scanner || {}),
     ameliorations: structuredClone(modele.ameliorations || []),
     ameliorationsMax: structuredClone(modele.ameliorationsMax || {}),
@@ -59,8 +75,8 @@ export function normaliserVaisseauPossede(vaisseau) {
   }
 
   const modele = donneesVaisseaux.find(
-    (modeleVaisseau) =>
-      modeleVaisseau.id === vaisseau.modeleId || modeleVaisseau.id === vaisseau.id,
+      (modeleVaisseau) =>
+          modeleVaisseau.id === vaisseau.modeleId || modeleVaisseau.id === vaisseau.id,
   )
 
   if (!modele) {
@@ -85,6 +101,7 @@ export function normaliserVaisseauPossede(vaisseau) {
     dronesMiniersMax: Number(vaisseau.dronesMiniersMax ?? modele.dronesMiniersMax ?? 0),
     carburant: bornerValeur(Number(vaisseau.carburant ?? carburantMax), 0, carburantMax),
     carburantMax,
+    assuranceNiveau: vaisseau.assuranceNiveau || 'aucune',
     scanner: structuredClone(vaisseau.scanner || modele.scanner || {}),
     ameliorations: structuredClone(vaisseau.ameliorations || modele.ameliorations || []),
     ameliorationsMax: structuredClone(vaisseau.ameliorationsMax || modele.ameliorationsMax || {}),
@@ -127,38 +144,40 @@ export function synchroniserFlotteDepuisVaisseauActif(etat = recupererEtatJeu())
 
   vaisseauActif.coqueMax = Number(etat.vaisseau.coqueMax ?? vaisseauActif.coqueMax)
   vaisseauActif.coque = bornerValeur(
-    Number(etat.vaisseau.coque ?? vaisseauActif.coque),
-    0,
-    vaisseauActif.coqueMax,
+      Number(etat.vaisseau.coque ?? vaisseauActif.coque),
+      0,
+      vaisseauActif.coqueMax,
   )
 
   vaisseauActif.souteMax = Number(etat.vaisseau.souteMax ?? vaisseauActif.souteMax)
   vaisseauActif.soute = bornerValeur(
-    Number(etat.vaisseau.soute ?? vaisseauActif.soute),
-    0,
-    vaisseauActif.souteMax,
+      Number(etat.vaisseau.soute ?? vaisseauActif.soute),
+      0,
+      vaisseauActif.souteMax,
   )
 
   vaisseauActif.puissanceMiniere = Number(
-    etat.vaisseau.puissanceMiniere ?? vaisseauActif.puissanceMiniere,
+      etat.vaisseau.puissanceMiniere ?? vaisseauActif.puissanceMiniere,
   )
   vaisseauActif.dronesMiniersMax = Number(
-    etat.vaisseau.dronesMiniersMax ?? vaisseauActif.dronesMiniersMax,
+      etat.vaisseau.dronesMiniersMax ?? vaisseauActif.dronesMiniersMax,
   )
 
   vaisseauActif.carburantMax = Number(etat.vaisseau.carburantMax ?? vaisseauActif.carburantMax)
   vaisseauActif.carburant = bornerValeur(
-    Number(etat.ressources.carburant ?? vaisseauActif.carburant),
-    0,
-    vaisseauActif.carburantMax,
+      Number(etat.ressources.carburant ?? vaisseauActif.carburant),
+      0,
+      vaisseauActif.carburantMax,
   )
+
+  vaisseauActif.assuranceNiveau = etat.vaisseau.assuranceNiveau || vaisseauActif.assuranceNiveau || 'aucune'
 
   vaisseauActif.scanner = structuredClone(etat.vaisseau.scanner || vaisseauActif.scanner || {})
   vaisseauActif.ameliorations = structuredClone(
-    etat.vaisseau.ameliorations || vaisseauActif.ameliorations || [],
+      etat.vaisseau.ameliorations || vaisseauActif.ameliorations || [],
   )
   vaisseauActif.ameliorationsMax = structuredClone(
-    etat.vaisseau.ameliorationsMax || vaisseauActif.ameliorationsMax || {},
+      etat.vaisseau.ameliorationsMax || vaisseauActif.ameliorationsMax || {},
   )
 }
 
@@ -182,6 +201,7 @@ export function synchroniserVaisseauActifDansEtat(etat = recupererEtatJeu()) {
     puissanceMiniere: vaisseauActif.puissanceMiniere,
     dronesMiniersMax: vaisseauActif.dronesMiniersMax,
     carburantMax: vaisseauActif.carburantMax,
+    assuranceNiveau: vaisseauActif.assuranceNiveau || 'aucune',
     scanner: structuredClone(vaisseauActif.scanner || {}),
     ameliorations: structuredClone(vaisseauActif.ameliorations || []),
     ameliorationsMax: structuredClone(vaisseauActif.ameliorationsMax || {}),
@@ -199,25 +219,27 @@ export function hydraterEtatVaisseauxApresChargement(etat = recupererEtatJeu()) 
     vaisseauHydrate.soute = etat.vaisseau?.soute ?? vaisseauHydrate.soute
     vaisseauHydrate.souteMax = etat.vaisseau?.souteMax ?? vaisseauHydrate.souteMax
     vaisseauHydrate.puissanceMiniere =
-      etat.vaisseau?.puissanceMiniere ?? vaisseauHydrate.puissanceMiniere
+        etat.vaisseau?.puissanceMiniere ?? vaisseauHydrate.puissanceMiniere
     vaisseauHydrate.dronesMiniersMax =
-      etat.vaisseau?.dronesMiniersMax ?? vaisseauHydrate.dronesMiniersMax
+        etat.vaisseau?.dronesMiniersMax ?? vaisseauHydrate.dronesMiniersMax
     vaisseauHydrate.carburant = etat.ressources?.carburant ?? vaisseauHydrate.carburant
     vaisseauHydrate.carburantMax = etat.vaisseau?.carburantMax ?? vaisseauHydrate.carburantMax
+    vaisseauHydrate.assuranceNiveau =
+        etat.vaisseau?.assuranceNiveau ?? vaisseauHydrate.assuranceNiveau
     vaisseauHydrate.scanner = structuredClone(etat.vaisseau?.scanner || vaisseauHydrate.scanner)
     vaisseauHydrate.ameliorations = structuredClone(
-      etat.vaisseau?.ameliorations || vaisseauHydrate.ameliorations,
+        etat.vaisseau?.ameliorations || vaisseauHydrate.ameliorations,
     )
     vaisseauHydrate.ameliorationsMax = structuredClone(
-      etat.vaisseau?.ameliorationsMax || vaisseauHydrate.ameliorationsMax || {},
+        etat.vaisseau?.ameliorationsMax || vaisseauHydrate.ameliorationsMax || {},
     )
 
     etat.vaisseauxPossedes = [normaliserVaisseauPossede(vaisseauHydrate)]
     etat.vaisseauActifId = etat.vaisseauxPossedes[0].id
   } else {
     etat.vaisseauxPossedes = etat.vaisseauxPossedes
-      .map((vaisseau) => normaliserVaisseauPossede(vaisseau))
-      .filter(Boolean)
+        .map((vaisseau) => normaliserVaisseauPossede(vaisseau))
+        .filter(Boolean)
   }
 
   if (!etat.vaisseauActifId && etat.vaisseauxPossedes.length > 0) {
@@ -251,7 +273,7 @@ export function peutChangerDeVaisseau(idVaisseau, etat = recupererEtatJeu()) {
   }
 
   const vaisseauCible =
-    (etat.vaisseauxPossedes || []).find((vaisseau) => vaisseau.id === idVaisseau) || null
+      (etat.vaisseauxPossedes || []).find((vaisseau) => vaisseau.id === idVaisseau) || null
 
   if (!vaisseauCible) {
     return { ok: false, raison: 'Vaisseau cible introuvable dans le hangar.' }
@@ -296,8 +318,8 @@ export function changerVaisseauActif(idVaisseau) {
   synchroniserVaisseauActifDansEtat(etat)
 
   ajouterAuJournal(
-    `Changement de châssis effectué : ${vaisseauCible.nom} désormais actif.`,
-    'evenements',
+      `Changement de châssis effectué : ${vaisseauCible.nom} désormais actif.`,
+      'evenements',
   )
 
   return true
@@ -309,11 +331,11 @@ export function recupererCatalogueVaisseauxStation(secteurId, etat = recupererEt
   }
 
   return donneesVaisseaux
-    .filter((vaisseau) => vaisseau.id === 'hw_caravel')
-    .map((modele) => ({
-      ...modele,
-      dejaPossede: possedeDejaModele(modele.id, etat),
-    }))
+      .filter((vaisseau) => vaisseau.id === 'hw_caravel')
+      .map((modele) => ({
+        ...modele,
+        dejaPossede: possedeDejaModele(modele.id, etat),
+      }))
 }
 
 export function peutAcheterVaisseau(modeleId, etat = recupererEtatJeu()) {
@@ -357,7 +379,7 @@ export function acheterVaisseau(modeleId) {
 
   const modele = donneesVaisseaux.find((vaisseau) => vaisseau.id === modeleId)
   const exemplairesExistants = etat.vaisseauxPossedes.filter(
-    (vaisseau) => vaisseau.modeleId === modeleId,
+      (vaisseau) => vaisseau.modeleId === modeleId,
   ).length
   const suffixe = String(exemplairesExistants + 1).padStart(3, '0')
   const nouveauVaisseau = creerInstanceVaisseauDepuisModele(modeleId, suffixe)
@@ -366,8 +388,78 @@ export function acheterVaisseau(modeleId) {
   etat.vaisseauxPossedes.push(normaliserVaisseauPossede(nouveauVaisseau))
 
   ajouterAuJournal(
-    `Acquisition confirmée : ${modele.nom} ajouté au hangar pour ${modele.prix} cr.`,
-    'commerce',
+      `Acquisition confirmée : ${modele.nom} ajouté au hangar pour ${modele.prix} cr.`,
+      'commerce',
+  )
+
+  return true
+}
+
+export function peutSouscrireAssuranceVaisseauActif(niveau, etat = recupererEtatJeu()) {
+  const vaisseauActif = recupererVaisseauActif(etat)
+
+  if (!vaisseauActif) {
+    return { ok: false, raison: 'Aucun vaisseau actif disponible.' }
+  }
+
+  if (etat.positionLocale !== 'station') {
+    return { ok: false, raison: 'La souscription d’assurance est possible uniquement en station.' }
+  }
+
+  if (etat.navigation?.enVoyage) {
+    return { ok: false, raison: 'Impossible de modifier une assurance pendant un trajet.' }
+  }
+
+  const niveauxAutorises = ['aucune', 'tiers', 'standard', 'premium', 'elite']
+
+  if (!niveauxAutorises.includes(niveau)) {
+    return { ok: false, raison: 'Niveau d’assurance invalide.' }
+  }
+
+  if ((vaisseauActif.assuranceNiveau || 'aucune') === niveau) {
+    return { ok: false, raison: 'Ce contrat est déjà actif sur le vaisseau.' }
+  }
+
+  const modele = donneesVaisseaux.find((entree) => entree.id === vaisseauActif.modeleId)
+  const valeurMarchande = Number(modele?.prix || 0)
+
+  const multiplicateurs = {
+    aucune: 0,
+    tiers: 0.04,
+    standard: 0.07,
+    premium: 0.11,
+    elite: 0.16,
+  }
+
+  const cout = Math.max(0, Math.round(valeurMarchande * (multiplicateurs[niveau] || 0)))
+
+  if ((etat.ressources?.credits || 0) < cout) {
+    return { ok: false, raison: 'Crédits insuffisants pour cette formule d’assurance.' }
+  }
+
+  return { ok: true, raison: null, cout }
+}
+
+export function souscrireAssuranceVaisseauActif(niveau) {
+  const etat = recupererEtatJeu()
+  const validation = peutSouscrireAssuranceVaisseauActif(niveau, etat)
+
+  if (!validation.ok) {
+    ajouterAuJournal(validation.raison, 'commerce')
+    return false
+  }
+
+  synchroniserFlotteDepuisVaisseauActif(etat)
+
+  const vaisseauActif = recupererVaisseauActif(etat)
+  vaisseauActif.assuranceNiveau = niveau
+  etat.ressources.credits -= validation.cout
+
+  synchroniserVaisseauActifDansEtat(etat)
+
+  ajouterAuJournal(
+      `Contrat d’assurance ${recupererLibelleAssurance(niveau)} souscrit pour ${vaisseauActif.nom} (${validation.cout} cr).`,
+      'commerce',
   )
 
   return true
