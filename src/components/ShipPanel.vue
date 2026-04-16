@@ -48,6 +48,48 @@ const roleClass = computed(() => {
 
 const descriptionVaisseau = computed(() => props.vaisseau.description || 'Vaisseau opérationnel.')
 
+const assuranceInfo = computed(() => {
+    const niveau = props.vaisseau.assuranceNiveau || 'aucune'
+
+    switch (niveau) {
+        case 'tiers':
+            return {
+                libelle: 'Assurance au tiers',
+                remboursement: '33%',
+                code: 'Trs',
+                classeCss: 'ship-insurance-badge--tiers',
+            }
+        case 'standard':
+            return {
+                libelle: 'Assurance standard',
+                remboursement: '66%',
+                code: 'Std',
+                classeCss: 'ship-insurance-badge--standard',
+            }
+        case 'premium':
+            return {
+                libelle: 'Assurance premium',
+                remboursement: '100%',
+                code: 'Prm',
+                classeCss: 'ship-insurance-badge--premium',
+            }
+        case 'elite':
+            return {
+                libelle: 'Assurance élite',
+                remboursement: '125%',
+                code: 'Elt',
+                classeCss: 'ship-insurance-badge--elite',
+            }
+        default:
+            return {
+                libelle: 'Aucune assurance',
+                remboursement: '0%',
+                code: 'Auc',
+                classeCss: 'ship-insurance-badge--none',
+            }
+    }
+})
+
 const coquePourcentage = computed(() => {
     if (!props.vaisseau.coqueMax) return 0
     return Math.max(0, Math.min(100, Math.round((props.vaisseau.coque / props.vaisseau.coqueMax) * 100)))
@@ -120,9 +162,21 @@ const nombreDronesActifs = computed(() => props.industrie?.drones?.length || 0)
                 </p>
             </div>
 
-            <span class="ship-role-badge" :class="roleClass">
-        {{ roleLabel }}
-      </span>
+            <div class="ship-panel-badges">
+        <span class="ship-role-badge" :class="roleClass">
+          {{ roleLabel }}
+        </span>
+
+                <span
+                    class="ship-insurance-badge"
+                    :class="assuranceInfo.classeCss"
+                    :title="`${assuranceInfo.libelle} — remboursement ${assuranceInfo.remboursement}`"
+                    :aria-label="`${assuranceInfo.libelle} — remboursement ${assuranceInfo.remboursement}`"
+                >
+          <span class="ship-insurance-badge-star" aria-hidden="true">★</span>
+          <span>{{ assuranceInfo.code }}</span>
+        </span>
+            </div>
         </div>
 
         <p class="ship-panel-role-line">{{ descriptionVaisseau }}</p>
