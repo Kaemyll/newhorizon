@@ -47,6 +47,14 @@
   color: rgba(210, 225, 245, 0.72);
 }
 
+.ship-panel-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+
 .ship-role-badge {
   display: inline-flex;
   align-items: center;
@@ -86,6 +94,63 @@
 .ship-role-badge--trade {
   background: rgba(110, 220, 170, 0.12);
   color: #92f0c2;
+}
+
+.ship-insurance-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.18rem;
+  padding: 0.14rem 0.38rem;
+  border-radius: 999px;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+.ship-insurance-badge-star {
+  font-size: 0.64rem;
+  line-height: 1;
+}
+
+.ship-insurance-badge--none {
+  background: rgba(120, 128, 138, 0.12);
+  color: #9aa6b3;
+  border-color: rgba(160, 172, 186, 0.2);
+}
+
+.ship-insurance-badge--tiers {
+  background: rgba(170, 52, 52, 0.14);
+  color: #ff9c9c;
+  border-color: rgba(224, 90, 90, 0.24);
+}
+
+.ship-insurance-badge--standard {
+  background: rgba(168, 124, 32, 0.14);
+  color: #ffd97b;
+  border-color: rgba(214, 146, 58, 0.24);
+}
+
+.ship-insurance-badge--premium {
+  background: rgba(44, 122, 78, 0.16);
+  color: #9df0be;
+  border-color: rgba(86, 196, 124, 0.24);
+}
+
+.ship-insurance-badge--elite {
+  background: rgba(116, 52, 170, 0.16);
+  color: #d6a9ff;
+  border-color: rgba(176, 104, 255, 0.26);
 }
 
 .ship-panel-role-line {
