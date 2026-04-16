@@ -53,6 +53,28 @@ const secteurCourantComplet = computed(
 
 const stationCourante = computed(() => secteurCourantComplet.value?.stationPrincipale ?? null)
 
+const temporaliteCourante = computed(() => {
+    const ticksGlobaux = Number(etat.technique?.compteurTicks) || 0
+
+    const ticksParJour = 24
+    const ticksParAn = 8760
+
+    const annee = Math.floor(ticksGlobaux / ticksParAn) + 1
+    const tickDansAnnee = ticksGlobaux % ticksParAn
+    const jour = Math.floor(tickDansAnnee / ticksParJour) + 1
+    const heure = tickDansAnnee % ticksParJour
+
+    return {
+        ticksGlobaux,
+        annee,
+        jour,
+        heure,
+        libelle: `A${annee} · J${jour} · ${String(heure).padStart(2, '0')}h · T${String(
+            ticksGlobaux,
+        ).padStart(4, '0')}`,
+    }
+})
+
 function normaliserSousModeStation() {
     const services = stationCourante.value?.services
 
@@ -273,7 +295,8 @@ onUnmounted(() => {
       etat.navigation &&
       etat.journal &&
       etat.exploration &&
-      etat.assistance
+      etat.assistance &&
+      etat.technique
     "
     >
         <header class="app-header">
@@ -292,6 +315,13 @@ onUnmounted(() => {
                     <p class="meta-line">
                         v{{ etat.meta?.version }} — {{ etat.meta?.auteur }} — {{ etat.meta?.annee }}
                     </p>
+                </div>
+
+                <div class="header-center">
+                    <div class="time-line" aria-label="Temporalité globale du jeu">
+                        <span class="time-line-label">Temps local</span>
+                        <span class="time-line-value">{{ temporaliteCourante.libelle }}</span>
+                    </div>
                 </div>
 
                 <HeaderActions

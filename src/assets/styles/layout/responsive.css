@@ -101,6 +101,15 @@
   .market-rate-grid-three-cols {
     grid-template-columns: 1fr;
   }
+
+  .header-top {
+    grid-template-columns: 1fr;
+  }
+
+  .header-center {
+    justify-content: flex-start;
+    padding-top: 0;
+  }
 }
 
 /* =========================================================
