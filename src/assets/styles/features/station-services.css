@@ -240,6 +240,11 @@
   box-shadow: inset 0 0 0 1px rgba(125, 184, 255, 0.04);
 }
 
+.station-insurance-card--expired {
+  border-color: rgba(214, 146, 58, 0.22);
+  background: rgba(214, 146, 58, 0.05);
+}
+
 .station-insurance-card-head {
   display: flex;
   align-items: center;
@@ -257,6 +262,11 @@
 .station-insurance-current {
   font-size: 0.72rem;
   opacity: 0.78;
+}
+
+.station-insurance-current--expired {
+  color: #ffd97b;
+  opacity: 0.94;
 }
 
 .station-insurance-badge {
