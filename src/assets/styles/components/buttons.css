@@ -57,3 +57,17 @@ button.is-active {
   padding: 0.48rem 0.72rem;
   font-size: 0.86rem;
 }
+
+/* ===== Variantes légères d’état global ===== */
+
+.header-actions button.is-live {
+  border-color: rgba(92, 150, 220, 0.5);
+  box-shadow:
+    0 0 0 1px rgba(92, 150, 220, 0.14),
+    0 0 12px rgba(32, 74, 124, 0.14);
+}
+
+.header-actions button.is-active .button-icon,
+.header-actions button.is-live .button-icon {
+  opacity: 0.98;
+}

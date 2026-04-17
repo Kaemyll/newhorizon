@@ -4,6 +4,10 @@ defineProps({
     type: String,
     required: true,
   },
+  enVoyage: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['changer-mode', 'reinitialiser'])
@@ -31,7 +35,7 @@ const emit = defineEmits(['changer-mode', 'reinitialiser'])
 
     <button
       class="action-button-with-icon"
-      :class="{ 'is-active': modeActif === 'navigation' }"
+      :class="{ 'is-active': modeActif === 'navigation', 'is-live': enVoyage }"
       @click="emit('changer-mode', 'navigation')"
     >
       <span class="button-icon" aria-hidden="true">🧭</span>
