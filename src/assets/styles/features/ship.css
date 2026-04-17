@@ -412,3 +412,78 @@
   font-size: 0.82rem;
   font-weight: 600;
 }
+
+/* ===== Variations globales du panneau vaisseau ===== */
+
+.ship-panel {
+  transition:
+    border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+    background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+    box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+.ship-panel--hull-nominale {
+  box-shadow: inset 0 0 0 1px rgba(86, 196, 124, 0.03);
+}
+
+.ship-panel--hull-degradee {
+  border-color: rgba(214, 146, 58, 0.22);
+  box-shadow:
+    inset 0 0 0 1px rgba(214, 146, 58, 0.07),
+    0 0 18px rgba(168, 104, 32, 0.06);
+  background:
+    linear-gradient(180deg, rgba(168, 104, 32, 0.05) 0%, rgba(255, 255, 255, 0) 100%),
+    rgba(255, 255, 255, 0.02);
+}
+
+.ship-panel--hull-critique {
+  border-color: rgba(224, 90, 90, 0.28);
+  box-shadow:
+    inset 0 0 0 1px rgba(224, 90, 90, 0.09),
+    0 0 22px rgba(150, 44, 44, 0.1);
+  background:
+    linear-gradient(180deg, rgba(150, 44, 44, 0.07) 0%, rgba(255, 255, 255, 0) 100%),
+    rgba(255, 255, 255, 0.02);
+}
+
+.ship-panel--hull-hors-service {
+  border-color: rgba(224, 90, 90, 0.36);
+  box-shadow:
+    inset 0 0 0 1px rgba(224, 90, 90, 0.12),
+    0 0 24px rgba(115, 18, 18, 0.14);
+  background:
+    linear-gradient(180deg, rgba(115, 18, 18, 0.1) 0%, rgba(255, 255, 255, 0) 100%),
+    rgba(255, 255, 255, 0.02);
+}
+
+/* ===== Accent secondaire carburant ===== */
+
+.ship-panel--fuel-degrade .ship-panel-fuel-status {
+  border-color: rgba(214, 146, 58, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(214, 146, 58, 0.04);
+}
+
+.ship-panel--fuel-critique .ship-panel-fuel-status {
+  border-color: rgba(224, 90, 90, 0.22);
+  box-shadow:
+    inset 0 0 0 1px rgba(224, 90, 90, 0.05),
+    0 0 16px rgba(150, 44, 44, 0.08);
+}
+
+.ship-panel--fuel-critique .ship-panel-fuel-title,
+.ship-panel--fuel-critique .ship-panel-fuel-meta {
+  color: rgba(255, 205, 205, 0.9);
+}
+
+/* ===== Renforcement lisible des sous-cartes ===== */
+
+.ship-panel--hull-degradee .ship-panel-hull-status,
+.ship-panel--hull-critique .ship-panel-hull-status,
+.ship-panel--hull-hors-service .ship-panel-hull-status {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.ship-panel--hull-critique .ship-panel-metrics p strong,
+.ship-panel--hull-hors-service .ship-panel-metrics p strong {
+  color: #fff3f3;
+}

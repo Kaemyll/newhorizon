@@ -701,3 +701,116 @@
 .ops-panel .action-group--stack button {
   width: 100%;
 }
+
+/* ===== Variations plus lisibles de contexte ===== */
+
+.ops-panel--context-station {
+  border-color: rgba(125, 184, 255, 0.16);
+  box-shadow:
+    inset 0 0 0 1px rgba(125, 184, 255, 0.04),
+    0 0 18px rgba(24, 72, 128, 0.05);
+}
+
+.ops-panel--context-operations {
+  border-color: rgba(186, 163, 96, 0.24);
+  box-shadow:
+    inset 0 0 0 1px rgba(186, 163, 96, 0.07),
+    0 0 22px rgba(120, 92, 28, 0.08);
+  background:
+    linear-gradient(180deg, rgba(186, 163, 96, 0.06) 0%, rgba(255, 255, 255, 0) 100%),
+    rgba(125, 184, 255, 0.03);
+}
+
+.ops-panel--context-transit {
+  border-color: rgba(92, 150, 220, 0.28);
+  box-shadow:
+    inset 0 0 0 1px rgba(92, 150, 220, 0.08),
+    0 0 24px rgba(32, 74, 124, 0.12);
+  background:
+    linear-gradient(180deg, rgba(46, 95, 160, 0.08) 0%, rgba(255, 255, 255, 0) 100%),
+    rgba(125, 184, 255, 0.035);
+}
+
+.ops-panel--context-remorquage {
+  border-color: rgba(224, 90, 90, 0.3);
+  box-shadow:
+    inset 0 0 0 1px rgba(224, 90, 90, 0.1),
+    0 0 26px rgba(150, 44, 44, 0.12);
+  background:
+    linear-gradient(180deg, rgba(150, 44, 44, 0.09) 0%, rgba(255, 255, 255, 0) 100%),
+    rgba(125, 184, 255, 0.03);
+}
+
+.ops-panel--site-actif:not(.ops-panel--hull-critique):not(.ops-panel--hull-hors-service) {
+  box-shadow:
+    inset 0 0 0 1px rgba(86, 196, 124, 0.08),
+    0 0 22px rgba(39, 122, 73, 0.08);
+}
+
+/* ===== Vol / contexte ===== */
+
+.ops-flight-chip--local-station {
+  border-color: rgba(125, 184, 255, 0.18);
+  background: rgba(125, 184, 255, 0.06);
+}
+
+.ops-flight-chip--local-operations {
+  border-color: rgba(186, 163, 96, 0.22);
+  background: rgba(186, 163, 96, 0.11);
+  box-shadow: inset 0 0 0 1px rgba(186, 163, 96, 0.05);
+}
+
+.ops-flight-chip--transit {
+  border-color: rgba(92, 150, 220, 0.28);
+  background: rgba(46, 95, 160, 0.14);
+  box-shadow:
+    inset 0 0 0 1px rgba(92, 150, 220, 0.08),
+    0 0 14px rgba(32, 74, 124, 0.12);
+}
+
+/* ===== Commandes immédiates ===== */
+
+.ops-quick-actions--active {
+  border-color: rgba(186, 163, 96, 0.2);
+  background: rgba(10, 22, 40, 0.9);
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px rgba(186, 163, 96, 0.04);
+}
+
+.ops-quick-actions--locked {
+  border-color: rgba(224, 90, 90, 0.2);
+  background: rgba(18, 18, 24, 0.92);
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px rgba(224, 90, 90, 0.05);
+}
+
+.ops-quick-actions--locked .ops-quick-actions-head strong {
+  color: #ffd2d2;
+}
+
+/* ===== Renforcement discret des éléments internes ===== */
+
+.ops-panel--context-operations .ops-status-banner,
+.ops-panel--context-transit .ops-status-banner,
+.ops-panel--context-remorquage .ops-status-banner {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.ops-panel--site-actif .ops-system-item,
+.ops-panel--site-actif .ops-metric-card,
+.ops-panel--site-actif .ops-mini-counter,
+.ops-panel--site-actif .drone-status-list li {
+  border-color: rgba(86, 196, 124, 0.16);
+}
+
+.ops-panel--context-transit .ops-system-item,
+.ops-panel--context-transit .ops-metric-card {
+  border-color: rgba(92, 150, 220, 0.16);
+}
+
+.ops-panel--context-remorquage .ops-system-item,
+.ops-panel--context-remorquage .ops-metric-card {
+  border-color: rgba(224, 90, 90, 0.16);
+}
