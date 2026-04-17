@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { donneesMinerais } from '../game/dataMinerais'
 import { recupererEtatCoque } from '../game/systemeCoque'
 import {
@@ -9,6 +9,8 @@ import {
   recupererEtatVisuelRisque,
   recupererEtatVisuelScan,
 } from '../game/systemeEtatsVisuels'
+
+const DUREE_ANIMATION_SCAN_MS = 900
 
 const props = defineProps({
   ressources: {
@@ -49,6 +51,10 @@ const emit = defineEmits([
   'rappeler-drones',
   'scanner',
 ])
+
+const scanEnCours = ref(false)
+let minuterieScan = null
+let contexteAudioScan = null
 
 const infosCoque = computed(() =>
   recupererEtatCoque(props.vaisseau?.coque ?? 0, props.vaisseau?.coqueMax ?? 0),
@@ -213,6 +219,14 @@ const typeAmasLabel = computed(() => {
 })
 
 const statutOperationnel = computed(() => {
+  if (scanEnCours.value) {
+    return {
+      niveau: 'info',
+      titre: 'Balayage en cours',
+      texte: 'Le scanner affine la lecture locale avant publication du relevé',
+    }
+  }
+
   if (props.assistance.remorquageEnCours) {
     return {
       niveau: 'critique',
@@ -291,6 +305,7 @@ const etatVisuelBandeau = computed(() =>
 
 const scannerDisponible = computed(
   () =>
+    !scanEnCours.value &&
     !estTransporteurMarchand.value &&
     !props.navigation.enVoyage &&
     props.positionLocale === 'operations' &&
@@ -300,6 +315,7 @@ const scannerDisponible = computed(
 
 const minageDisponible = computed(
   () =>
+    !scanEnCours.value &&
     !estTransporteurMarchand.value &&
     (props.vaisseau?.puissanceMiniere || 0) > 0 &&
     !props.navigation.enVoyage &&
@@ -310,6 +326,7 @@ const minageDisponible = computed(
 
 const deploiementDronesDisponible = computed(
   () =>
+    !scanEnCours.value &&
     !estTransporteurMarchand.value &&
     !props.navigation.enVoyage &&
     props.positionLocale === 'operations' &&
@@ -318,7 +335,11 @@ const deploiementDronesDisponible = computed(
 )
 
 const rappelDronesDisponible = computed(
-  () => !props.navigation.enVoyage && !props.assistance.remorquageEnCours && nbDeployes.value > 0,
+  () =>
+    !scanEnCours.value &&
+    !props.navigation.enVoyage &&
+    !props.assistance.remorquageEnCours &&
+    nbDeployes.value > 0,
 )
 
 const afficherActionsExploitation = computed(() => !estTransporteurMarchand.value)
@@ -329,6 +350,10 @@ const afficherActionsRapides = computed(
 )
 
 const classePanneauCoque = computed(() => etatVisuelCoque.value.classePanneau)
+
+const classesPanneauScan = computed(() => ({
+  'ops-panel--scan-active': scanEnCours.value,
+}))
 
 const classesPanneauOperations = computed(() => ({
   'ops-panel--context-station':
@@ -359,12 +384,118 @@ function decrireDrone(drone) {
 
   return 'Embarqué — prêt'
 }
+
+function jouerSonScan() {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  const AudioContextClasse = window.AudioContext || window.webkitAudioContext
+
+  if (!AudioContextClasse) {
+    return
+  }
+
+  if (!contexteAudioScan) {
+    contexteAudioScan = new AudioContextClasse()
+  }
+
+  const contexte = contexteAudioScan
+
+  if (contexte.state === 'suspended') {
+    contexte.resume()
+  }
+
+  const maintenant = contexte.currentTime
+
+  const gainSortie = contexte.createGain()
+  gainSortie.gain.setValueAtTime(0.68, maintenant)
+  gainSortie.connect(contexte.destination)
+
+  const oscillateur = contexte.createOscillator()
+  oscillateur.type = 'sine'
+  oscillateur.frequency.setValueAtTime(1180, maintenant)
+
+  const filtre = contexte.createBiquadFilter()
+  filtre.type = 'lowpass'
+  filtre.frequency.setValueAtTime(1800, maintenant)
+  filtre.frequency.exponentialRampToValueAtTime(540, maintenant + 3.4)
+  filtre.Q.setValueAtTime(1.15, maintenant)
+
+  const gain = contexte.createGain()
+  gain.gain.setValueAtTime(0.0001, maintenant)
+  gain.gain.exponentialRampToValueAtTime(0.11, maintenant + 0.01)
+  gain.gain.exponentialRampToValueAtTime(0.082, maintenant + 0.08)
+  gain.gain.exponentialRampToValueAtTime(0.042, maintenant + 0.5)
+  gain.gain.exponentialRampToValueAtTime(0.01, maintenant + 1.4)
+  gain.gain.exponentialRampToValueAtTime(0.003, maintenant + 2.4)
+  gain.gain.exponentialRampToValueAtTime(0.0001, maintenant + 3.4)
+
+  const duree = 3.4
+  const points = 26
+  const frequenceBase = 1180
+
+  oscillateur.frequency.setValueAtTime(frequenceBase, maintenant)
+
+  for (let i = 1; i <= points; i += 1) {
+    const progression = i / points
+    const instant = maintenant + duree * progression
+
+    const deriveGrave = 1 - progression * 0.1
+    const attenuation = 1 - progression * 0.78
+    const variationAleatoire = (Math.random() * 2 - 1) * frequenceBase * 0.01 * attenuation
+    const modulationLente =
+      Math.sin(progression * Math.PI * 6.1) * frequenceBase * 0.008 * attenuation
+
+    const valeur = frequenceBase * deriveGrave + variationAleatoire + modulationLente
+
+    oscillateur.frequency.linearRampToValueAtTime(valeur, instant)
+  }
+
+  oscillateur.connect(filtre)
+  filtre.connect(gain)
+  gain.connect(gainSortie)
+
+  oscillateur.start(maintenant)
+  oscillateur.stop(maintenant + duree + 0.03)
+}
+
+function declencherAnimationScan() {
+  if (!scannerDisponible.value || scanEnCours.value) {
+    return
+  }
+
+  scanEnCours.value = true
+  jouerSonScan()
+
+  if (minuterieScan) {
+    clearTimeout(minuterieScan)
+  }
+
+  minuterieScan = window.setTimeout(() => {
+    emit('scanner')
+    scanEnCours.value = false
+    minuterieScan = null
+  }, DUREE_ANIMATION_SCAN_MS)
+}
+
+onBeforeUnmount(() => {
+  if (minuterieScan) {
+    clearTimeout(minuterieScan)
+    minuterieScan = null
+  }
+
+  if (contexteAudioScan && contexteAudioScan.state !== 'closed') {
+    contexteAudioScan.close()
+    contexteAudioScan = null
+  }
+})
 </script>
 
 <template>
   <section
     class="panel ops-panel ops-panel--enhanced ops-panel--scrollable"
-    :class="[classePanneauCoque, classesPanneauOperations]"
+    :class="[classePanneauCoque, classesPanneauOperations, classesPanneauScan]"
   >
     <div class="ops-header">
       <div>
@@ -416,7 +547,10 @@ function decrireDrone(drone) {
       </div>
     </div>
 
-    <section class="ops-status-banner" :class="etatVisuelBandeau.classeBandeau">
+    <section
+      class="ops-status-banner"
+      :class="[etatVisuelBandeau.classeBandeau, { 'ops-status-banner--scan-active': scanEnCours }]"
+    >
       <div class="ops-status-banner-head">
         <span class="ops-status-dot"></span>
         <strong>{{ statutOperationnel.titre }}</strong>
@@ -451,11 +585,12 @@ function decrireDrone(drone) {
         <button
           v-if="afficherActionsExploitation"
           class="action-button-with-icon ops-quick-button"
+          :class="{ 'ops-quick-button--scan-active': scanEnCours }"
           :disabled="!scannerDisponible"
-          @click="emit('scanner')"
+          @click="declencherAnimationScan"
         >
           <span class="button-icon" aria-hidden="true">⌘</span>
-          <span>Scanner</span>
+          <span>{{ scanEnCours ? 'Balayage...' : 'Scanner' }}</span>
         </button>
 
         <button
