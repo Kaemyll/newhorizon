@@ -51,6 +51,7 @@ const emit = defineEmits([
   "deployer-drones",
   "rappeler-drones",
   "scanner",
+  "ouvrir-navigation",
 ]);
 
 const scanEnCours = ref(false);
@@ -146,6 +147,14 @@ const doctrineOperationnelle = computed(() => {
 
 const statutVolLabel = computed(() =>
   props.navigation.enVoyage ? "Transit" : "Local",
+);
+
+const navigationContextuelleDisponible = computed(
+  () => !props.assistance.remorquageEnCours,
+);
+
+const libelleBoutonNavigation = computed(() =>
+  props.navigation.enVoyage ? "Suivre le transit" : "Voyager",
 );
 
 const statutCanon = computed(() => {
@@ -605,6 +614,15 @@ onBeforeUnmount(() => {
           <span class="ops-flight-chip-label">Statut de vol</span>
           <strong>{{ statutVolLabel }}</strong>
         </div>
+
+        <button
+          class="ops-context-button ops-context-button--navigation action-button-with-icon"
+          :disabled="!navigationContextuelleDisponible"
+          @click="emit('ouvrir-navigation')"
+        >
+          <span class="button-icon" aria-hidden="true">🧭</span>
+          <span>{{ libelleBoutonNavigation }}</span>
+        </button>
 
         <button
           v-if="positionLocale === 'station'"

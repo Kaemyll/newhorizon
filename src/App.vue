@@ -1,307 +1,341 @@
 <script setup>
-import { computed, onMounted, onUnmounted, reactive } from 'vue'
-import PlayerPanel from './components/PlayerPanel.vue'
-import ResourcePanel from './components/ResourcePanel.vue'
-import ShipPanel from './components/ShipPanel.vue'
-import SectorPanel from './components/SectorPanel.vue'
-import StationPanel from './components/StationPanel.vue'
-import NavigationPanel from './components/NavigationPanel.vue'
-import UpgradePanel from './components/UpgradePanel.vue'
-import HeaderActions from './components/HeaderActions.vue'
-import LogPanel from './components/LogPanel.vue'
-import OperationPanel from './components/OperationPanel.vue'
-import StationServicesPanel from './components/StationServicesPanel.vue'
-import HangarPanel from './components/HangarPanel.vue'
+import { computed, onMounted, onUnmounted, reactive } from "vue";
+import PlayerPanel from "./components/PlayerPanel.vue";
+import ResourcePanel from "./components/ResourcePanel.vue";
+import ShipPanel from "./components/ShipPanel.vue";
+import SectorPanel from "./components/SectorPanel.vue";
+import StationPanel from "./components/StationPanel.vue";
+import NavigationPanel from "./components/NavigationPanel.vue";
+import UpgradePanel from "./components/UpgradePanel.vue";
+import HeaderActions from "./components/HeaderActions.vue";
+import LogPanel from "./components/LogPanel.vue";
+import OperationPanel from "./components/OperationPanel.vue";
+import StationServicesPanel from "./components/StationServicesPanel.vue";
+import HangarPanel from "./components/HangarPanel.vue";
 
-import { recupererEtatJeu, reinitialiserEtatJeu } from './game/etatJeu'
-import { chargerJeu, sauvegarderJeu } from './game/systemeSauvegarde'
+import { recupererEtatJeu, reinitialiserEtatJeu } from "./game/etatJeu";
+import { chargerJeu, sauvegarderJeu } from "./game/systemeSauvegarde";
 import {
   minerMineraiManuellement,
   vendreTousLesMinerais,
   acheterDroneMinier,
   deployerDrones,
   rappelerDrones,
-} from './game/systemeMinage'
-import { acheterMineraiEnStation, vendreMineraiEnStation } from './game/systemeCommerce'
-import { ravitaillerCarburant } from './game/systemeRavitaillement'
-import { ameliorerVaisseau } from './game/systemeAmeliorations'
-import { reparerPartiellementVaisseauActif, reparerVaisseauActif } from './game/systemeReparation'
+} from "./game/systemeMinage";
+import {
+  acheterMineraiEnStation,
+  vendreMineraiEnStation,
+} from "./game/systemeCommerce";
+import { ravitaillerCarburant } from "./game/systemeRavitaillement";
+import { ameliorerVaisseau } from "./game/systemeAmeliorations";
+import {
+  reparerPartiellementVaisseauActif,
+  reparerVaisseauActif,
+} from "./game/systemeReparation";
 import {
   selectionnerDestination,
   lancerVoyageVersDestinationSelectionnee,
-} from './game/systemeNavigation'
-import { allerEnZoneOperations, retourALaStation } from './game/systemeLocalisation'
-import { scannerAmasMinier } from './game/systemeExploration'
-import { donneesSecteurs } from './game/dataSecteurs'
-import { demarrerBoucleJeu, arreterBoucleJeu } from './game/systemeTick'
+} from "./game/systemeNavigation";
+import {
+  allerEnZoneOperations,
+  retourALaStation,
+} from "./game/systemeLocalisation";
+import { scannerAmasMinier } from "./game/systemeExploration";
+import { donneesSecteurs } from "./game/dataSecteurs";
+import { demarrerBoucleJeu, arreterBoucleJeu } from "./game/systemeTick";
 import {
   acheterVaisseau,
   changerVaisseauActif,
   souscrireAssuranceVaisseauActif,
-} from './game/systemeVaisseaux'
+} from "./game/systemeVaisseaux";
 
-const etat = reactive({})
+const etat = reactive({});
 
 function creerEtatUIInitial() {
   return {
-    modeActif: 'station',
-    sousModeStation: 'commerce',
-  }
+    modeActif: "station",
+    sousModeStation: "commerce",
+  };
 }
 
-const ui = reactive(creerEtatUIInitial())
+const ui = reactive(creerEtatUIInitial());
 
 const secteurCourantComplet = computed(
-  () => donneesSecteurs.find((secteur) => secteur.id === etat.secteurCourant?.id) || null,
-)
+  () =>
+    donneesSecteurs.find((secteur) => secteur.id === etat.secteurCourant?.id) ||
+    null,
+);
 
-const stationCourante = computed(() => secteurCourantComplet.value?.stationPrincipale ?? null)
+const stationCourante = computed(
+  () => secteurCourantComplet.value?.stationPrincipale ?? null,
+);
 
 const temporaliteCourante = computed(() => {
-  const ticksGlobaux = Number(etat.technique?.compteurTicks) || 0
+  const ticksGlobaux = Number(etat.technique?.compteurTicks) || 0;
 
-  const ticksParJour = 24
-  const ticksParAn = 8760
+  const ticksParJour = 24;
+  const ticksParAn = 8760;
 
-  const annee = Math.floor(ticksGlobaux / ticksParAn) + 1
-  const tickDansAnnee = ticksGlobaux % ticksParAn
-  const jour = Math.floor(tickDansAnnee / ticksParJour) + 1
-  const heure = tickDansAnnee % ticksParJour
+  const annee = Math.floor(ticksGlobaux / ticksParAn) + 1;
+  const tickDansAnnee = ticksGlobaux % ticksParAn;
+  const jour = Math.floor(tickDansAnnee / ticksParJour) + 1;
+  const heure = tickDansAnnee % ticksParJour;
 
   return {
     ticksGlobaux,
     annee,
     jour,
     heure,
-    libelle: `A${annee} · J${jour} · ${String(heure).padStart(2, '0')}h · T${String(
+    libelle: `A${annee} · J${jour} · ${String(heure).padStart(2, "0")}h · T${String(
       ticksGlobaux,
-    ).padStart(4, '0')}`,
-  }
-})
+    ).padStart(4, "0")}`,
+  };
+});
 
 const classesHeaderTop = computed(() => ({
-  'header-top--station': ui.modeActif === 'station' && !etat.navigation?.enVoyage,
-  'header-top--operations': ui.modeActif === 'operations' && !etat.navigation?.enVoyage,
-  'header-top--navigation': ui.modeActif === 'navigation' && !etat.navigation?.enVoyage,
-}))
+  "header-top--station":
+    ui.modeActif === "station" && !etat.navigation?.enVoyage,
+  "header-top--operations":
+    ui.modeActif === "operations" && !etat.navigation?.enVoyage,
+  "header-top--navigation":
+    ui.modeActif === "navigation" && !etat.navigation?.enVoyage,
+}));
 
 const classesTimeLine = computed(() => ({
-  'time-line--station': ui.modeActif === 'station' && !etat.navigation?.enVoyage,
-  'time-line--operations': ui.modeActif === 'operations' && !etat.navigation?.enVoyage,
-  'time-line--navigation': ui.modeActif === 'navigation' || etat.navigation?.enVoyage,
-  'time-line--in-transit': etat.navigation?.enVoyage,
-}))
+  "time-line--station":
+    ui.modeActif === "station" && !etat.navigation?.enVoyage,
+  "time-line--operations":
+    ui.modeActif === "operations" && !etat.navigation?.enVoyage,
+  "time-line--navigation":
+    ui.modeActif === "navigation" || etat.navigation?.enVoyage,
+  "time-line--in-transit": etat.navigation?.enVoyage,
+}));
 
 function normaliserSousModeStation() {
-  const services = stationCourante.value?.services
+  const services = stationCourante.value?.services;
 
-  if (ui.sousModeStation === 'hangar') {
-    return
+  if (ui.sousModeStation === "hangar") {
+    return;
   }
 
   if (!services) {
-    ui.sousModeStation = 'hangar'
-    return
+    ui.sousModeStation = "hangar";
+    return;
   }
 
-  if (ui.sousModeStation === 'commerce' && services.commerce) return
-  if (ui.sousModeStation === 'ravitaillement' && services.ravitaillement) return
-  if (ui.sousModeStation === 'atelier' && services.atelier) return
-  if (ui.sousModeStation === 'assurance') return
+  if (ui.sousModeStation === "commerce" && services.commerce) return;
+  if (ui.sousModeStation === "ravitaillement" && services.ravitaillement)
+    return;
+  if (ui.sousModeStation === "atelier" && services.atelier) return;
+  if (ui.sousModeStation === "assurance") return;
 
-  ui.sousModeStation = 'hangar'
+  ui.sousModeStation = "hangar";
 }
 
 function synchroniserModeActifAvecPositionLocale() {
-  if (etat.positionLocale === 'station') {
-    ui.modeActif = 'station'
-    normaliserSousModeStation()
-    return
+  if (ui.modeActif === "navigation") {
+    return;
   }
 
-  if (etat.positionLocale === 'operations') {
-    ui.modeActif = 'operations'
+  if (etat.positionLocale === "station") {
+    ui.modeActif = "station";
+    normaliserSousModeStation();
+    return;
+  }
+
+  if (etat.positionLocale === "operations") {
+    ui.modeActif = "operations";
   }
 }
 
 function synchroniserEtat() {
-  const etatCourant = structuredClone(recupererEtatJeu())
+  const etatCourant = structuredClone(recupererEtatJeu());
 
   Object.keys(etat).forEach((cle) => {
-    delete etat[cle]
-  })
+    delete etat[cle];
+  });
 
-  Object.assign(etat, etatCourant)
+  Object.assign(etat, etatCourant);
 
-  synchroniserModeActifAvecPositionLocale()
+  synchroniserModeActifAvecPositionLocale();
 }
 
 function gererRenommagePilote(nouvelleIdentite) {
-  const etatJeu = recupererEtatJeu()
+  const etatJeu = recupererEtatJeu();
 
   if (!etatJeu.joueur) {
-    etatJeu.joueur = {}
+    etatJeu.joueur = {};
   }
 
-  etatJeu.joueur.identite = nouvelleIdentite
-  sauvegarderJeu()
-  synchroniserEtat()
+  etatJeu.joueur.identite = nouvelleIdentite;
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererMinageManuel() {
-  minerMineraiManuellement()
-  sauvegarderJeu()
-  synchroniserEtat()
+  minerMineraiManuellement();
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererScanner() {
-  scannerAmasMinier()
-  sauvegarderJeu()
-  synchroniserEtat()
+  scannerAmasMinier();
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererVenteMinerai() {
-  vendreTousLesMinerais()
-  sauvegarderJeu()
-  synchroniserEtat()
+  vendreTousLesMinerais();
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererVenteBien(idBien, quantite = 1) {
-  vendreMineraiEnStation(idBien, quantite)
-  sauvegarderJeu()
-  synchroniserEtat()
+  vendreMineraiEnStation(idBien, quantite);
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererAchatBien(idBien, quantite = 1) {
-  acheterMineraiEnStation(idBien, quantite)
-  sauvegarderJeu()
-  synchroniserEtat()
+  acheterMineraiEnStation(idBien, quantite);
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererAchatDrone() {
-  acheterDroneMinier()
-  sauvegarderJeu()
-  synchroniserEtat()
+  acheterDroneMinier();
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererDeploiementDrones() {
-  deployerDrones()
-  sauvegarderJeu()
-  synchroniserEtat()
+  deployerDrones();
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererRappelDrones() {
-  rappelerDrones()
-  sauvegarderJeu()
-  synchroniserEtat()
+  rappelerDrones();
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererRavitaillement() {
-  ravitaillerCarburant()
-  sauvegarderJeu()
-  synchroniserEtat()
+  ravitaillerCarburant();
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererReparationVaisseau() {
-  reparerVaisseauActif()
-  sauvegarderJeu()
-  synchroniserEtat()
+  reparerVaisseauActif();
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererReparationPartielleVaisseau() {
-  reparerPartiellementVaisseauActif()
-  sauvegarderJeu()
-  synchroniserEtat()
+  reparerPartiellementVaisseauActif();
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererSouscriptionAssurance(niveauAssurance) {
-  souscrireAssuranceVaisseauActif(niveauAssurance)
-  sauvegarderJeu()
-  synchroniserEtat()
+  souscrireAssuranceVaisseauActif(niveauAssurance);
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererVoyage() {
-  lancerVoyageVersDestinationSelectionnee()
-  sauvegarderJeu()
-  synchroniserEtat()
+  lancerVoyageVersDestinationSelectionnee();
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererSelectionDestination(idDestination) {
-  selectionnerDestination(idDestination)
-  sauvegarderJeu()
-  synchroniserEtat()
+  selectionnerDestination(idDestination);
+  sauvegarderJeu();
+  synchroniserEtat();
+}
+
+function gererOuvertureNavigation() {
+  ui.modeActif = "navigation";
 }
 
 function gererAmelioration(idAmelioration) {
-  ameliorerVaisseau(idAmelioration)
-  sauvegarderJeu()
-  synchroniserEtat()
+  ameliorerVaisseau(idAmelioration);
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererAllerOperations() {
-  const positionAvant = etat.positionLocale
+  const positionAvant = etat.positionLocale;
 
-  allerEnZoneOperations()
-  sauvegarderJeu()
-  synchroniserEtat()
+  allerEnZoneOperations();
+  sauvegarderJeu();
+  synchroniserEtat();
 
-  if (positionAvant !== etat.positionLocale && etat.positionLocale === 'operations') {
-    ui.modeActif = 'operations'
+  if (
+    positionAvant !== etat.positionLocale &&
+    etat.positionLocale === "operations"
+  ) {
+    ui.modeActif = "operations";
   }
 }
 
 function gererRetourStation() {
-  const positionAvant = etat.positionLocale
+  const positionAvant = etat.positionLocale;
 
-  retourALaStation()
-  sauvegarderJeu()
-  synchroniserEtat()
+  retourALaStation();
+  sauvegarderJeu();
+  synchroniserEtat();
 
-  if (positionAvant !== etat.positionLocale && etat.positionLocale === 'station') {
-    ui.modeActif = 'station'
-    normaliserSousModeStation()
+  if (
+    positionAvant !== etat.positionLocale &&
+    etat.positionLocale === "station"
+  ) {
+    ui.modeActif = "station";
+    normaliserSousModeStation();
   }
 }
 
 function gererChangerVaisseau(idVaisseau) {
-  changerVaisseauActif(idVaisseau)
-  sauvegarderJeu()
-  synchroniserEtat()
+  changerVaisseauActif(idVaisseau);
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererAcheterVaisseau(modeleId) {
-  acheterVaisseau(modeleId)
-  sauvegarderJeu()
-  synchroniserEtat()
+  acheterVaisseau(modeleId);
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function gererReinitialisation() {
-  reinitialiserEtatJeu()
-  Object.assign(ui, creerEtatUIInitial())
-  sauvegarderJeu()
-  synchroniserEtat()
+  reinitialiserEtatJeu();
+  Object.assign(ui, creerEtatUIInitial());
+  sauvegarderJeu();
+  synchroniserEtat();
 }
 
 function changerMode(mode) {
-  ui.modeActif = mode
-  if (mode === 'station') {
-    normaliserSousModeStation()
+  ui.modeActif = mode;
+  if (mode === "station") {
+    normaliserSousModeStation();
   }
 }
 
 function changerSousModeStation(sousMode) {
-  ui.sousModeStation = sousMode
+  ui.sousModeStation = sousMode;
 }
 
 onMounted(() => {
-  chargerJeu()
-  synchroniserEtat()
-  demarrerBoucleJeu(synchroniserEtat)
-})
+  chargerJeu();
+  synchroniserEtat();
+  demarrerBoucleJeu(synchroniserEtat);
+});
 
 onUnmounted(() => {
-  arreterBoucleJeu()
-})
+  arreterBoucleJeu();
+});
 </script>
 
 <template>
@@ -333,18 +367,25 @@ onUnmounted(() => {
           </h1>
 
           <p class="subtitle">
-            Simulation spatiale incrémentale de prospection minière et de commerce
+            Simulation spatiale incrémentale de prospection minière et de
+            commerce
           </p>
 
           <p class="meta-line">
-            v{{ etat.meta?.version }} — {{ etat.meta?.auteur }} — {{ etat.meta?.annee }}
+            v{{ etat.meta?.version }} — {{ etat.meta?.auteur }} —
+            {{ etat.meta?.annee }}
           </p>
         </div>
 
         <div class="header-center">
-          <div :class="['time-line', classesTimeLine]" aria-label="Temporalité globale du jeu">
+          <div
+            :class="['time-line', classesTimeLine]"
+            aria-label="Temporalité globale du jeu"
+          >
             <span class="time-line-label">Temps local</span>
-            <span class="time-line-value">{{ temporaliteCourante.libelle }}</span>
+            <span class="time-line-value">{{
+              temporaliteCourante.libelle
+            }}</span>
           </div>
         </div>
 
@@ -377,15 +418,6 @@ onUnmounted(() => {
           :ressources="etat.ressources"
           :current-tick="temporaliteCourante.ticksGlobaux"
         />
-
-        <NavigationPanel
-          :secteur-courant-id="etat.secteurCourant.id"
-          :navigation="etat.navigation"
-          :position-locale="etat.positionLocale"
-          :mode-actif="ui.modeActif"
-          @selectionner-destination="gererSelectionDestination"
-          @voyager="gererVoyage"
-        />
       </section>
 
       <section class="main-column main-column-center">
@@ -403,6 +435,7 @@ onUnmounted(() => {
             @scanner="gererScanner"
             @aller-operations="gererAllerOperations"
             @retour-station="gererRetourStation"
+            @ouvrir-navigation="gererOuvertureNavigation"
             @deployer-drones="gererDeploiementDrones"
             @rappeler-drones="gererRappelDrones"
           />
