@@ -20,14 +20,30 @@
   overflow: hidden;
 }
 
-.station-services-header {
-  margin-bottom: 8px;
+.station-services-topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
   flex: 0 0 auto;
 }
 
+.station-services-header {
+  flex: 1 1 auto;
+  min-width: 160px;
+  margin-bottom: 0;
+}
+
+.station-services-header h2 {
+  margin: 0;
+  line-height: 1.1;
+}
+
 .station-services-subtitle {
-  margin: 2px 0 0 0;
+  margin: 0.15rem 0 0 0;
   font-size: 0.82rem;
+  line-height: 1.15;
   opacity: 0.72;
 }
 
@@ -36,20 +52,24 @@
 .station-mode-tabs {
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 6px;
-  margin-bottom: 10px;
-  flex: 0 0 auto;
+  margin-top: 0;
+  margin-bottom: 0;
+  flex: 0 1 auto;
 }
 
 .station-mode-tabs button {
-  padding: 0.46rem 0.7rem;
-  font-size: 0.84rem;
+  min-height: 32px;
+  padding: 0.38rem 0.66rem;
+  font-size: 0.82rem;
+  line-height: 1.05;
 }
 
 .station-mode-tabs--with-launch {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.45rem;
   align-items: center;
 }
 
