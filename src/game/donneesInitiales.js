@@ -48,7 +48,7 @@ export function creerEtatInitialJeu() {
     },
 
     ressources: {
-      credits: 0,
+      credits: 100,
       minerais: creerStockMineraisInitial(),
       cargaisonMarchande: {},
     },

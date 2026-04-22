@@ -12,6 +12,7 @@ import LogPanel from "./components/LogPanel.vue";
 import OperationPanel from "./components/OperationPanel.vue";
 import StationServicesPanel from "./components/StationServicesPanel.vue";
 import HangarPanel from "./components/HangarPanel.vue";
+import ContextBanner from "./components/ContextBanner.vue";
 
 import { recupererEtatJeu, reinitialiserEtatJeu } from "./game/etatJeu";
 import { chargerJeu, sauvegarderJeu } from "./game/systemeSauvegarde";
@@ -420,6 +421,13 @@ onUnmounted(() => {
       </section>
 
       <section class="main-column main-column-center">
+        <ContextBanner
+          :mode-actif="ui.modeActif"
+          :sous-mode-station="ui.sousModeStation"
+          :navigation="etat.navigation"
+          :position-locale="etat.positionLocale"
+        />
+
         <div class="center-top">
           <OperationPanel
             v-if="ui.modeActif === 'operations'"

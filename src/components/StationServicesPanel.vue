@@ -370,70 +370,72 @@ function boutonAssuranceDesactive(offre) {
 
 <template>
   <section class="panel station-services-panel" v-if="station">
-    <div class="station-services-header">
-      <h2>⌘ Services de station</h2>
-      <p class="station-services-subtitle">
-        {{ station.nom }} — {{ station.type }}
-      </p>
-    </div>
+    <div class="station-services-topbar">
+      <div class="station-services-header">
+        <h2>⌘ Services de station</h2>
+        <p class="station-services-subtitle">
+          {{ station.nom }} — {{ station.type }}
+        </p>
+      </div>
 
-    <div class="station-mode-tabs station-mode-tabs--with-launch">
-      <button
-        v-if="positionLocale === 'station'"
-        class="station-launch-button action-button-with-icon"
-        @click="emit('aller-operations')"
-      >
-        <span class="button-icon" aria-hidden="true">⌘</span>
-        <span>Zone d’opérations</span>
-      </button>
+      <div class="station-mode-tabs station-mode-tabs--with-launch">
+        <button
+          v-if="positionLocale === 'station'"
+          class="station-launch-button action-button-with-icon"
+          @click="emit('aller-operations')"
+        >
+          <span class="button-icon" aria-hidden="true">⌘</span>
+          <span>Zone d’opérations</span>
+        </button>
 
-      <button
-        :class="{ 'is-active': sousModeStation === 'hangar' }"
-        class="action-button-with-icon"
-        @click="emit('changer-sous-mode-station', 'hangar')"
-      >
-        <span class="button-icon" aria-hidden="true">⌂</span>
-        <span>Hangar</span>
-      </button>
+        <button
+          :class="{ 'is-active': sousModeStation === 'hangar' }"
+          class="action-button-with-icon"
+          @click="emit('changer-sous-mode-station', 'hangar')"
+        >
+          <span class="button-icon" aria-hidden="true">⌂</span>
+          <span>Hangar</span>
+        </button>
 
-      <button
-        v-if="station.services.commerce"
-        :class="{ 'is-active': sousModeStation === 'commerce' }"
-        class="action-button-with-icon"
-        @click="emit('changer-sous-mode-station', 'commerce')"
-      >
-        <span class="button-icon" aria-hidden="true">✦</span>
-        <span>Commerce</span>
-      </button>
+        <button
+          v-if="station.services.commerce"
+          :class="{ 'is-active': sousModeStation === 'commerce' }"
+          class="action-button-with-icon"
+          @click="emit('changer-sous-mode-station', 'commerce')"
+        >
+          <span class="button-icon" aria-hidden="true">✦</span>
+          <span>Commerce</span>
+        </button>
 
-      <button
-        v-if="station.services.ravitaillement"
-        :class="{ 'is-active': sousModeStation === 'ravitaillement' }"
-        class="action-button-with-icon"
-        @click="emit('changer-sous-mode-station', 'ravitaillement')"
-      >
-        <span class="button-icon" aria-hidden="true">⛽</span>
-        <span>Ravitaillement</span>
-      </button>
+        <button
+          v-if="station.services.ravitaillement"
+          :class="{ 'is-active': sousModeStation === 'ravitaillement' }"
+          class="action-button-with-icon"
+          @click="emit('changer-sous-mode-station', 'ravitaillement')"
+        >
+          <span class="button-icon" aria-hidden="true">⛽</span>
+          <span>Ravitaillement</span>
+        </button>
 
-      <button
-        :class="{ 'is-active': sousModeStation === 'assurance' }"
-        class="action-button-with-icon"
-        @click="emit('changer-sous-mode-station', 'assurance')"
-      >
-        <span class="button-icon" aria-hidden="true">★</span>
-        <span>Assurance</span>
-      </button>
+        <button
+          :class="{ 'is-active': sousModeStation === 'assurance' }"
+          class="action-button-with-icon"
+          @click="emit('changer-sous-mode-station', 'assurance')"
+        >
+          <span class="button-icon" aria-hidden="true">★</span>
+          <span>Assurance</span>
+        </button>
 
-      <button
-        v-if="station.services.atelier"
-        :class="{ 'is-active': sousModeStation === 'atelier' }"
-        class="action-button-with-icon"
-        @click="emit('changer-sous-mode-station', 'atelier')"
-      >
-        <span class="button-icon" aria-hidden="true">⚙</span>
-        <span>Atelier</span>
-      </button>
+        <button
+          v-if="station.services.atelier"
+          :class="{ 'is-active': sousModeStation === 'atelier' }"
+          class="action-button-with-icon"
+          @click="emit('changer-sous-mode-station', 'atelier')"
+        >
+          <span class="button-icon" aria-hidden="true">⚙</span>
+          <span>Atelier</span>
+        </button>
+      </div>
     </div>
 
     <template v-if="positionLocale !== 'station'">
