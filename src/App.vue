@@ -415,7 +415,6 @@ onUnmounted(() => {
         <ShipPanel
           :vaisseau="etat.vaisseau"
           :industrie="etat.industrie"
-          :ressources="etat.ressources"
           :current-tick="temporaliteCourante.ticksGlobaux"
         />
       </section>
