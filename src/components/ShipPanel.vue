@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue";
 
 const props = defineProps({
   vaisseau: {
@@ -10,191 +10,202 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  ressources: {
-    type: Object,
-    required: true,
-  },
   currentTick: {
     type: Number,
     default: 0,
   },
-})
+});
 
 const roleLabel = computed(() => {
   switch (props.vaisseau.role) {
-    case 'mineur_leger':
-      return 'Mineur léger'
-    case 'mineur_renforce':
-      return 'Mineur renforcé'
-    case 'mineur_lourd':
-      return 'Mineur lourd'
-    case 'transporteur_marchand':
-      return 'Transporteur marchand'
+    case "mineur_leger":
+      return "Mineur léger";
+    case "mineur_renforce":
+      return "Mineur renforcé";
+    case "mineur_lourd":
+      return "Mineur lourd";
+    case "transporteur_marchand":
+      return "Transporteur marchand";
     default:
-      return 'Vaisseau'
+      return "Vaisseau";
   }
-})
+});
 
 const roleClass = computed(() => {
   switch (props.vaisseau.role) {
-    case 'mineur_leger':
-      return 'ship-role-badge--light'
-    case 'mineur_renforce':
-      return 'ship-role-badge--reinforced'
-    case 'mineur_lourd':
-      return 'ship-role-badge--heavy'
-    case 'transporteur_marchand':
-      return 'ship-role-badge--trade'
+    case "mineur_leger":
+      return "ship-role-badge--light";
+    case "mineur_renforce":
+      return "ship-role-badge--reinforced";
+    case "mineur_lourd":
+      return "ship-role-badge--heavy";
+    case "transporteur_marchand":
+      return "ship-role-badge--trade";
     default:
-      return 'ship-role-badge--light'
+      return "ship-role-badge--light";
   }
-})
+});
 
-const descriptionVaisseau = computed(() => props.vaisseau.description || 'Vaisseau opérationnel.')
+const descriptionVaisseau = computed(
+  () => props.vaisseau.description || "Vaisseau opérationnel.",
+);
 
 const assuranceActive = computed(() => {
-  const niveau = props.vaisseau.assuranceNiveau || 'aucune'
-  const expiration = Number(props.vaisseau.assuranceExpirationTick || 0)
+  const niveau = props.vaisseau.assuranceNiveau || "aucune";
+  const expiration = Number(props.vaisseau.assuranceExpirationTick || 0);
 
-  if (niveau === 'aucune') {
-    return false
+  if (niveau === "aucune") {
+    return false;
   }
 
-  return expiration > props.currentTick
-})
+  return expiration > props.currentTick;
+});
 
 const assuranceInfo = computed(() => {
-  const niveau = props.vaisseau.assuranceNiveau || 'aucune'
-  const expiration = Number(props.vaisseau.assuranceExpirationTick || 0)
+  const niveau = props.vaisseau.assuranceNiveau || "aucune";
+  const expiration = Number(props.vaisseau.assuranceExpirationTick || 0);
 
   if (!assuranceActive.value) {
-    if (niveau !== 'aucune' && expiration > 0) {
+    if (niveau !== "aucune" && expiration > 0) {
       return {
-        libelle: 'Contrat expiré',
-        remboursement: '0%',
-        code: 'Exp',
-        classeCss: 'ship-insurance-badge--expired',
-      }
+        libelle: "Contrat expiré",
+        remboursement: "0%",
+        code: "Exp",
+        classeCss: "ship-insurance-badge--expired",
+      };
     }
 
     return {
-      libelle: 'Aucune assurance',
-      remboursement: '0%',
-      code: 'Auc',
-      classeCss: 'ship-insurance-badge--none',
-    }
+      libelle: "Aucune assurance",
+      remboursement: "0%",
+      code: "Auc",
+      classeCss: "ship-insurance-badge--none",
+    };
   }
 
   switch (niveau) {
-    case 'tiers':
+    case "tiers":
       return {
-        libelle: 'Assurance au tiers',
-        remboursement: '33%',
-        code: 'Trs',
-        classeCss: 'ship-insurance-badge--tiers',
-      }
-    case 'standard':
+        libelle: "Assurance au tiers",
+        remboursement: "33%",
+        code: "Trs",
+        classeCss: "ship-insurance-badge--tiers",
+      };
+    case "standard":
       return {
-        libelle: 'Assurance standard',
-        remboursement: '66%',
-        code: 'Std',
-        classeCss: 'ship-insurance-badge--standard',
-      }
-    case 'premium':
+        libelle: "Assurance standard",
+        remboursement: "66%",
+        code: "Std",
+        classeCss: "ship-insurance-badge--standard",
+      };
+    case "premium":
       return {
-        libelle: 'Assurance premium',
-        remboursement: '100%',
-        code: 'Prm',
-        classeCss: 'ship-insurance-badge--premium',
-      }
-    case 'elite':
+        libelle: "Assurance premium",
+        remboursement: "100%",
+        code: "Prm",
+        classeCss: "ship-insurance-badge--premium",
+      };
+    case "elite":
       return {
-        libelle: 'Assurance élite',
-        remboursement: '125%',
-        code: 'Elt',
-        classeCss: 'ship-insurance-badge--elite',
-      }
+        libelle: "Assurance élite",
+        remboursement: "125%",
+        code: "Elt",
+        classeCss: "ship-insurance-badge--elite",
+      };
     default:
       return {
-        libelle: 'Aucune assurance',
-        remboursement: '0%',
-        code: 'Auc',
-        classeCss: 'ship-insurance-badge--none',
-      }
+        libelle: "Aucune assurance",
+        remboursement: "0%",
+        code: "Auc",
+        classeCss: "ship-insurance-badge--none",
+      };
   }
-})
+});
 
 const coquePourcentage = computed(() => {
-  if (!props.vaisseau.coqueMax) return 0
+  if (!props.vaisseau.coqueMax) return 0;
   return Math.max(
     0,
-    Math.min(100, Math.round((props.vaisseau.coque / props.vaisseau.coqueMax) * 100)),
-  )
-})
+    Math.min(
+      100,
+      Math.round((props.vaisseau.coque / props.vaisseau.coqueMax) * 100),
+    ),
+  );
+});
 
 const etatCoque = computed(() => {
-  const pourcentage = coquePourcentage.value
+  const pourcentage = coquePourcentage.value;
 
   if (pourcentage <= 0) {
     return {
-      libelle: 'Hors service',
-      classeCss: 'ship-hull-badge--hors-service',
-    }
+      libelle: "Hors service",
+      classeCss: "ship-hull-badge--hors-service",
+    };
   }
 
   if (pourcentage <= 39) {
     return {
-      libelle: 'Critique',
-      classeCss: 'ship-hull-badge--critique',
-    }
+      libelle: "Critique",
+      classeCss: "ship-hull-badge--critique",
+    };
   }
 
   if (pourcentage <= 74) {
     return {
-      libelle: 'Dégradée',
-      classeCss: 'ship-hull-badge--degradee',
-    }
+      libelle: "Dégradée",
+      classeCss: "ship-hull-badge--degradee",
+    };
   }
 
   return {
-    libelle: 'Nominale',
-    classeCss: 'ship-hull-badge--nominale',
-  }
-})
+    libelle: "Nominale",
+    classeCss: "ship-hull-badge--nominale",
+  };
+});
 
-const carburantActuel = computed(() => Number(props.ressources?.carburant) || 0)
+const carburantActuel = computed(() => Number(props.vaisseau?.carburant) || 0);
 
 const carburantPourcentage = computed(() => {
-  if (!props.vaisseau.carburantMax) return 0
+  if (!props.vaisseau.carburantMax) return 0;
   return Math.max(
     0,
-    Math.min(100, Math.round((carburantActuel.value / props.vaisseau.carburantMax) * 100)),
-  )
-})
+    Math.min(
+      100,
+      Math.round((carburantActuel.value / props.vaisseau.carburantMax) * 100),
+    ),
+  );
+});
 
 const carburantEtatClass = computed(() => {
-  if (carburantPourcentage.value <= 15) return 'ship-fuel-badge--critique'
-  if (carburantPourcentage.value <= 40) return 'ship-fuel-badge--degrade'
-  return 'ship-fuel-badge--nominal'
-})
+  if (carburantPourcentage.value <= 15) return "ship-fuel-badge--critique";
+  if (carburantPourcentage.value <= 40) return "ship-fuel-badge--degrade";
+  return "ship-fuel-badge--nominal";
+});
 
 const carburantEtatLibelle = computed(() => {
-  if (carburantPourcentage.value <= 15) return 'Réserve critique'
-  if (carburantPourcentage.value <= 40) return 'Réserve basse'
-  return 'Réserve correcte'
-})
+  if (carburantPourcentage.value <= 15) return "Réserve critique";
+  if (carburantPourcentage.value <= 40) return "Réserve basse";
+  return "Réserve correcte";
+});
 
 const classesPanneauVaisseau = computed(() => ({
-  'ship-panel--hull-nominale': etatCoque.value.classeCss === 'ship-hull-badge--nominale',
-  'ship-panel--hull-degradee': etatCoque.value.classeCss === 'ship-hull-badge--degradee',
-  'ship-panel--hull-critique': etatCoque.value.classeCss === 'ship-hull-badge--critique',
-  'ship-panel--hull-hors-service': etatCoque.value.classeCss === 'ship-hull-badge--hors-service',
-  'ship-panel--fuel-nominal': carburantEtatClass.value === 'ship-fuel-badge--nominal',
-  'ship-panel--fuel-degrade': carburantEtatClass.value === 'ship-fuel-badge--degrade',
-  'ship-panel--fuel-critique': carburantEtatClass.value === 'ship-fuel-badge--critique',
-}))
+  "ship-panel--hull-nominale":
+    etatCoque.value.classeCss === "ship-hull-badge--nominale",
+  "ship-panel--hull-degradee":
+    etatCoque.value.classeCss === "ship-hull-badge--degradee",
+  "ship-panel--hull-critique":
+    etatCoque.value.classeCss === "ship-hull-badge--critique",
+  "ship-panel--hull-hors-service":
+    etatCoque.value.classeCss === "ship-hull-badge--hors-service",
+  "ship-panel--fuel-nominal":
+    carburantEtatClass.value === "ship-fuel-badge--nominal",
+  "ship-panel--fuel-degrade":
+    carburantEtatClass.value === "ship-fuel-badge--degrade",
+  "ship-panel--fuel-critique":
+    carburantEtatClass.value === "ship-fuel-badge--critique",
+}));
 
-const nombreDronesActifs = computed(() => props.industrie?.drones?.length || 0)
+const nombreDronesActifs = computed(() => props.industrie?.drones?.length || 0);
 </script>
 
 <template>
@@ -283,7 +294,9 @@ const nombreDronesActifs = computed(() => props.industrie?.drones?.length || 0)
       </p>
       <p>
         <span>Drones</span>
-        <strong>{{ nombreDronesActifs }} / {{ vaisseau.dronesMiniersMax }}</strong>
+        <strong
+          >{{ nombreDronesActifs }} / {{ vaisseau.dronesMiniersMax }}</strong
+        >
       </p>
     </div>
   </section>

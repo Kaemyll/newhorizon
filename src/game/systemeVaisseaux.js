@@ -1,62 +1,74 @@
-import { donneesVaisseaux } from './dataVaisseaux'
-import { recupererEtatJeu } from './etatJeu'
-import { recupererTickCourant } from './systemeTemps'
-import { recupererEtatCoque } from './systemeCoque'
+import { donneesVaisseaux } from "./dataVaisseaux";
+import { recupererEtatJeu } from "./etatJeu";
+import { recupererTickCourant } from "./systemeTemps";
+import { recupererEtatCoque } from "./systemeCoque";
 
-export const DUREE_CONTRAT_ASSURANCE_TICKS = 720
+export const DUREE_CONTRAT_ASSURANCE_TICKS = 720;
 
 function obtenirHorodatageTick() {
-  const tick = recupererTickCourant()
-  return `[T${String(tick).padStart(4, '0')}]`
+  const tick = recupererTickCourant();
+  return `[T${String(tick).padStart(4, "0")}]`;
 }
 
-function ajouterAuJournal(message, categorie = 'evenements') {
-  const etat = recupererEtatJeu()
+function ajouterAuJournal(message, categorie = "evenements") {
+  const etat = recupererEtatJeu();
 
   etat.journal.unshift({
     horodatage: obtenirHorodatageTick(),
     message,
     categorie,
-  })
+  });
 
   if (etat.journal.length > 50) {
-    etat.journal.pop()
+    etat.journal.pop();
   }
 }
 
 function bornerValeur(valeur, minimum, maximum) {
-  return Math.min(Math.max(valeur, minimum), maximum)
+  return Math.min(Math.max(valeur, minimum), maximum);
+}
+
+function supprimerCarburantRessourcesLegacy(etat) {
+  if (
+    etat?.ressources &&
+    Object.prototype.hasOwnProperty.call(etat.ressources, "carburant")
+  ) {
+    delete etat.ressources.carburant;
+  }
 }
 
 function recupererLibelleAssurance(niveau) {
   switch (niveau) {
-    case 'tiers':
-      return 'au tiers'
-    case 'standard':
-      return 'standard'
-    case 'premium':
-      return 'premium'
-    case 'elite':
-      return 'élite'
+    case "tiers":
+      return "au tiers";
+    case "standard":
+      return "standard";
+    case "premium":
+      return "premium";
+    case "elite":
+      return "élite";
     default:
-      return 'aucune'
+      return "aucune";
   }
 }
 
-function estContratAssuranceActif(vaisseau, tickCourant = recupererTickCourant()) {
-  const niveau = vaisseau?.assuranceNiveau || 'aucune'
-  const expiration = Number(vaisseau?.assuranceExpirationTick || 0)
+function estContratAssuranceActif(
+  vaisseau,
+  tickCourant = recupererTickCourant(),
+) {
+  const niveau = vaisseau?.assuranceNiveau || "aucune";
+  const expiration = Number(vaisseau?.assuranceExpirationTick || 0);
 
-  if (niveau === 'aucune') {
-    return false
+  if (niveau === "aucune") {
+    return false;
   }
 
-  return expiration > tickCourant
+  return expiration > tickCourant;
 }
 
 function calculerCoutAssurance(modeleId, niveau) {
-  const modele = donneesVaisseaux.find((entree) => entree.id === modeleId)
-  const valeurMarchande = Number(modele?.prix || 0)
+  const modele = donneesVaisseaux.find((entree) => entree.id === modeleId);
+  const valeurMarchande = Number(modele?.prix || 0);
 
   const multiplicateurs = {
     aucune: 0,
@@ -64,50 +76,55 @@ function calculerCoutAssurance(modeleId, niveau) {
     standard: 0.07,
     premium: 0.11,
     elite: 0.16,
-  }
+  };
 
-  return Math.max(0, Math.round(valeurMarchande * (multiplicateurs[niveau] || 0)))
+  return Math.max(
+    0,
+    Math.round(valeurMarchande * (multiplicateurs[niveau] || 0)),
+  );
 }
 
 function recupererTauxRemboursementAssurance(niveau) {
   switch (niveau) {
-    case 'tiers':
-      return 0.33
-    case 'standard':
-      return 0.66
-    case 'premium':
-      return 1
-    case 'elite':
-      return 1.25
+    case "tiers":
+      return 0.33;
+    case "standard":
+      return 0.66;
+    case "premium":
+      return 1;
+    case "elite":
+      return 1.25;
     default:
-      return 0
+      return 0;
   }
 }
 
 function recupererValeurMarchandeVaisseau(vaisseau) {
   if (!vaisseau) {
-    return 0
+    return 0;
   }
 
-  const modele = donneesVaisseaux.find((entree) => entree.id === vaisseau.modeleId)
-  return Math.max(0, Number(modele?.prix || 0))
+  const modele = donneesVaisseaux.find(
+    (entree) => entree.id === vaisseau.modeleId,
+  );
+  return Math.max(0, Number(modele?.prix || 0));
 }
 
 function reinitialiserContratAssuranceVaisseau(vaisseau) {
   if (!vaisseau) {
-    return
+    return;
   }
 
-  vaisseau.assuranceNiveau = 'aucune'
-  vaisseau.assuranceSouscriptionTick = 0
-  vaisseau.assuranceExpirationTick = 0
+  vaisseau.assuranceNiveau = "aucune";
+  vaisseau.assuranceSouscriptionTick = 0;
+  vaisseau.assuranceExpirationTick = 0;
 }
 
-export function creerInstanceVaisseauDepuisModele(modeleId, suffixe = '001') {
-  const modele = donneesVaisseaux.find((vaisseau) => vaisseau.id === modeleId)
+export function creerInstanceVaisseauDepuisModele(modeleId, suffixe = "001") {
+  const modele = donneesVaisseaux.find((vaisseau) => vaisseau.id === modeleId);
 
   if (!modele) {
-    throw new Error(`Modèle de vaisseau introuvable : ${modeleId}`)
+    throw new Error(`Modèle de vaisseau introuvable : ${modeleId}`);
   }
 
   return {
@@ -124,32 +141,35 @@ export function creerInstanceVaisseauDepuisModele(modeleId, suffixe = '001') {
     dronesMiniersMax: modele.dronesMiniersMax,
     carburant: modele.carburantMax,
     carburantMax: modele.carburantMax,
-    assuranceNiveau: 'aucune',
+    assuranceNiveau: "aucune",
     assuranceSouscriptionTick: 0,
     assuranceExpirationTick: 0,
     scanner: structuredClone(modele.scanner || {}),
     ameliorations: structuredClone(modele.ameliorations || []),
     ameliorationsMax: structuredClone(modele.ameliorationsMax || {}),
-  }
+  };
 }
 
 export function normaliserVaisseauPossede(vaisseau) {
   if (!vaisseau) {
-    return null
+    return null;
   }
 
   const modele = donneesVaisseaux.find(
     (modeleVaisseau) =>
-      modeleVaisseau.id === vaisseau.modeleId || modeleVaisseau.id === vaisseau.id,
-  )
+      modeleVaisseau.id === vaisseau.modeleId ||
+      modeleVaisseau.id === vaisseau.id,
+  );
 
   if (!modele) {
-    return structuredClone(vaisseau)
+    return structuredClone(vaisseau);
   }
 
-  const coqueMax = Number(vaisseau.coqueMax ?? modele.coqueMax ?? 0)
-  const souteMax = Number(vaisseau.souteMax ?? modele.souteMax ?? 0)
-  const carburantMax = Number(vaisseau.carburantMax ?? modele.carburantMax ?? 0)
+  const coqueMax = Number(vaisseau.coqueMax ?? modele.coqueMax ?? 0);
+  const souteMax = Number(vaisseau.souteMax ?? modele.souteMax ?? 0);
+  const carburantMax = Number(
+    vaisseau.carburantMax ?? modele.carburantMax ?? 0,
+  );
 
   return {
     id: vaisseau.id || `${modele.id}_001`,
@@ -161,104 +181,140 @@ export function normaliserVaisseauPossede(vaisseau) {
     coqueMax,
     soute: bornerValeur(Number(vaisseau.soute ?? 0), 0, souteMax),
     souteMax,
-    puissanceMiniere: Number(vaisseau.puissanceMiniere ?? modele.puissanceMiniere ?? 0),
-    dronesMiniersMax: Number(vaisseau.dronesMiniersMax ?? modele.dronesMiniersMax ?? 0),
-    carburant: bornerValeur(Number(vaisseau.carburant ?? carburantMax), 0, carburantMax),
+    puissanceMiniere: Number(
+      vaisseau.puissanceMiniere ?? modele.puissanceMiniere ?? 0,
+    ),
+    dronesMiniersMax: Number(
+      vaisseau.dronesMiniersMax ?? modele.dronesMiniersMax ?? 0,
+    ),
+    carburant: bornerValeur(
+      Number(vaisseau.carburant ?? carburantMax),
+      0,
+      carburantMax,
+    ),
     carburantMax,
-    assuranceNiveau: vaisseau.assuranceNiveau || 'aucune',
+    assuranceNiveau: vaisseau.assuranceNiveau || "aucune",
     assuranceSouscriptionTick: Number(vaisseau.assuranceSouscriptionTick || 0),
     assuranceExpirationTick: Number(vaisseau.assuranceExpirationTick || 0),
     scanner: structuredClone(vaisseau.scanner || modele.scanner || {}),
-    ameliorations: structuredClone(vaisseau.ameliorations || modele.ameliorations || []),
-    ameliorationsMax: structuredClone(vaisseau.ameliorationsMax || modele.ameliorationsMax || {}),
-  }
+    ameliorations: structuredClone(
+      vaisseau.ameliorations || modele.ameliorations || [],
+    ),
+    ameliorationsMax: structuredClone(
+      vaisseau.ameliorationsMax || modele.ameliorationsMax || {},
+    ),
+  };
 }
 
 export function recupererVaisseauActif(etat = recupererEtatJeu()) {
   if (!etat.vaisseauxPossedes || !etat.vaisseauActifId) {
-    return null
+    return null;
   }
 
-  return etat.vaisseauxPossedes.find((vaisseau) => vaisseau.id === etat.vaisseauActifId) || null
+  return (
+    etat.vaisseauxPossedes.find(
+      (vaisseau) => vaisseau.id === etat.vaisseauActifId,
+    ) || null
+  );
 }
 
 export function recupererInformationsCoqueVaisseau(vaisseau) {
   if (!vaisseau) {
     return {
-      code: 'hors_service',
-      label: 'Hors service',
+      code: "hors_service",
+      label: "Hors service",
       seuilMin: 0,
       seuilMax: 0,
       pourcentage: 0,
-    }
+    };
   }
 
-  return recupererEtatCoque(vaisseau.coque, vaisseau.coqueMax)
+  return recupererEtatCoque(vaisseau.coque, vaisseau.coqueMax);
 }
 
-export function recupererInformationsCoqueVaisseauActif(etat = recupererEtatJeu()) {
-  const vaisseauActif = recupererVaisseauActif(etat)
-  return recupererInformationsCoqueVaisseau(vaisseauActif)
+export function recupererInformationsCoqueVaisseauActif(
+  etat = recupererEtatJeu(),
+) {
+  const vaisseauActif = recupererVaisseauActif(etat);
+  return recupererInformationsCoqueVaisseau(vaisseauActif);
 }
 
-export function synchroniserFlotteDepuisVaisseauActif(etat = recupererEtatJeu()) {
-  const vaisseauActif = recupererVaisseauActif(etat)
+export function synchroniserFlotteDepuisVaisseauActif(
+  etat = recupererEtatJeu(),
+) {
+  const vaisseauActif = recupererVaisseauActif(etat);
 
   if (!vaisseauActif || !etat.vaisseau) {
-    return
+    supprimerCarburantRessourcesLegacy(etat);
+    return;
   }
 
-  vaisseauActif.coqueMax = Number(etat.vaisseau.coqueMax ?? vaisseauActif.coqueMax)
+  vaisseauActif.coqueMax = Number(
+    etat.vaisseau.coqueMax ?? vaisseauActif.coqueMax,
+  );
   vaisseauActif.coque = bornerValeur(
     Number(etat.vaisseau.coque ?? vaisseauActif.coque),
     0,
     vaisseauActif.coqueMax,
-  )
+  );
 
-  vaisseauActif.souteMax = Number(etat.vaisseau.souteMax ?? vaisseauActif.souteMax)
+  vaisseauActif.souteMax = Number(
+    etat.vaisseau.souteMax ?? vaisseauActif.souteMax,
+  );
   vaisseauActif.soute = bornerValeur(
     Number(etat.vaisseau.soute ?? vaisseauActif.soute),
     0,
     vaisseauActif.souteMax,
-  )
+  );
 
   vaisseauActif.puissanceMiniere = Number(
     etat.vaisseau.puissanceMiniere ?? vaisseauActif.puissanceMiniere,
-  )
+  );
   vaisseauActif.dronesMiniersMax = Number(
     etat.vaisseau.dronesMiniersMax ?? vaisseauActif.dronesMiniersMax,
-  )
+  );
 
-  vaisseauActif.carburantMax = Number(etat.vaisseau.carburantMax ?? vaisseauActif.carburantMax)
+  vaisseauActif.carburantMax = Number(
+    etat.vaisseau.carburantMax ?? vaisseauActif.carburantMax,
+  );
   vaisseauActif.carburant = bornerValeur(
-    Number(etat.ressources.carburant ?? vaisseauActif.carburant),
+    Number(etat.vaisseau.carburant ?? vaisseauActif.carburant),
     0,
     vaisseauActif.carburantMax,
-  )
+  );
 
   vaisseauActif.assuranceNiveau =
-    etat.vaisseau.assuranceNiveau || vaisseauActif.assuranceNiveau || 'aucune'
+    etat.vaisseau.assuranceNiveau || vaisseauActif.assuranceNiveau || "aucune";
   vaisseauActif.assuranceSouscriptionTick = Number(
-    etat.vaisseau.assuranceSouscriptionTick ?? vaisseauActif.assuranceSouscriptionTick ?? 0,
-  )
+    etat.vaisseau.assuranceSouscriptionTick ??
+      vaisseauActif.assuranceSouscriptionTick ??
+      0,
+  );
   vaisseauActif.assuranceExpirationTick = Number(
-    etat.vaisseau.assuranceExpirationTick ?? vaisseauActif.assuranceExpirationTick ?? 0,
-  )
+    etat.vaisseau.assuranceExpirationTick ??
+      vaisseauActif.assuranceExpirationTick ??
+      0,
+  );
 
-  vaisseauActif.scanner = structuredClone(etat.vaisseau.scanner || vaisseauActif.scanner || {})
+  vaisseauActif.scanner = structuredClone(
+    etat.vaisseau.scanner || vaisseauActif.scanner || {},
+  );
   vaisseauActif.ameliorations = structuredClone(
     etat.vaisseau.ameliorations || vaisseauActif.ameliorations || [],
-  )
+  );
   vaisseauActif.ameliorationsMax = structuredClone(
     etat.vaisseau.ameliorationsMax || vaisseauActif.ameliorationsMax || {},
-  )
+  );
+
+  supprimerCarburantRessourcesLegacy(etat);
 }
 
 export function synchroniserVaisseauActifDansEtat(etat = recupererEtatJeu()) {
-  const vaisseauActif = recupererVaisseauActif(etat)
+  const vaisseauActif = recupererVaisseauActif(etat);
 
   if (!vaisseauActif) {
-    return
+    supprimerCarburantRessourcesLegacy(etat);
+    return;
   }
 
   etat.vaisseau = {
@@ -273,383 +329,478 @@ export function synchroniserVaisseauActifDansEtat(etat = recupererEtatJeu()) {
     souteMax: vaisseauActif.souteMax,
     puissanceMiniere: vaisseauActif.puissanceMiniere,
     dronesMiniersMax: vaisseauActif.dronesMiniersMax,
+    carburant: vaisseauActif.carburant,
     carburantMax: vaisseauActif.carburantMax,
-    assuranceNiveau: vaisseauActif.assuranceNiveau || 'aucune',
-    assuranceSouscriptionTick: Number(vaisseauActif.assuranceSouscriptionTick || 0),
+    assuranceNiveau: vaisseauActif.assuranceNiveau || "aucune",
+    assuranceSouscriptionTick: Number(
+      vaisseauActif.assuranceSouscriptionTick || 0,
+    ),
     assuranceExpirationTick: Number(vaisseauActif.assuranceExpirationTick || 0),
     scanner: structuredClone(vaisseauActif.scanner || {}),
     ameliorations: structuredClone(vaisseauActif.ameliorations || []),
     ameliorationsMax: structuredClone(vaisseauActif.ameliorationsMax || {}),
-  }
+  };
 
-  etat.ressources.carburant = vaisseauActif.carburant
+  supprimerCarburantRessourcesLegacy(etat);
 }
 
-export function hydraterEtatVaisseauxApresChargement(etat = recupererEtatJeu()) {
-  if (!Array.isArray(etat.vaisseauxPossedes) || etat.vaisseauxPossedes.length === 0) {
-    const modeleId = etat.vaisseau?.modeleId || etat.vaisseau?.id || 'hw_mule'
-    const vaisseauHydrate = creerInstanceVaisseauDepuisModele(modeleId)
+export function hydraterEtatVaisseauxApresChargement(
+  etat = recupererEtatJeu(),
+) {
+  const carburantLegacy =
+    etat.vaisseau?.carburant ?? etat.ressources?.carburant;
 
-    vaisseauHydrate.coque = etat.vaisseau?.coque ?? vaisseauHydrate.coque
-    vaisseauHydrate.soute = etat.vaisseau?.soute ?? vaisseauHydrate.soute
-    vaisseauHydrate.souteMax = etat.vaisseau?.souteMax ?? vaisseauHydrate.souteMax
+  if (
+    !Array.isArray(etat.vaisseauxPossedes) ||
+    etat.vaisseauxPossedes.length === 0
+  ) {
+    const modeleId = etat.vaisseau?.modeleId || etat.vaisseau?.id || "hw_mule";
+    const vaisseauHydrate = creerInstanceVaisseauDepuisModele(modeleId);
+
+    vaisseauHydrate.coque = etat.vaisseau?.coque ?? vaisseauHydrate.coque;
+    vaisseauHydrate.soute = etat.vaisseau?.soute ?? vaisseauHydrate.soute;
+    vaisseauHydrate.souteMax =
+      etat.vaisseau?.souteMax ?? vaisseauHydrate.souteMax;
     vaisseauHydrate.puissanceMiniere =
-      etat.vaisseau?.puissanceMiniere ?? vaisseauHydrate.puissanceMiniere
+      etat.vaisseau?.puissanceMiniere ?? vaisseauHydrate.puissanceMiniere;
     vaisseauHydrate.dronesMiniersMax =
-      etat.vaisseau?.dronesMiniersMax ?? vaisseauHydrate.dronesMiniersMax
-    vaisseauHydrate.carburant = etat.ressources?.carburant ?? vaisseauHydrate.carburant
-    vaisseauHydrate.carburantMax = etat.vaisseau?.carburantMax ?? vaisseauHydrate.carburantMax
+      etat.vaisseau?.dronesMiniersMax ?? vaisseauHydrate.dronesMiniersMax;
+    vaisseauHydrate.carburant = carburantLegacy ?? vaisseauHydrate.carburant;
+    vaisseauHydrate.carburantMax =
+      etat.vaisseau?.carburantMax ?? vaisseauHydrate.carburantMax;
     vaisseauHydrate.assuranceNiveau =
-      etat.vaisseau?.assuranceNiveau ?? vaisseauHydrate.assuranceNiveau
+      etat.vaisseau?.assuranceNiveau ?? vaisseauHydrate.assuranceNiveau;
     vaisseauHydrate.assuranceSouscriptionTick =
-      etat.vaisseau?.assuranceSouscriptionTick ?? vaisseauHydrate.assuranceSouscriptionTick
+      etat.vaisseau?.assuranceSouscriptionTick ??
+      vaisseauHydrate.assuranceSouscriptionTick;
     vaisseauHydrate.assuranceExpirationTick =
-      etat.vaisseau?.assuranceExpirationTick ?? vaisseauHydrate.assuranceExpirationTick
-    vaisseauHydrate.scanner = structuredClone(etat.vaisseau?.scanner || vaisseauHydrate.scanner)
+      etat.vaisseau?.assuranceExpirationTick ??
+      vaisseauHydrate.assuranceExpirationTick;
+    vaisseauHydrate.scanner = structuredClone(
+      etat.vaisseau?.scanner || vaisseauHydrate.scanner,
+    );
     vaisseauHydrate.ameliorations = structuredClone(
       etat.vaisseau?.ameliorations || vaisseauHydrate.ameliorations,
-    )
+    );
     vaisseauHydrate.ameliorationsMax = structuredClone(
       etat.vaisseau?.ameliorationsMax || vaisseauHydrate.ameliorationsMax || {},
-    )
+    );
 
-    etat.vaisseauxPossedes = [normaliserVaisseauPossede(vaisseauHydrate)]
-    etat.vaisseauActifId = etat.vaisseauxPossedes[0].id
+    etat.vaisseauxPossedes = [normaliserVaisseauPossede(vaisseauHydrate)];
+    etat.vaisseauActifId = etat.vaisseauxPossedes[0].id;
   } else {
     etat.vaisseauxPossedes = etat.vaisseauxPossedes
-      .map((vaisseau) => normaliserVaisseauPossede(vaisseau))
-      .filter(Boolean)
+      .map((vaisseau) => {
+        const estVaisseauActifLegacy =
+          vaisseau.id === etat.vaisseauActifId ||
+          (!etat.vaisseauActifId && vaisseau.id === etat.vaisseau?.id);
+
+        if (
+          estVaisseauActifLegacy &&
+          vaisseau.carburant === undefined &&
+          carburantLegacy !== undefined
+        ) {
+          return normaliserVaisseauPossede({
+            ...vaisseau,
+            carburant: carburantLegacy,
+          });
+        }
+
+        return normaliserVaisseauPossede(vaisseau);
+      })
+      .filter(Boolean);
   }
 
   if (!etat.vaisseauActifId && etat.vaisseauxPossedes.length > 0) {
-    etat.vaisseauActifId = etat.vaisseauxPossedes[0].id
+    etat.vaisseauActifId = etat.vaisseauxPossedes[0].id;
   }
 
-  const vaisseauActif = recupererVaisseauActif(etat)
+  const vaisseauActif = recupererVaisseauActif(etat);
 
   if (!vaisseauActif && etat.vaisseauxPossedes.length > 0) {
-    etat.vaisseauActifId = etat.vaisseauxPossedes[0].id
+    etat.vaisseauActifId = etat.vaisseauxPossedes[0].id;
   }
 
   if (!etat.ressources.cargaisonMarchande) {
-    etat.ressources.cargaisonMarchande = {}
+    etat.ressources.cargaisonMarchande = {};
   }
 
-  synchroniserVaisseauActifDansEtat(etat)
+  synchroniserVaisseauActifDansEtat(etat);
+  supprimerCarburantRessourcesLegacy(etat);
 }
 
 export function possedeDejaModele(modeleId, etat = recupererEtatJeu()) {
-  return (etat.vaisseauxPossedes || []).some((vaisseau) => vaisseau.modeleId === modeleId)
+  return (etat.vaisseauxPossedes || []).some(
+    (vaisseau) => vaisseau.modeleId === modeleId,
+  );
 }
 
 export function peutChangerDeVaisseau(idVaisseau, etat = recupererEtatJeu()) {
-  if (etat.positionLocale !== 'station') {
-    return { ok: false, raison: 'Le changement de vaisseau n’est possible qu’en station.' }
+  if (etat.positionLocale !== "station") {
+    return {
+      ok: false,
+      raison: "Le changement de vaisseau n’est possible qu’en station.",
+    };
   }
 
   if (etat.navigation?.enVoyage) {
-    return { ok: false, raison: 'Impossible de changer de vaisseau pendant un trajet.' }
+    return {
+      ok: false,
+      raison: "Impossible de changer de vaisseau pendant un trajet.",
+    };
   }
 
   const vaisseauCible =
-    (etat.vaisseauxPossedes || []).find((vaisseau) => vaisseau.id === idVaisseau) || null
+    (etat.vaisseauxPossedes || []).find(
+      (vaisseau) => vaisseau.id === idVaisseau,
+    ) || null;
 
   if (!vaisseauCible) {
-    return { ok: false, raison: 'Vaisseau cible introuvable dans le hangar.' }
+    return { ok: false, raison: "Vaisseau cible introuvable dans le hangar." };
   }
 
   if (etat.vaisseauActifId === idVaisseau) {
-    return { ok: false, raison: 'Ce vaisseau est déjà actif.' }
+    return { ok: false, raison: "Ce vaisseau est déjà actif." };
   }
 
   if ((etat.vaisseau?.soute || 0) > vaisseauCible.souteMax) {
     return {
       ok: false,
-      raison: 'La soute actuelle dépasse la capacité maximale du vaisseau cible.',
-    }
+      raison:
+        "La soute actuelle dépasse la capacité maximale du vaisseau cible.",
+    };
   }
 
-  return { ok: true, raison: null }
+  return { ok: true, raison: null };
 }
 
 export function changerVaisseauActif(idVaisseau) {
-  const etat = recupererEtatJeu()
-  const validation = peutChangerDeVaisseau(idVaisseau, etat)
+  const etat = recupererEtatJeu();
+  const validation = peutChangerDeVaisseau(idVaisseau, etat);
 
   if (!validation.ok) {
-    ajouterAuJournal(validation.raison, 'evenements')
-    return false
+    ajouterAuJournal(validation.raison, "evenements");
+    return false;
   }
 
-  synchroniserFlotteDepuisVaisseauActif(etat)
+  synchroniserFlotteDepuisVaisseauActif(etat);
 
-  const ancienVaisseau = recupererVaisseauActif(etat)
-  const vaisseauCible = etat.vaisseauxPossedes.find((vaisseau) => vaisseau.id === idVaisseau)
-  const cargaisonActuelle = etat.vaisseau?.soute || 0
+  const ancienVaisseau = recupererVaisseauActif(etat);
+  const vaisseauCible = etat.vaisseauxPossedes.find(
+    (vaisseau) => vaisseau.id === idVaisseau,
+  );
+  const cargaisonActuelle = etat.vaisseau?.soute || 0;
 
   if (ancienVaisseau) {
-    ancienVaisseau.soute = 0
+    ancienVaisseau.soute = 0;
   }
 
-  vaisseauCible.soute = cargaisonActuelle
-  etat.vaisseauActifId = vaisseauCible.id
+  vaisseauCible.soute = cargaisonActuelle;
+  etat.vaisseauActifId = vaisseauCible.id;
 
-  synchroniserVaisseauActifDansEtat(etat)
+  synchroniserVaisseauActifDansEtat(etat);
 
   ajouterAuJournal(
     `Changement de châssis effectué : ${vaisseauCible.nom} désormais actif.`,
-    'evenements',
-  )
+    "evenements",
+  );
 
-  return true
+  return true;
 }
 
-export function recupererCatalogueVaisseauxStation(secteurId, etat = recupererEtatJeu()) {
-  if (secteurId !== 'ceinture_khepri') {
-    return []
+export function recupererCatalogueVaisseauxStation(
+  secteurId,
+  etat = recupererEtatJeu(),
+) {
+  if (secteurId !== "ceinture_khepri") {
+    return [];
   }
 
   return donneesVaisseaux
-    .filter((vaisseau) => vaisseau.id === 'hw_caravel')
+    .filter((vaisseau) => vaisseau.id === "hw_caravel")
     .map((modele) => ({
       ...modele,
       dejaPossede: possedeDejaModele(modele.id, etat),
-    }))
+    }));
 }
 
 export function peutAcheterVaisseau(modeleId, etat = recupererEtatJeu()) {
-  if (etat.positionLocale !== 'station') {
-    return { ok: false, raison: 'Achat de vaisseau possible uniquement en station.' }
+  if (etat.positionLocale !== "station") {
+    return {
+      ok: false,
+      raison: "Achat de vaisseau possible uniquement en station.",
+    };
   }
 
   if (etat.navigation?.enVoyage) {
-    return { ok: false, raison: 'Impossible d’acheter un vaisseau pendant un trajet.' }
+    return {
+      ok: false,
+      raison: "Impossible d’acheter un vaisseau pendant un trajet.",
+    };
   }
 
-  if (etat.secteurCourant?.id !== 'ceinture_khepri') {
-    return { ok: false, raison: 'Aucun marchand de vaisseaux disponible dans ce secteur.' }
+  if (etat.secteurCourant?.id !== "ceinture_khepri") {
+    return {
+      ok: false,
+      raison: "Aucun marchand de vaisseaux disponible dans ce secteur.",
+    };
   }
 
-  const modele = donneesVaisseaux.find((vaisseau) => vaisseau.id === modeleId)
+  const modele = donneesVaisseaux.find((vaisseau) => vaisseau.id === modeleId);
 
   if (!modele) {
-    return { ok: false, raison: 'Modèle de vaisseau introuvable.' }
+    return { ok: false, raison: "Modèle de vaisseau introuvable." };
   }
 
   if (possedeDejaModele(modeleId, etat)) {
-    return { ok: false, raison: 'Ce vaisseau est déjà présent dans votre hangar.' }
+    return {
+      ok: false,
+      raison: "Ce vaisseau est déjà présent dans votre hangar.",
+    };
   }
 
   if ((etat.ressources?.credits || 0) < (modele.prix || 0)) {
-    return { ok: false, raison: 'Crédits insuffisants pour cet achat.' }
+    return { ok: false, raison: "Crédits insuffisants pour cet achat." };
   }
 
-  return { ok: true, raison: null }
+  return { ok: true, raison: null };
 }
 
 export function acheterVaisseau(modeleId) {
-  const etat = recupererEtatJeu()
-  const validation = peutAcheterVaisseau(modeleId, etat)
+  const etat = recupererEtatJeu();
+  const validation = peutAcheterVaisseau(modeleId, etat);
 
   if (!validation.ok) {
-    ajouterAuJournal(validation.raison, 'commerce')
-    return false
+    ajouterAuJournal(validation.raison, "commerce");
+    return false;
   }
 
-  const modele = donneesVaisseaux.find((vaisseau) => vaisseau.id === modeleId)
+  const modele = donneesVaisseaux.find((vaisseau) => vaisseau.id === modeleId);
   const exemplairesExistants = etat.vaisseauxPossedes.filter(
     (vaisseau) => vaisseau.modeleId === modeleId,
-  ).length
-  const suffixe = String(exemplairesExistants + 1).padStart(3, '0')
-  const nouveauVaisseau = creerInstanceVaisseauDepuisModele(modeleId, suffixe)
+  ).length;
+  const suffixe = String(exemplairesExistants + 1).padStart(3, "0");
+  const nouveauVaisseau = creerInstanceVaisseauDepuisModele(modeleId, suffixe);
 
-  etat.ressources.credits -= modele.prix
-  etat.vaisseauxPossedes.push(normaliserVaisseauPossede(nouveauVaisseau))
+  etat.ressources.credits -= modele.prix;
+  etat.vaisseauxPossedes.push(normaliserVaisseauPossede(nouveauVaisseau));
 
   ajouterAuJournal(
     `Acquisition confirmée : ${modele.nom} ajouté au hangar pour ${modele.prix} cr.`,
-    'commerce',
-  )
+    "commerce",
+  );
 
-  return true
+  return true;
 }
 
-export function peutSouscrireAssuranceVaisseauActif(niveau, etat = recupererEtatJeu()) {
-  const vaisseauActif = recupererVaisseauActif(etat)
+export function peutSouscrireAssuranceVaisseauActif(
+  niveau,
+  etat = recupererEtatJeu(),
+) {
+  const vaisseauActif = recupererVaisseauActif(etat);
 
   if (!vaisseauActif) {
-    return { ok: false, raison: 'Aucun vaisseau actif disponible.' }
+    return { ok: false, raison: "Aucun vaisseau actif disponible." };
   }
 
-  if (etat.positionLocale !== 'station') {
-    return { ok: false, raison: 'La souscription d’assurance est possible uniquement en station.' }
+  if (etat.positionLocale !== "station") {
+    return {
+      ok: false,
+      raison: "La souscription d’assurance est possible uniquement en station.",
+    };
   }
 
   if (etat.navigation?.enVoyage) {
-    return { ok: false, raison: 'Impossible de modifier une assurance pendant un trajet.' }
+    return {
+      ok: false,
+      raison: "Impossible de modifier une assurance pendant un trajet.",
+    };
   }
 
-  const niveauxAutorises = ['aucune', 'tiers', 'standard', 'premium', 'elite']
+  const niveauxAutorises = ["aucune", "tiers", "standard", "premium", "elite"];
 
   if (!niveauxAutorises.includes(niveau)) {
-    return { ok: false, raison: 'Niveau d’assurance invalide.' }
+    return { ok: false, raison: "Niveau d’assurance invalide." };
   }
 
-  const contratActif = estContratAssuranceActif(vaisseauActif)
+  const contratActif = estContratAssuranceActif(vaisseauActif);
 
-  if (niveau === 'aucune' && vaisseauActif.assuranceNiveau === 'aucune') {
-    return { ok: false, raison: 'Aucun contrat actif à résilier.' }
+  if (niveau === "aucune" && vaisseauActif.assuranceNiveau === "aucune") {
+    return { ok: false, raison: "Aucun contrat actif à résilier." };
   }
 
-  if (niveau !== 'aucune' && vaisseauActif.assuranceNiveau === niveau && contratActif) {
-    return { ok: false, raison: 'Ce contrat est déjà actif sur le vaisseau.' }
+  if (
+    niveau !== "aucune" &&
+    vaisseauActif.assuranceNiveau === niveau &&
+    contratActif
+  ) {
+    return { ok: false, raison: "Ce contrat est déjà actif sur le vaisseau." };
   }
 
-  const cout = calculerCoutAssurance(vaisseauActif.modeleId, niveau)
+  const cout = calculerCoutAssurance(vaisseauActif.modeleId, niveau);
 
   if ((etat.ressources?.credits || 0) < cout) {
-    return { ok: false, raison: 'Crédits insuffisants pour cette formule d’assurance.' }
+    return {
+      ok: false,
+      raison: "Crédits insuffisants pour cette formule d’assurance.",
+    };
   }
 
-  return { ok: true, raison: null, cout }
+  return { ok: true, raison: null, cout };
 }
 
 export function souscrireAssuranceVaisseauActif(niveau) {
-  const etat = recupererEtatJeu()
-  const validation = peutSouscrireAssuranceVaisseauActif(niveau, etat)
+  const etat = recupererEtatJeu();
+  const validation = peutSouscrireAssuranceVaisseauActif(niveau, etat);
 
   if (!validation.ok) {
-    ajouterAuJournal(validation.raison, 'commerce')
-    return false
+    ajouterAuJournal(validation.raison, "commerce");
+    return false;
   }
 
-  synchroniserFlotteDepuisVaisseauActif(etat)
+  synchroniserFlotteDepuisVaisseauActif(etat);
 
-  const tickCourant = recupererTickCourant()
-  const vaisseauActif = recupererVaisseauActif(etat)
+  const tickCourant = recupererTickCourant();
+  const vaisseauActif = recupererVaisseauActif(etat);
 
-  if (niveau === 'aucune') {
-    reinitialiserContratAssuranceVaisseau(vaisseauActif)
+  if (niveau === "aucune") {
+    reinitialiserContratAssuranceVaisseau(vaisseauActif);
 
-    synchroniserVaisseauActifDansEtat(etat)
+    synchroniserVaisseauActifDansEtat(etat);
 
-    ajouterAuJournal(`Résiliation du contrat d’assurance pour ${vaisseauActif.nom}.`, 'commerce')
+    ajouterAuJournal(
+      `Résiliation du contrat d’assurance pour ${vaisseauActif.nom}.`,
+      "commerce",
+    );
 
-    return true
+    return true;
   }
 
-  vaisseauActif.assuranceNiveau = niveau
-  vaisseauActif.assuranceSouscriptionTick = tickCourant
-  vaisseauActif.assuranceExpirationTick = tickCourant + DUREE_CONTRAT_ASSURANCE_TICKS
-  etat.ressources.credits -= validation.cout
+  vaisseauActif.assuranceNiveau = niveau;
+  vaisseauActif.assuranceSouscriptionTick = tickCourant;
+  vaisseauActif.assuranceExpirationTick =
+    tickCourant + DUREE_CONTRAT_ASSURANCE_TICKS;
+  etat.ressources.credits -= validation.cout;
 
-  synchroniserVaisseauActifDansEtat(etat)
+  synchroniserVaisseauActifDansEtat(etat);
 
   ajouterAuJournal(
     `Contrat d’assurance ${recupererLibelleAssurance(niveau)} souscrit pour ${vaisseauActif.nom} (${validation.cout} cr, validité 720 ticks).`,
-    'commerce',
-  )
+    "commerce",
+  );
 
-  return true
+  return true;
 }
 
-export function estVaisseauIndemnisable(vaisseau, tickCourant = recupererTickCourant()) {
+export function estVaisseauIndemnisable(
+  vaisseau,
+  tickCourant = recupererTickCourant(),
+) {
   if (!vaisseau) {
-    return false
+    return false;
   }
 
-  return estContratAssuranceActif(vaisseau, tickCourant)
+  return estContratAssuranceActif(vaisseau, tickCourant);
 }
 
-export function recupererTauxIndemnisationVaisseau(vaisseau, tickCourant = recupererTickCourant()) {
+export function recupererTauxIndemnisationVaisseau(
+  vaisseau,
+  tickCourant = recupererTickCourant(),
+) {
   if (!estVaisseauIndemnisable(vaisseau, tickCourant)) {
-    return 0
+    return 0;
   }
 
-  return recupererTauxRemboursementAssurance(vaisseau.assuranceNiveau)
+  return recupererTauxRemboursementAssurance(vaisseau.assuranceNiveau);
 }
 
 export function calculerMontantIndemnisationVaisseau(
   vaisseau,
   tickCourant = recupererTickCourant(),
 ) {
-  const tauxIndemnisation = recupererTauxIndemnisationVaisseau(vaisseau, tickCourant)
-  const valeurMarchande = recupererValeurMarchandeVaisseau(vaisseau)
+  const tauxIndemnisation = recupererTauxIndemnisationVaisseau(
+    vaisseau,
+    tickCourant,
+  );
+  const valeurMarchande = recupererValeurMarchandeVaisseau(vaisseau);
 
   if (tauxIndemnisation <= 0 || valeurMarchande <= 0) {
-    return 0
+    return 0;
   }
 
-  return Math.max(0, Math.round(valeurMarchande * tauxIndemnisation))
+  return Math.max(0, Math.round(valeurMarchande * tauxIndemnisation));
 }
 
-export function peutDeclencherIndemnisationAssuranceVaisseauActif(etat = recupererEtatJeu()) {
-  const vaisseauActif = recupererVaisseauActif(etat)
+export function peutDeclencherIndemnisationAssuranceVaisseauActif(
+  etat = recupererEtatJeu(),
+) {
+  const vaisseauActif = recupererVaisseauActif(etat);
 
   if (!vaisseauActif) {
     return {
       ok: false,
-      raison: 'Aucun vaisseau actif disponible pour une indemnisation.',
+      raison: "Aucun vaisseau actif disponible pour une indemnisation.",
       montant: 0,
-    }
+    };
   }
 
   if (!estVaisseauIndemnisable(vaisseauActif)) {
     return {
       ok: false,
-      raison: 'Aucun contrat actif ne permet une indemnisation sur ce vaisseau.',
+      raison:
+        "Aucun contrat actif ne permet une indemnisation sur ce vaisseau.",
       montant: 0,
-    }
+    };
   }
 
-  const montant = calculerMontantIndemnisationVaisseau(vaisseauActif)
+  const montant = calculerMontantIndemnisationVaisseau(vaisseauActif);
 
   if (montant <= 0) {
     return {
       ok: false,
-      raison: 'Le contrat actif ne permet aucune indemnisation exploitable.',
+      raison: "Le contrat actif ne permet aucune indemnisation exploitable.",
       montant: 0,
-    }
+    };
   }
 
   return {
     ok: true,
     raison: null,
     montant,
-  }
+  };
 }
 
 export function declencherIndemnisationAssuranceVaisseauActif() {
-  const etat = recupererEtatJeu()
-  synchroniserFlotteDepuisVaisseauActif(etat)
+  const etat = recupererEtatJeu();
+  synchroniserFlotteDepuisVaisseauActif(etat);
 
-  const vaisseauActif = recupererVaisseauActif(etat)
-  const validation = peutDeclencherIndemnisationAssuranceVaisseauActif(etat)
+  const vaisseauActif = recupererVaisseauActif(etat);
+  const validation = peutDeclencherIndemnisationAssuranceVaisseauActif(etat);
 
   if (!validation.ok || !vaisseauActif) {
     return {
       ok: false,
       raison: validation.raison,
       montant: 0,
-    }
+    };
   }
 
-  const niveauAvantIndemnisation = vaisseauActif.assuranceNiveau
-  const montant = validation.montant
+  const niveauAvantIndemnisation = vaisseauActif.assuranceNiveau;
+  const montant = validation.montant;
 
-  etat.ressources.credits += montant
-  reinitialiserContratAssuranceVaisseau(vaisseauActif)
+  etat.ressources.credits += montant;
+  reinitialiserContratAssuranceVaisseau(vaisseauActif);
 
-  synchroniserVaisseauActifDansEtat(etat)
+  synchroniserVaisseauActifDansEtat(etat);
 
   ajouterAuJournal(
     `Indemnisation d’assurance ${recupererLibelleAssurance(niveauAvantIndemnisation)} versée pour ${vaisseauActif.nom} : +${montant} cr.`,
-    'commerce',
-  )
+    "commerce",
+  );
 
   return {
     ok: true,
     raison: null,
     montant,
-  }
+  };
 }
