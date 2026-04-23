@@ -3,98 +3,98 @@
     "id": "ceinture_khepri__anneau_demeter",
     "origine": "ceinture_khepri",
     "destination": "anneau_demeter",
-    "coutCarburant": 2,
-    "tempsTrajet": 3
+    "coutCarburant": 3,
+    "tempsTrajet": 5
   },
   {
     "id": "anneau_demeter__ceinture_khepri",
     "origine": "anneau_demeter",
     "destination": "ceinture_khepri",
-    "coutCarburant": 2,
-    "tempsTrajet": 3
+    "coutCarburant": 3,
+    "tempsTrajet": 5
   },
   {
     "id": "anneau_demeter__forge_tantalus",
     "origine": "anneau_demeter",
     "destination": "forge_tantalus",
-    "coutCarburant": 2,
-    "tempsTrajet": 3
+    "coutCarburant": 3,
+    "tempsTrajet": 5
   },
   {
     "id": "forge_tantalus__anneau_demeter",
     "origine": "forge_tantalus",
     "destination": "anneau_demeter",
-    "coutCarburant": 2,
-    "tempsTrajet": 3
+    "coutCarburant": 3,
+    "tempsTrajet": 5
   },
   {
     "id": "forge_tantalus__banc_persephone",
     "origine": "forge_tantalus",
     "destination": "banc_persephone",
-    "coutCarburant": 2,
-    "tempsTrajet": 3
+    "coutCarburant": 3,
+    "tempsTrajet": 5
   },
   {
     "id": "banc_persephone__forge_tantalus",
     "origine": "banc_persephone",
     "destination": "forge_tantalus",
-    "coutCarburant": 2,
-    "tempsTrajet": 3
+    "coutCarburant": 3,
+    "tempsTrajet": 5
   },
   {
     "id": "banc_persephone__drift_nyx",
     "origine": "banc_persephone",
     "destination": "drift_nyx",
-    "coutCarburant": 2,
-    "tempsTrajet": 3
+    "coutCarburant": 3,
+    "tempsTrajet": 5
   },
   {
     "id": "drift_nyx__banc_persephone",
     "origine": "drift_nyx",
     "destination": "banc_persephone",
-    "coutCarburant": 2,
-    "tempsTrajet": 3
+    "coutCarburant": 3,
+    "tempsTrajet": 5
   },
   {
     "id": "drift_nyx__nuee_hecate",
     "origine": "drift_nyx",
     "destination": "nuee_hecate",
-    "coutCarburant": 2,
-    "tempsTrajet": 3
+    "coutCarburant": 3,
+    "tempsTrajet": 5
   },
   {
     "id": "nuee_hecate__drift_nyx",
     "origine": "nuee_hecate",
     "destination": "drift_nyx",
-    "coutCarburant": 2,
-    "tempsTrajet": 3
+    "coutCarburant": 3,
+    "tempsTrajet": 5
   },
   {
     "id": "ceinture_khepri__forge_tantalus",
     "origine": "ceinture_khepri",
     "destination": "forge_tantalus",
-    "coutCarburant": 3,
-    "tempsTrajet": 4
+    "coutCarburant": 5,
+    "tempsTrajet": 6
   },
   {
     "id": "forge_tantalus__ceinture_khepri",
     "origine": "forge_tantalus",
     "destination": "ceinture_khepri",
-    "coutCarburant": 3,
-    "tempsTrajet": 4
+    "coutCarburant": 5,
+    "tempsTrajet": 6
   },
   {
     "id": "banc_persephone__nuee_hecate",
     "origine": "banc_persephone",
     "destination": "nuee_hecate",
-    "coutCarburant": 3,
-    "tempsTrajet": 4
+    "coutCarburant": 5,
+    "tempsTrajet": 6
   },
   {
     "id": "nuee_hecate__banc_persephone",
     "origine": "nuee_hecate",
     "destination": "banc_persephone",
-    "coutCarburant": 3,
-    "tempsTrajet": 4
+    "coutCarburant": 5,
+    "tempsTrajet": 6
   }
 ]

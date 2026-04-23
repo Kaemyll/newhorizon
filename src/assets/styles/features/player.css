@@ -1,0 +1,133 @@
+/* =========================================================
+   FEATURE — PILOTE
+   ---------------------------------------------------------
+   Rôle :
+   - panneau d’identité du joueur
+   - statut, réputation, fortune
+   - compacité adaptée à la colonne gauche
+   ========================================================= */
+
+.player-panel {
+  position: relative;
+  min-height: unset;
+  padding-bottom: 9px;
+}
+
+.player-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+          linear-gradient(135deg, rgba(125, 184, 255, 0.05), transparent 45%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.015), transparent 55%);
+  pointer-events: none;
+}
+
+.player-panel-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.player-panel-header h2 {
+  margin-bottom: 0;
+}
+
+.player-panel-badge {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 58%;
+  padding: 2px 7px;
+  border: 1px solid rgba(125, 184, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(125, 184, 255, 0.08);
+  font-size: 0.64rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.92;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-panel-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
+}
+
+.player-panel-card {
+  padding: 5px 8px 5px;
+  border: 1px solid rgba(125, 184, 255, 0.08);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.player-panel-label {
+  display: block;
+  margin-bottom: 1px;
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.66;
+}
+
+.player-panel-value {
+  display: block;
+  font-size: 0.84rem;
+  line-height: 1.05;
+  color: #d8e7f7;
+}
+
+.player-panel-line-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.player-panel-edit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid rgba(125, 184, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(125, 184, 255, 0.06);
+  color: #d8e7f7;
+  font-size: 0.68rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          opacity var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+.player-panel-edit-button:hover {
+  background: rgba(125, 184, 255, 0.12);
+  border-color: rgba(125, 184, 255, 0.28);
+}
+
+.player-panel-edit-row {
+  margin-top: 2px;
+}
+
+.player-panel-input {
+  width: 100%;
+  padding: 0.34rem 0.45rem;
+  border: 1px solid #3c536b;
+  border-radius: 6px;
+  background: #0f1822;
+  color: #eef5fb;
+  font-size: 0.82rem;
+  line-height: 1.05;
+}

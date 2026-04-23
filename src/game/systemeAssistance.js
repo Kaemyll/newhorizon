@@ -1,80 +1,100 @@
-import { recupererEtatJeu } from './etatJeu'
-import { donneesSecteurs } from './dataSecteurs'
-import { calculerTauxTaxePourSecurite } from './systemeCommerce'
-import { ajouterAuJournal, rappelerDrones } from './systemeMinage'
+import { recupererEtatJeu } from "./etatJeu";
+import { donneesSecteurs } from "./dataSecteurs";
+import { calculerTauxTaxePourSecurite } from "./systemeCommerce";
+import { ajouterAuJournal, rappelerDrones } from "./systemeMinage";
+import {
+  recupererVaisseauActif,
+  synchroniserVaisseauActifDansEtat,
+} from "./systemeVaisseaux";
 
 export function verifierPanneSecheEtDeclencher() {
-  const etat = recupererEtatJeu()
+  const etat = recupererEtatJeu();
+  const vaisseauActif = recupererVaisseauActif(etat);
+
+  if (!vaisseauActif) {
+    return;
+  }
 
   if (etat.assistance?.remorquageEnCours) {
-    return
+    return;
   }
 
   if (etat.navigation?.enVoyage) {
-    return
+    return;
   }
 
-  if (etat.positionLocale === 'station') {
-    return
+  if (etat.positionLocale === "station") {
+    return;
   }
 
-  if (etat.ressources.carburant > 0) {
-    return
+  if (vaisseauActif.carburant > 0) {
+    return;
   }
 
-  const secteur = donneesSecteurs.find((s) => s.id === etat.secteurCourant.id)
-  const stationNom = secteur?.stationPrincipale?.nom || 'station locale'
+  const secteur = donneesSecteurs.find((s) => s.id === etat.secteurCourant.id);
+  const stationNom = secteur?.stationPrincipale?.nom || "station locale";
 
-  rappelerDrones(true)
+  rappelerDrones(true);
 
-  etat.assistance.remorquageEnCours = true
-  etat.assistance.ticksRestants = 4
-  etat.assistance.stationCibleNom = stationNom
+  vaisseauActif.carburant = 0;
+  synchroniserVaisseauActifDansEtat(etat);
 
-  ajouterAuJournal('Propulsion indisponible : carburant épuisé.', 'evenements', 'critique')
+  etat.assistance.remorquageEnCours = true;
+  etat.assistance.ticksRestants = 4;
+  etat.assistance.stationCibleNom = stationNom;
+
   ajouterAuJournal(
-    'Assistance orbitale requise. Service de remorquage déclenché.',
-    'evenements',
-    'critique',
-  )
-  ajouterAuJournal(`Remorquage estimé : 4 ticks jusqu’à ${stationNom}.`, 'evenements', 'critique')
+    "Propulsion indisponible : carburant épuisé.",
+    "evenements",
+    "critique",
+  );
+  ajouterAuJournal(
+    "Assistance orbitale requise. Service de remorquage déclenché.",
+    "evenements",
+    "critique",
+  );
+  ajouterAuJournal(
+    `Remorquage estimé : 4 ticks jusqu’à ${stationNom}.`,
+    "evenements",
+    "critique",
+  );
 }
 
 export function faireAvancerRemorquage() {
-  const etat = recupererEtatJeu()
+  const etat = recupererEtatJeu();
 
   if (!etat.assistance?.remorquageEnCours) {
-    return
+    return;
   }
 
-  etat.assistance.ticksRestants -= 1
+  etat.assistance.ticksRestants -= 1;
 
   if (etat.assistance.ticksRestants > 0) {
-    return
+    return;
   }
 
-  const secteur = donneesSecteurs.find((s) => s.id === etat.secteurCourant.id)
-  const station = secteur?.stationPrincipale
-  const tauxTaxe = calculerTauxTaxePourSecurite(secteur?.securite ?? 1)
-  const coutBase = etat.assistance.coutBase ?? 5
-  const taxe = Math.floor(coutBase * tauxTaxe)
-  const coutFinal = coutBase + taxe
+  const secteur = donneesSecteurs.find((s) => s.id === etat.secteurCourant.id);
+  const station = secteur?.stationPrincipale;
+  const tauxTaxe = calculerTauxTaxePourSecurite(secteur?.securite ?? 1);
+  const coutBase = etat.assistance.coutBase ?? 5;
+  const taxe = Math.floor(coutBase * tauxTaxe);
+  const coutFinal = coutBase + taxe;
 
-  etat.ressources.credits -= coutFinal
-  etat.positionLocale = 'station'
-  etat.assistance.remorquageEnCours = false
-  etat.assistance.ticksRestants = 0
-  etat.assistance.stationCibleNom = null
-  etat.exploration.siteActif = null
+  etat.ressources.credits -= coutFinal;
+  etat.positionLocale = "station";
+  etat.assistance.remorquageEnCours = false;
+  etat.assistance.ticksRestants = 0;
+  etat.assistance.stationCibleNom = null;
+  etat.exploration.siteActif = null;
 
   ajouterAuJournal(
-    `Remorquage terminé. Vaisseau amarré à ${station?.nom || 'la station locale'}.`,
-    'commerce',
-    'info',
-  )
+    `Remorquage terminé. Vaisseau amarré à ${station?.nom || "la station locale"}.`,
+    "commerce",
+    "info",
+  );
   ajouterAuJournal(
     `Frais d’assistance : ${coutBase} cr + ${taxe} cr de taxe = ${coutFinal} cr.`,
-    'commerce',
-    'alerte',
-  )
+    "commerce",
+    "alerte",
+  );
 }

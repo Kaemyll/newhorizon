@@ -1,0 +1,420 @@
+/* =========================================================
+   FEATURE — BANDEAU CONTEXTUEL
+   ---------------------------------------------------------
+   Rôle :
+   - affiche un bandeau immersif compact dans la colonne centrale
+   - matérialise le contexte courant du joueur
+   - sert de placeholder durable avant intégration des assets
+   - reste utilisable en fallback si une bannière image manque
+
+   Emplacement :
+   - colonne centrale
+   - au-dessus du panneau actif
+   ========================================================= */
+
+.context-banner {
+    --context-banner-height: 96px;
+    --context-banner-accent-rgb: 125, 184, 255;
+
+    position: relative;
+    flex: 0 0 var(--context-banner-height);
+    height: var(--context-banner-height);
+    min-height: var(--context-banner-height);
+    max-height: var(--context-banner-height);
+    margin-bottom: 0.55rem;
+    overflow: hidden;
+    border: 1px solid rgba(125, 184, 255, 0.16);
+    border-radius: 14px;
+    background:
+            radial-gradient(circle at 18% 35%, rgba(125, 184, 255, 0.14), transparent 34%),
+            linear-gradient(135deg, rgba(12, 24, 42, 0.98), rgba(5, 11, 20, 0.98));
+    box-shadow:
+            inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+            0 8px 16px rgba(0, 0, 0, 0.14);
+}
+
+.context-banner::before,
+.context-banner::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.context-banner::before {
+    top: 0;
+    height: 2px;
+    background: linear-gradient(
+            90deg,
+            rgba(var(--context-banner-accent-rgb), 0.18) 0%,
+            rgba(var(--context-banner-accent-rgb), 0.95) 12%,
+            rgba(var(--context-banner-accent-rgb), 0.95) 88%,
+            rgba(var(--context-banner-accent-rgb), 0.18) 100%
+    );
+    box-shadow: 0 0 8px rgba(var(--context-banner-accent-rgb), 0.28);
+}
+
+.context-banner::after {
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(
+            90deg,
+            rgba(var(--context-banner-accent-rgb), 0.18) 0%,
+            rgba(var(--context-banner-accent-rgb), 0.95) 12%,
+            rgba(var(--context-banner-accent-rgb), 0.95) 88%,
+            rgba(var(--context-banner-accent-rgb), 0.18) 100%
+    );
+    box-shadow: 0 0 8px rgba(var(--context-banner-accent-rgb), 0.22);
+}
+
+.context-banner-visual {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.context-banner-grid {
+    position: absolute;
+    inset: 0;
+    background:
+            linear-gradient(90deg, rgba(255, 255, 255, 0.032) 1px, transparent 1px),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+    background-size: 30px 30px;
+    opacity: 0.13;
+}
+
+.context-banner-orb {
+    position: absolute;
+    display: block;
+    border-radius: 999px;
+    filter: blur(1px);
+    opacity: 0.58;
+}
+
+.context-banner-orb--primary {
+    width: 150px;
+    height: 150px;
+    right: -38px;
+    top: -72px;
+    background: radial-gradient(circle, rgba(125, 184, 255, 0.32), transparent 62%);
+}
+
+.context-banner-orb--secondary {
+    width: 110px;
+    height: 110px;
+    left: 8%;
+    bottom: -68px;
+    background: radial-gradient(circle, rgba(214, 146, 58, 0.16), transparent 66%);
+}
+
+.context-banner-orb--tertiary {
+    width: 82px;
+    height: 82px;
+    left: 50%;
+    top: 10%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.07), transparent 68%);
+}
+
+.context-banner-line {
+    position: absolute;
+    display: block;
+    height: 1px;
+    transform-origin: center;
+    background: linear-gradient(90deg, transparent, rgba(184, 226, 255, 0.36), transparent);
+    opacity: 0.38;
+}
+
+.context-banner-line--one {
+    width: 78%;
+    right: -10%;
+    top: 30%;
+    transform: rotate(-6deg);
+}
+
+.context-banner-line--two {
+    width: 58%;
+    left: -12%;
+    bottom: 34%;
+    transform: rotate(-9deg);
+}
+
+.context-banner-line--three {
+    width: 46%;
+    right: 12%;
+    bottom: 18%;
+    transform: rotate(-4deg);
+    opacity: 0.22;
+}
+
+.context-banner-noise {
+    position: absolute;
+    inset: 0;
+    background:
+            repeating-linear-gradient(
+                    0deg,
+                    rgba(255, 255, 255, 0.014) 0,
+                    rgba(255, 255, 255, 0.014) 1px,
+                    transparent 1px,
+                    transparent 4px
+            );
+    opacity: 0.18;
+}
+
+.context-banner-content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    height: 100%;
+    min-height: 0;
+    padding: 0.45rem 0.8rem;
+    box-sizing: border-box;
+}
+
+.context-banner-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    flex: 0 0 auto;
+    border: 1px solid rgba(184, 226, 255, 0.2);
+    border-radius: 10px;
+    background: rgba(7, 13, 22, 0.48);
+    box-shadow:
+            inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+            0 0 14px rgba(32, 74, 124, 0.12);
+    font-size: 1.02rem;
+    backdrop-filter: blur(2px);
+}
+
+.context-banner-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.02rem;
+    min-width: 0;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
+}
+
+.context-banner-kicker {
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.72;
+}
+
+.context-banner-text strong {
+    font-size: 0.92rem;
+    line-height: 1.05;
+}
+
+.context-banner-text span:last-child {
+    font-size: 0.7rem;
+    opacity: 0.84;
+}
+
+/* ===== Placeholders durables par contexte ===== */
+
+.context-banner--operations {
+    --context-banner-accent-rgb: 186, 163, 96;
+    border-color: rgba(186, 163, 96, 0.25);
+    background:
+            radial-gradient(circle at 76% 32%, rgba(186, 163, 96, 0.22), transparent 30%),
+            radial-gradient(circle at 18% 72%, rgba(100, 84, 62, 0.2), transparent 27%),
+            radial-gradient(circle at 45% 46%, rgba(255, 255, 255, 0.045), transparent 23%),
+            linear-gradient(135deg, rgba(24, 23, 20, 0.98), rgba(7, 10, 15, 0.98));
+}
+
+.context-banner--operations .context-banner-orb--secondary {
+    background: radial-gradient(circle, rgba(186, 163, 96, 0.24), transparent 66%);
+}
+
+.context-banner--hangar {
+    --context-banner-accent-rgb: 125, 184, 255;
+    border-color: rgba(125, 184, 255, 0.19);
+    background:
+            linear-gradient(90deg, rgba(125, 184, 255, 0.05), transparent 34%),
+            radial-gradient(circle at 78% 18%, rgba(125, 184, 255, 0.17), transparent 31%),
+            linear-gradient(135deg, rgba(15, 28, 42, 0.98), rgba(8, 12, 20, 0.98));
+}
+
+.context-banner--commerce {
+    --context-banner-accent-rgb: 86, 196, 124;
+    border-color: rgba(86, 196, 124, 0.22);
+    background:
+            linear-gradient(90deg, rgba(86, 196, 124, 0.085), transparent 38%),
+            radial-gradient(circle at 74% 24%, rgba(86, 196, 124, 0.18), transparent 31%),
+            linear-gradient(135deg, rgba(8, 27, 22, 0.98), rgba(7, 12, 18, 0.98));
+}
+
+.context-banner--commerce .context-banner-line {
+    background: linear-gradient(90deg, transparent, rgba(120, 255, 170, 0.36), transparent);
+}
+
+.context-banner--fuel {
+    --context-banner-accent-rgb: 214, 146, 58;
+    border-color: rgba(214, 146, 58, 0.25);
+    background:
+            radial-gradient(circle at 72% 28%, rgba(214, 146, 58, 0.2), transparent 31%),
+            linear-gradient(135deg, rgba(34, 24, 12, 0.98), rgba(9, 12, 18, 0.98));
+}
+
+.context-banner--workshop {
+    --context-banner-accent-rgb: 214, 146, 58;
+    border-color: rgba(214, 146, 58, 0.28);
+    background:
+            radial-gradient(circle at 80% 25%, rgba(214, 146, 58, 0.19), transparent 30%),
+            linear-gradient(135deg, rgba(42, 27, 14, 0.98), rgba(12, 16, 22, 0.98));
+}
+
+.context-banner--workshop .context-banner-grid {
+    opacity: 0.16;
+}
+
+.context-banner--insurance {
+    --context-banner-accent-rgb: 224, 206, 128;
+    border-color: rgba(224, 206, 128, 0.25);
+    background:
+            radial-gradient(circle at 76% 28%, rgba(224, 206, 128, 0.17), transparent 30%),
+            linear-gradient(135deg, rgba(24, 27, 38, 0.98), rgba(9, 12, 20, 0.98));
+}
+
+.context-banner--navigation {
+    --context-banner-accent-rgb: 92, 150, 220;
+    border-color: rgba(92, 150, 220, 0.31);
+    background:
+            radial-gradient(circle at 74% 30%, rgba(92, 150, 220, 0.24), transparent 32%),
+            linear-gradient(135deg, rgba(10, 28, 52, 0.98), rgba(5, 10, 20, 0.98));
+}
+
+.context-banner--navigation .context-banner-line {
+    background: linear-gradient(90deg, transparent, rgba(125, 184, 255, 0.44), transparent);
+}
+
+.context-banner--transit {
+    --context-banner-accent-rgb: 140, 180, 255;
+    border-color: rgba(140, 180, 255, 0.36);
+    background:
+            linear-gradient(105deg, transparent 0%, rgba(125, 184, 255, 0.14) 42%, transparent 74%),
+            radial-gradient(circle at 82% 34%, rgba(160, 190, 255, 0.28), transparent 31%),
+            linear-gradient(135deg, rgba(8, 14, 32, 0.98), rgba(4, 8, 18, 0.98));
+}
+
+.context-banner--transit .context-banner-line--one {
+    animation: contextTransitLine 1.8s ease-in-out infinite;
+}
+
+.context-banner--transit .context-banner-line--two {
+    animation: contextTransitLine 2.2s ease-in-out infinite reverse;
+}
+
+.context-banner--transit .context-banner-line--three {
+    animation: contextTransitLine 2.6s ease-in-out infinite;
+}
+
+/* ===== Support image + fallback ===== */
+
+.context-banner--with-image {
+    background:
+            linear-gradient(180deg, rgba(5, 10, 18, 0.12), rgba(5, 10, 18, 0.5)),
+            linear-gradient(90deg, rgba(var(--context-banner-accent-rgb), 0.12), rgba(var(--context-banner-accent-rgb), 0.04) 24%, rgba(0, 0, 0, 0) 55%),
+            var(--context-banner-image),
+            linear-gradient(135deg, rgba(12, 24, 42, 0.98), rgba(5, 11, 20, 0.98));
+    background-size: cover;
+    background-position: center;
+}
+
+.context-banner--with-image .context-banner-grid,
+.context-banner--with-image .context-banner-orb,
+.context-banner--with-image .context-banner-line,
+.context-banner--with-image .context-banner-noise {
+    opacity: 0.08;
+}
+
+.context-banner--with-image .context-banner-icon {
+    background: rgba(7, 13, 22, 0.58);
+}
+
+@keyframes contextTransitLine {
+    0% {
+        opacity: 0.2;
+        transform: translateX(-18px) rotate(-8deg);
+    }
+
+    50% {
+        opacity: 0.62;
+        transform: translateX(0) rotate(-8deg);
+    }
+
+    100% {
+        opacity: 0.2;
+        transform: translateX(18px) rotate(-8deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .context-banner--transit .context-banner-line--one,
+    .context-banner--transit .context-banner-line--two,
+    .context-banner--transit .context-banner-line--three {
+        animation: none !important;
+    }
+}
+
+@media (max-width: 1100px) {
+    .context-banner {
+        --context-banner-height: 64px;
+        margin-bottom: 0.45rem;
+        border-radius: 12px;
+    }
+
+    .context-banner-content {
+        padding: 0.4rem 0.7rem;
+    }
+
+    .context-banner-icon {
+        width: 1.95rem;
+        height: 1.95rem;
+        font-size: 0.96rem;
+    }
+
+    .context-banner-text strong {
+        font-size: 0.86rem;
+    }
+
+    .context-banner-text span:last-child {
+        font-size: 0.66rem;
+    }
+}
+
+@media (max-width: 760px) {
+    .context-banner {
+        --context-banner-height: 56px;
+        margin-bottom: 0.4rem;
+        border-radius: 11px;
+    }
+
+    .context-banner-content {
+        padding: 0.35rem 0.6rem;
+    }
+
+    .context-banner-icon {
+        width: 1.75rem;
+        height: 1.75rem;
+        font-size: 0.9rem;
+    }
+
+    .context-banner-kicker {
+        display: none;
+    }
+
+    .context-banner-text strong {
+        font-size: 0.8rem;
+    }
+
+    .context-banner-text span:last-child {
+        font-size: 0.62rem;
+    }
+}

@@ -20,11 +20,25 @@ select {
   color: #eef5fb;
 }
 
+.navigation-destination-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
 .navigation-label {
   display: block;
   margin-bottom: 5px;
   font-size: 0.88rem;
   opacity: 0.9;
+}
+
+.navigation-label--inline {
+  margin-bottom: 0;
+  font-size: 0.82rem;
+  white-space: nowrap;
 }
 
 .navigation-select {
@@ -37,9 +51,260 @@ select {
   color: #eef5fb;
 }
 
+.navigation-select--compact {
+  margin-bottom: 0;
+  padding: 0.38rem 0.55rem;
+  font-size: 0.9rem;
+  line-height: 1.1;
+}
+
+.navigation-route-meta {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  line-height: 1.1;
+  opacity: 0.88;
+}
+
 .navigation-status {
   margin-top: 8px;
   font-style: italic;
   font-size: 0.88rem;
   opacity: 0.9;
+}
+
+/* ===== Panneau navigation — variations d’état ===== */
+
+.navigation-panel {
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+.navigation-panel--active {
+  border-color: rgba(92, 150, 220, 0.26);
+  box-shadow:
+          inset 0 0 0 1px rgba(92, 150, 220, 0.05),
+          0 0 16px rgba(32, 74, 124, 0.1);
+}
+
+.navigation-panel--station-context:not(.navigation-panel--in-transit) {
+  background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.018) 0%, rgba(255, 255, 255, 0) 100%),
+          rgba(255, 255, 255, 0.02);
+}
+
+.navigation-panel--operations-context:not(.navigation-panel--in-transit) {
+  border-color: rgba(186, 163, 96, 0.22);
+  background:
+          linear-gradient(180deg, rgba(186, 163, 96, 0.05) 0%, rgba(255, 255, 255, 0) 100%),
+          rgba(255, 255, 255, 0.02);
+}
+
+.navigation-panel--in-transit {
+  border-color: rgba(92, 150, 220, 0.32);
+  background:
+          radial-gradient(circle at 50% 0%, rgba(92, 150, 220, 0.12), transparent 52%),
+          linear-gradient(180deg, rgba(46, 95, 160, 0.1) 0%, rgba(255, 255, 255, 0) 100%),
+          rgba(255, 255, 255, 0.025);
+  box-shadow:
+          inset 0 0 0 1px rgba(92, 150, 220, 0.08),
+          0 0 22px rgba(32, 74, 124, 0.16);
+}
+
+.navigation-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.navigation-panel-header h2 {
+  margin: 0;
+}
+
+.navigation-panel-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.navigation-context-pill,
+.navigation-status-pill {
+  min-height: 24px;
+  padding: 0.14rem 0.5rem;
+  font-size: 0.67rem;
+}
+
+.navigation-panel-body p:first-child {
+  margin-top: 0;
+}
+
+.navigation-select {
+  transition:
+          border-color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          background var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          box-shadow var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+.navigation-panel--active .navigation-select,
+.navigation-panel--in-transit .navigation-select {
+  border-color: rgba(92, 150, 220, 0.34);
+  box-shadow: 0 0 0 1px rgba(92, 150, 220, 0.08);
+}
+
+.navigation-route-meta {
+  transition:
+          color var(--nh-motion-duration-fast) var(--nh-motion-ease-standard),
+          opacity var(--nh-motion-duration-fast) var(--nh-motion-ease-standard);
+}
+
+.navigation-panel--in-transit .navigation-route-meta,
+.navigation-panel--in-transit .navigation-status {
+  color: #b8d7ff;
+}
+
+.navigation-status {
+  margin-top: 8px;
+  font-style: italic;
+  font-size: 0.88rem;
+  opacity: 0.9;
+}
+
+/* =========================================================
+   ANIMATION DE VOYAGE
+   ---------------------------------------------------------
+   Rôle :
+   - matérialiser le transit inter-sectoriel
+   - renforcer la perception de déplacement
+   - rester lisible et non intrusif
+   ========================================================= */
+
+.navigation-transit-visual {
+  --navigation-transit-progress: 0%;
+  position: relative;
+  overflow: hidden;
+  min-height: 48px;
+  margin: 0.2rem 0 0.75rem;
+  padding: 0.72rem 0.8rem;
+  border: 1px solid rgba(92, 150, 220, 0.2);
+  border-radius: 12px;
+  background:
+          linear-gradient(90deg, rgba(92, 150, 220, 0.08), transparent 48%, rgba(92, 150, 220, 0.06)),
+          rgba(5, 15, 28, 0.42);
+  box-shadow:
+          inset 0 0 0 1px rgba(92, 150, 220, 0.05),
+          0 0 16px rgba(32, 74, 124, 0.1);
+}
+
+.navigation-transit-stars {
+  position: absolute;
+  inset: 0;
+  opacity: 0.32;
+  background:
+          linear-gradient(90deg, transparent 0%, rgba(184, 226, 255, 0.22) 50%, transparent 100%),
+          repeating-linear-gradient(
+                  90deg,
+                  rgba(125, 184, 255, 0) 0,
+                  rgba(125, 184, 255, 0) 18px,
+                  rgba(125, 184, 255, 0.26) 19px,
+                  rgba(125, 184, 255, 0) 21px
+          );
+  animation: nhTransitField 1.8s linear infinite;
+  pointer-events: none;
+}
+
+.navigation-transit-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 22px;
+  z-index: 1;
+}
+
+.navigation-transit-node {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 999px;
+  background: rgba(184, 226, 255, 0.92);
+  box-shadow: 0 0 10px rgba(125, 184, 255, 0.42);
+}
+
+.navigation-transit-node--destination {
+  background: rgba(185, 240, 201, 0.92);
+  box-shadow: 0 0 10px rgba(86, 196, 124, 0.34);
+}
+
+.navigation-transit-line,
+.navigation-transit-progress {
+  grid-column: 2;
+  grid-row: 1;
+  height: 3px;
+  border-radius: 999px;
+}
+
+.navigation-transit-line {
+  width: 100%;
+  background: rgba(125, 184, 255, 0.14);
+}
+
+.navigation-transit-progress {
+  width: var(--navigation-transit-progress);
+  min-width: 8px;
+  max-width: 100%;
+  background: linear-gradient(90deg, rgba(92, 150, 220, 0.45), rgba(184, 226, 255, 0.96));
+  box-shadow: 0 0 10px rgba(125, 184, 255, 0.2);
+  transition: width var(--nh-motion-duration-medium) var(--nh-motion-ease-standard);
+}
+
+.navigation-transit-pulse {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: start;
+  width: 0.72rem;
+  height: 0.72rem;
+  margin-left: var(--navigation-transit-progress);
+  border-radius: 999px;
+  background: #e6f3ff;
+  box-shadow:
+          0 0 0 3px rgba(125, 184, 255, 0.1),
+          0 0 14px rgba(125, 184, 255, 0.46);
+  transform: translateX(-50%);
+  animation: nhTransitPulse 1.35s ease-in-out infinite;
+  transition: margin-left var(--nh-motion-duration-medium) var(--nh-motion-ease-standard);
+}
+
+@keyframes nhTransitField {
+  0% {
+    transform: translateX(-24px);
+  }
+
+  100% {
+    transform: translateX(24px);
+  }
+}
+
+@keyframes nhTransitPulse {
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: translateX(-50%) scale(0.88);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navigation-transit-stars,
+  .navigation-transit-pulse {
+    animation: none !important;
+  }
 }

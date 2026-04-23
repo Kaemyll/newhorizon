@@ -34,7 +34,7 @@ New Horizon repose sur quelques principes simples :
 
 ## 🚀 État actuel du projet
 
-**Version actuelle : v0.3.14**
+**Version actuelle : v0.3.15**
 
 ### Fonctionnalités principales
 

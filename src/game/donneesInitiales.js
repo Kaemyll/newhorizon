@@ -1,8 +1,8 @@
-import { donneesVaisseaux } from './dataVaisseaux'
-import { donneesMinerais } from './dataMinerais'
+import { donneesVaisseaux } from "./dataVaisseaux";
+import { donneesMinerais } from "./dataMinerais";
 
 function creerStockMineraisInitial() {
-  return Object.fromEntries(donneesMinerais.map((minerai) => [minerai.id, 0]))
+  return Object.fromEntries(donneesMinerais.map((minerai) => [minerai.id, 0]));
 }
 
 function creerInstanceVaisseauDepuisModele(modele) {
@@ -20,26 +20,35 @@ function creerInstanceVaisseauDepuisModele(modele) {
     dronesMiniersMax: modele.dronesMiniersMax,
     carburant: modele.carburantMax,
     carburantMax: modele.carburantMax,
+    assuranceNiveau: "aucune",
+    assuranceSouscriptionTick: 0,
+    assuranceExpirationTick: 0,
     scanner: structuredClone(modele.scanner || {}),
     ameliorations: structuredClone(modele.ameliorations || []),
     ameliorationsMax: structuredClone(modele.ameliorationsMax || {}),
-  }
+  };
 }
 
 export function creerEtatInitialJeu() {
-  const modeleDepart = donneesVaisseaux.find((vaisseau) => vaisseau.id === 'hw_mule')
-  const vaisseauDepart = creerInstanceVaisseauDepuisModele(modeleDepart)
+  const modeleDepart = donneesVaisseaux.find(
+    (vaisseau) => vaisseau.id === "hw_mule",
+  );
+  const vaisseauDepart = creerInstanceVaisseauDepuisModele(modeleDepart);
 
   return {
     meta: {
-      version: '0.3.14',
-      auteur: 'Kaemyll',
+      version: "0.3.15",
+      auteur: "Kaemyll",
       annee: 2026,
     },
 
+    joueur: {
+      identite: "Sans indicatif",
+      reputation: "I — Neutre",
+    },
+
     ressources: {
-      credits: 0,
-      carburant: vaisseauDepart.carburant,
+      credits: 100,
       minerais: creerStockMineraisInitial(),
       cargaisonMarchande: {},
     },
@@ -59,7 +68,11 @@ export function creerEtatInitialJeu() {
       souteMax: vaisseauDepart.souteMax,
       puissanceMiniere: vaisseauDepart.puissanceMiniere,
       dronesMiniersMax: vaisseauDepart.dronesMiniersMax,
+      carburant: vaisseauDepart.carburant,
       carburantMax: vaisseauDepart.carburantMax,
+      assuranceNiveau: vaisseauDepart.assuranceNiveau,
+      assuranceSouscriptionTick: vaisseauDepart.assuranceSouscriptionTick,
+      assuranceExpirationTick: vaisseauDepart.assuranceExpirationTick,
       scanner: structuredClone(vaisseauDepart.scanner || {}),
       ameliorations: structuredClone(vaisseauDepart.ameliorations || []),
       ameliorationsMax: structuredClone(vaisseauDepart.ameliorationsMax || {}),
@@ -71,14 +84,14 @@ export function creerEtatInitialJeu() {
     },
 
     secteurCourant: {
-      id: 'ceinture_khepri',
+      id: "ceinture_khepri",
     },
 
-    positionLocale: 'station',
+    positionLocale: "station",
 
     navigation: {
       enVoyage: false,
-      destinationSelectionneeId: 'anneau_demeter',
+      destinationSelectionneeId: "anneau_demeter",
       secteurDestinationId: null,
       ticksRestants: 0,
     },
@@ -101,14 +114,14 @@ export function creerEtatInitialJeu() {
 
     journal: [
       {
-        horodatage: '[T0000]',
-        message: 'Système initialisé.',
-        categorie: 'evenements',
+        horodatage: "[T0000]",
+        message: "Système initialisé.",
+        categorie: "evenements",
       },
       {
-        horodatage: '[T0000]',
-        message: 'Vaisseau prêt au départ, amarré à la station locale.',
-        categorie: 'evenements',
+        horodatage: "[T0000]",
+        message: "Vaisseau prêt au départ, amarré à la station locale.",
+        categorie: "evenements",
       },
     ],
 
@@ -120,5 +133,5 @@ export function creerEtatInitialJeu() {
     technique: {
       compteurTicks: 0,
     },
-  }
+  };
 }
