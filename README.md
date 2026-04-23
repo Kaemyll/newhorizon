@@ -29,6 +29,8 @@ New Horizon repose sur quelques principes simples :
 - gestion des risques
 - progression matérielle
 - automatisation partielle (drones, modules)
+- navigation spatiale plus structurée
+- ambiance de cockpit plus immersive
 
 ---
 
@@ -56,6 +58,30 @@ New Horizon repose sur quelques principes simples :
 - système de temps : **1 tick = 1 heure**
 - interface rationalisée par zones fonctionnelles
 - CSS modulaire organisé par couches et zones UI
+- bandeau contextuel immersif selon la situation du joueur
+- habillage visuel contextuel des principaux états de jeu
+- navigation rééquilibrée sur la carte sectorielle
+
+---
+
+## ✨ Ce qu’apporte la v0.3.15
+
+La version **v0.3.15** consolide surtout l’**immersion visuelle**, la **lisibilité de navigation** et la **cohérence contextuelle de l’interface**.
+
+Elle introduit notamment :
+
+- un **bandeau contextuel** au-dessus du panneau actif
+- des **visuels dédiés** selon les grands contextes de jeu
+- une meilleure lecture de la situation courante :
+    - opérations
+    - station
+    - navigation
+    - transit
+- un **rééquilibrage des trajets inter-sectoriels**
+- une base plus propre pour enrichir progressivement l’identité visuelle du cockpit
+
+Cette version marque une transition importante :  
+l’interface ne se contente plus d’afficher des panneaux, elle commence à **mettre en scène la situation du joueur**.
 
 ---
 
@@ -67,12 +93,14 @@ Le projet repose sur une séparation claire entre :
 - la **logique de jeu**
 - les **composants d’interface**
 - les **styles modulaires**
+- les **assets visuels contextuels**
 
 ### Arborescence simplifiée
 
 ```text
 src/
   assets/
+    banners/
     styles/
   components/
   data/
@@ -123,15 +151,29 @@ Le dossier `src/components/` regroupe les panneaux et composants de l’interfac
 - ressources
 - navigation
 - journal
+- éléments de contexte et d’ambiance
 
-## Styles
+## 🎨 Styles et identité visuelle
 
-Les styles sont centralisés dans `src/assets/styles/` avec un point d’entrée unique :
+Les styles sont centralisés dans src/assets/styles/ avec un point d’entrée unique.
+
+Organisation générale :
 
 - base
 - layout
 - components
 - features
+
+La v0.3.15 ajoute également une logique d’**habillage visuel contextuel** reposant sur :
+- des **assets dédiés** dans src/assets/banners/
+- un **fallback CSS robuste**
+- une intégration légère, pensée pour préserver la lisibilité et les performances
+
+L’identité visée reste volontairement cohérente avec la direction artistique du projet :
+- hard sci-fi
+- industriel
+- rétro futuriste
+- pixel art maîtrisé
 
 ---
 
@@ -208,6 +250,7 @@ Ctrl + C
 7. revenir en station
 8. vendre, réparer, améliorer ou changer de vaisseau
 9. voyager vers un autre secteur
+10. repartir avec un appareil optimisé selon la situation locale
 
 ---
 
@@ -254,6 +297,8 @@ En cas de carburant nul :
 - recharge : 2 ticks
 - extraction automatique sur amas actif
 - rappel automatique si nécessaire selon le contexte de jeu
+
+Les drones participent déjà à l’identité semi-idle du prototype en automatisant une partie de l’exploitation minière.
 
 ---
 
@@ -306,7 +351,7 @@ Le risque fait désormais partie intégrante de la boucle d’exploitation.
 
 ---
 
-## 🌌 Secteurs
+## 🌌 Secteurs et navigation
 
 Chaque secteur possède :
 
@@ -321,6 +366,11 @@ Chaque secteur possède :
 - Low-Sec : 0.4 à 0.1
 - Null-Sec : prévu ultérieurement
 
+### Navigation inter-sectorielle
+
+La navigation repose sur des trajets dont la durée est exprimée en ticks.
+La v0.3.15 a introduit un **rééquilibrage des temps de trajet** afin de rendre la progression spatiale plus crédible et plus lisible.
+
 ---
 
 ## 🛰️ Position locale
@@ -334,6 +384,8 @@ Contraintes :
 
 - minage : uniquement en zone d’opérations
 - services : uniquement en station
+
+L’interface met désormais davantage en valeur ces contextes grâce à un bandeau visuel dédié.
 
 ---
 
@@ -388,6 +440,8 @@ Le projet suit une logique simple :
 - prototype jouable en permanence
 - ajout de systèmes par couches successives
 - préférence pour les structures maintenables et refactorables
+
+Chaque version doit enrichir le jeu sans casser l’existant, et préparer les suivantes de manière propre.
 
 ---
 
