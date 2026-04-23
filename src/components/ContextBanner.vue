@@ -1,6 +1,15 @@
 <script setup>
 import { computed } from "vue";
 
+import bannerNavigation from "../assets/banners/banner_navigation.png";
+import bannerOperations from "../assets/banners/banner_operations.png";
+import bannerStationAssurance from "../assets/banners/banner_station_assurance.png";
+import bannerStationAtelier from "../assets/banners/banner_station_atelier.png";
+import bannerStationCommerce from "../assets/banners/banner_station_commerce.png";
+import bannerStationHangar from "../assets/banners/banner_station_hangar.png";
+import bannerStationRavitaillement from "../assets/banners/banner_station_ravitaillement.png";
+import bannerTransit from "../assets/banners/banner_transit.png";
+
 const props = defineProps({
   modeActif: {
     type: String,
@@ -28,6 +37,7 @@ const contexteBandeau = computed(() => {
       sousTitre: "Trajectoire verrouillée · propulsion active",
       icone: "⟁",
       classe: "context-banner--transit",
+      image: bannerTransit,
     };
   }
 
@@ -38,6 +48,7 @@ const contexteBandeau = computed(() => {
       sousTitre: "Prospection locale · exploitation minière",
       icone: "✦",
       classe: "context-banner--operations",
+      image: bannerOperations,
     };
   }
 
@@ -48,6 +59,7 @@ const contexteBandeau = computed(() => {
       sousTitre: "Calcul de route · préparation du trajet",
       icone: "🧭",
       classe: "context-banner--navigation",
+      image: bannerNavigation,
     };
   }
 
@@ -59,6 +71,7 @@ const contexteBandeau = computed(() => {
         sousTitre: "Cours locaux · transactions · fret",
         icone: "¤",
         classe: "context-banner--commerce",
+        image: bannerStationCommerce,
       };
     }
 
@@ -69,6 +82,7 @@ const contexteBandeau = computed(() => {
         sousTitre: "Réservoirs · carburant · autonomie",
         icone: "⛽",
         classe: "context-banner--fuel",
+        image: bannerStationRavitaillement,
       };
     }
 
@@ -79,6 +93,7 @@ const contexteBandeau = computed(() => {
         sousTitre: "Réparations · améliorations · maintenance",
         icone: "⚙",
         classe: "context-banner--workshop",
+        image: bannerStationAtelier,
       };
     }
 
@@ -89,6 +104,7 @@ const contexteBandeau = computed(() => {
         sousTitre: "Contrats · couverture · indemnisation",
         icone: "★",
         classe: "context-banner--insurance",
+        image: bannerStationAssurance,
       };
     }
 
@@ -98,6 +114,7 @@ const contexteBandeau = computed(() => {
       sousTitre: "Vaisseaux · stockage · préparation",
       icone: "⌂",
       classe: "context-banner--hangar",
+      image: bannerStationHangar,
     };
   }
 
@@ -107,6 +124,7 @@ const contexteBandeau = computed(() => {
     sousTitre: "Services disponibles · vaisseau amarré",
     icone: "⌂",
     classe: "context-banner--hangar",
+    image: bannerStationHangar,
   };
 });
 
@@ -114,14 +132,29 @@ const classesBandeau = computed(() => [
   "context-banner",
   contexteBandeau.value.classe,
   {
+    "context-banner--with-image": Boolean(contexteBandeau.value.image),
     "context-banner--station-local": props.positionLocale === "station",
     "context-banner--operations-local": props.positionLocale === "operations",
   },
 ]);
+
+const styleBandeau = computed(() => {
+  if (!contexteBandeau.value.image) {
+    return {};
+  }
+
+  return {
+    "--context-banner-image": `url("${contexteBandeau.value.image}")`,
+  };
+});
 </script>
 
 <template>
-  <section :class="classesBandeau" :data-context="contexteBandeau.id">
+  <section
+    :class="classesBandeau"
+    :data-context="contexteBandeau.id"
+    :style="styleBandeau"
+  >
     <div class="context-banner-visual" aria-hidden="true">
       <span class="context-banner-orb context-banner-orb--primary"></span>
       <span class="context-banner-orb context-banner-orb--secondary"></span>

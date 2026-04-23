@@ -14,6 +14,7 @@
 
 .context-banner {
     --context-banner-height: 96px;
+    --context-banner-accent-rgb: 125, 184, 255;
 
     position: relative;
     flex: 0 0 var(--context-banner-height);
@@ -32,13 +33,40 @@
             0 8px 16px rgba(0, 0, 0, 0.14);
 }
 
+.context-banner::before,
 .context-banner::after {
     content: '';
     position: absolute;
-    inset: auto 0 0 0;
-    height: 60%;
-    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.34));
+    left: 0;
+    width: 100%;
     pointer-events: none;
+    z-index: 2;
+}
+
+.context-banner::before {
+    top: 0;
+    height: 2px;
+    background: linear-gradient(
+            90deg,
+            rgba(var(--context-banner-accent-rgb), 0.18) 0%,
+            rgba(var(--context-banner-accent-rgb), 0.95) 12%,
+            rgba(var(--context-banner-accent-rgb), 0.95) 88%,
+            rgba(var(--context-banner-accent-rgb), 0.18) 100%
+    );
+    box-shadow: 0 0 8px rgba(var(--context-banner-accent-rgb), 0.28);
+}
+
+.context-banner::after {
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(
+            90deg,
+            rgba(var(--context-banner-accent-rgb), 0.18) 0%,
+            rgba(var(--context-banner-accent-rgb), 0.95) 12%,
+            rgba(var(--context-banner-accent-rgb), 0.95) 88%,
+            rgba(var(--context-banner-accent-rgb), 0.18) 100%
+    );
+    box-shadow: 0 0 8px rgba(var(--context-banner-accent-rgb), 0.22);
 }
 
 .context-banner-visual {
@@ -136,7 +164,7 @@
 
 .context-banner-content {
     position: relative;
-    z-index: 1;
+    z-index: 3;
     display: flex;
     align-items: center;
     gap: 0.65rem;
@@ -155,11 +183,12 @@
     flex: 0 0 auto;
     border: 1px solid rgba(184, 226, 255, 0.2);
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.052);
+    background: rgba(7, 13, 22, 0.48);
     box-shadow:
             inset 0 0 0 1px rgba(255, 255, 255, 0.025),
             0 0 14px rgba(32, 74, 124, 0.12);
     font-size: 1.02rem;
+    backdrop-filter: blur(2px);
 }
 
 .context-banner-text {
@@ -167,13 +196,14 @@
     flex-direction: column;
     gap: 0.02rem;
     min-width: 0;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
 }
 
 .context-banner-kicker {
     font-size: 0.58rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    opacity: 0.62;
+    opacity: 0.72;
 }
 
 .context-banner-text strong {
@@ -183,12 +213,13 @@
 
 .context-banner-text span:last-child {
     font-size: 0.7rem;
-    opacity: 0.8;
+    opacity: 0.84;
 }
 
 /* ===== Placeholders durables par contexte ===== */
 
 .context-banner--operations {
+    --context-banner-accent-rgb: 186, 163, 96;
     border-color: rgba(186, 163, 96, 0.25);
     background:
             radial-gradient(circle at 76% 32%, rgba(186, 163, 96, 0.22), transparent 30%),
@@ -202,6 +233,7 @@
 }
 
 .context-banner--hangar {
+    --context-banner-accent-rgb: 125, 184, 255;
     border-color: rgba(125, 184, 255, 0.19);
     background:
             linear-gradient(90deg, rgba(125, 184, 255, 0.05), transparent 34%),
@@ -210,6 +242,7 @@
 }
 
 .context-banner--commerce {
+    --context-banner-accent-rgb: 86, 196, 124;
     border-color: rgba(86, 196, 124, 0.22);
     background:
             linear-gradient(90deg, rgba(86, 196, 124, 0.085), transparent 38%),
@@ -222,6 +255,7 @@
 }
 
 .context-banner--fuel {
+    --context-banner-accent-rgb: 214, 146, 58;
     border-color: rgba(214, 146, 58, 0.25);
     background:
             radial-gradient(circle at 72% 28%, rgba(214, 146, 58, 0.2), transparent 31%),
@@ -229,6 +263,7 @@
 }
 
 .context-banner--workshop {
+    --context-banner-accent-rgb: 214, 146, 58;
     border-color: rgba(214, 146, 58, 0.28);
     background:
             radial-gradient(circle at 80% 25%, rgba(214, 146, 58, 0.19), transparent 30%),
@@ -240,6 +275,7 @@
 }
 
 .context-banner--insurance {
+    --context-banner-accent-rgb: 224, 206, 128;
     border-color: rgba(224, 206, 128, 0.25);
     background:
             radial-gradient(circle at 76% 28%, rgba(224, 206, 128, 0.17), transparent 30%),
@@ -247,6 +283,7 @@
 }
 
 .context-banner--navigation {
+    --context-banner-accent-rgb: 92, 150, 220;
     border-color: rgba(92, 150, 220, 0.31);
     background:
             radial-gradient(circle at 74% 30%, rgba(92, 150, 220, 0.24), transparent 32%),
@@ -258,6 +295,7 @@
 }
 
 .context-banner--transit {
+    --context-banner-accent-rgb: 140, 180, 255;
     border-color: rgba(140, 180, 255, 0.36);
     background:
             linear-gradient(105deg, transparent 0%, rgba(125, 184, 255, 0.14) 42%, transparent 74%),
@@ -277,11 +315,12 @@
     animation: contextTransitLine 2.6s ease-in-out infinite;
 }
 
-/* ===== Préparation future #144 : support image + fallback ===== */
+/* ===== Support image + fallback ===== */
 
 .context-banner--with-image {
     background:
-            linear-gradient(180deg, rgba(5, 10, 18, 0.08), rgba(5, 10, 18, 0.42)),
+            linear-gradient(180deg, rgba(5, 10, 18, 0.12), rgba(5, 10, 18, 0.5)),
+            linear-gradient(90deg, rgba(var(--context-banner-accent-rgb), 0.12), rgba(var(--context-banner-accent-rgb), 0.04) 24%, rgba(0, 0, 0, 0) 55%),
             var(--context-banner-image),
             linear-gradient(135deg, rgba(12, 24, 42, 0.98), rgba(5, 11, 20, 0.98));
     background-size: cover;
@@ -292,7 +331,11 @@
 .context-banner--with-image .context-banner-orb,
 .context-banner--with-image .context-banner-line,
 .context-banner--with-image .context-banner-noise {
-    opacity: 0.1;
+    opacity: 0.08;
+}
+
+.context-banner--with-image .context-banner-icon {
+    background: rgba(7, 13, 22, 0.58);
 }
 
 @keyframes contextTransitLine {
